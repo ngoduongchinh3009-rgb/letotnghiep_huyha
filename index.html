@@ -615,6 +615,33 @@
       50% { opacity: 0.95; transform: scale(1.15); }
     }
 
+    /* Cute stickers overlay (camera only) */
+    .cam-stickers {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .sticker {
+      position: absolute;
+      font-size: clamp(18px, 7vw, 34px);
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+      opacity: 0.95;
+      animation: stickerFloat 2.6s ease-in-out infinite;
+      user-select: none;
+    }
+
+    .sticker--heart { top: 10%; left: 8%; animation-delay: 0s; }
+    .sticker--spark { top: 12%; right: 10%; animation-delay: 0.35s; }
+    .sticker--flower { bottom: 12%; left: 10%; animation-delay: 0.7s; }
+    .sticker--cap { bottom: 12%; right: 10%; animation-delay: 1.05s; }
+
+    @keyframes stickerFloat {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50% { transform: translateY(-6px) rotate(4deg); }
+    }
+
     .cam-actions {
       display: flex;
       flex-wrap: wrap;
@@ -1293,10 +1320,20 @@
           <span class="cam-cap cam-cap--bl" title="Cử nhân">🎓</span>
           <span class="cam-cap cam-cap--br" title="Cử nhân">🎓</span>
         </div>
+        <div class="cam-stickers" id="cam-stickers" aria-hidden="true">
+          <span class="sticker sticker--heart">💗</span>
+          <span class="sticker sticker--spark">✨</span>
+          <span class="sticker sticker--flower">🌸</span>
+          <span class="sticker sticker--cap">🎓</span>
+        </div>
       </div>
       <div class="cam-actions">
         <button type="button" class="btn-capture" id="btn-start-cam">Mở camera</button>
         <button type="button" class="btn-primary" id="btn-capture" disabled>Chụp ảnh kỷ niệm</button>
+      </div>
+      <div class="inline-row" style="margin-top:0.6rem;">
+        <label class="pill"><input type="checkbox" id="opt-beauty" checked> Làm đẹp nhẹ</label>
+        <label class="pill"><input type="checkbox" id="opt-stickers" checked> Sticker cute</label>
       </div>
       <p class="cam-hint">Ảnh tải về PNG. Camera trên điện thoại: cần trang <strong>HTTPS</strong> (hoặc localhost). Mở mục “Điện thoại truy cập &amp; mở camera” ở màn form để xem cách dùng ngrok.</p>
       <p class="cam-error" id="cam-error" hidden></p>
@@ -1364,6 +1401,10 @@
         <input id="wall-search" type="text" placeholder="Tìm theo tên..." style="max-width: 220px;">
       </div>
       <p class="hintline" id="wall-hint">Các lời chúc sẽ hiện ở đây sau khi kết nối Firebase.</p>
+        <div class="inline-row" style="justify-content:flex-start; margin-top:0.25rem;">
+          <button type="button" class="btn-secondary" id="btn-copy-wall-link">Copy link xem (HuyHa)</button>
+          <span class="hintline" id="wall-link-hint" style="margin:0;">Link này chỉ để xem Wall.</span>
+        </div>
         <details class="access-help" style="margin:0.6rem 0 0; width:100%; max-width:none;">
           <summary>Hướng dẫn vận hành (HuyHa) / GitHub Pages</summary>
           <div class="access-help__body">
@@ -1553,6 +1594,9 @@
   var camError = document.getElementById("cam-error");
   var snapCanvas = document.getElementById("snap-canvas");
   var cardCanvas = document.getElementById("card-canvas");
+  var optBeauty = document.getElementById("opt-beauty");
+  var optStickers = document.getElementById("opt-stickers");
+  var camStickers = document.getElementById("cam-stickers");
   var photoPreview = document.getElementById("photo-preview");
   var previewImg = document.getElementById("preview-img");
   var btnRetake = document.getElementById("btn-retake");
@@ -1576,6 +1620,8 @@
   var modalImg = document.getElementById("modal-img");
   var modalClose = document.getElementById("modal-close");
   var modalTitle = document.getElementById("modal-title");
+  var btnCopyWallLink = document.getElementById("btn-copy-wall-link");
+  var wallLinkHint = document.getElementById("wall-link-hint");
 
   var guestFullName = "";
   /** Dòng chức danh hiển thị trên thiệp + canvas (theo khách khớp hoặc mặc định) */
@@ -1593,6 +1639,26 @@
     var i;
     for (i = 0; i < screens.length; i++) screens[i].classList.remove("is-active");
     el.classList.add("is-active");
+  }
+
+  function getQuery(name) {
+    try {
+      var u = new URL(window.location.href);
+      return u.searchParams.get(name);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function buildWallViewLink() {
+    try {
+      var u = new URL(window.location.href);
+      u.searchParams.set("view", "wall");
+      u.hash = "#wall";
+      return u.toString();
+    } catch (e) {
+      return window.location.href.split("#")[0] + "?view=wall#wall";
+    }
   }
 
   function wait(ms) {
@@ -1800,6 +1866,25 @@
     ctx.fill();
     ctx.restore();
 
+    // Blush nhẹ
+    ctx.save();
+    ctx.globalCompositeOperation = "soft-light";
+    var b1 = ctx.createRadialGradient(w * 0.36, h * 0.53, 1, w * 0.36, h * 0.53, Math.min(w, h) * 0.1);
+    b1.addColorStop(0, "rgba(245, 120, 140, 0.09)");
+    b1.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = b1;
+    ctx.beginPath();
+    ctx.arc(w * 0.36, h * 0.53, Math.min(w, h) * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    var b2 = ctx.createRadialGradient(w * 0.64, h * 0.53, 1, w * 0.64, h * 0.53, Math.min(w, h) * 0.1);
+    b2.addColorStop(0, "rgba(245, 120, 140, 0.09)");
+    b2.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = b2;
+    ctx.beginPath();
+    ctx.arc(w * 0.64, h * 0.53, Math.min(w, h) * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
     try {
       var soft = document.createElement("canvas");
       soft.width = w;
@@ -1815,6 +1900,22 @@
     } catch (e) {
       /* bỏ qua nếu trình duyệt hạn chế */
     }
+  }
+
+  function drawCuteStickersOnCanvas(ctx, w, h) {
+    // Vẽ sticker dạng emoji ở góc, tránh che mặt
+    ctx.save();
+    ctx.font = "900 " + Math.max(28, Math.min(w, h) * 0.06) + "px system-ui, Apple Color Emoji, Segoe UI Emoji";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.shadowColor = "rgba(0,0,0,0.35)";
+    ctx.shadowBlur = 10;
+    ctx.globalAlpha = 0.95;
+    ctx.fillText("💗", w * 0.13, h * 0.16);
+    ctx.fillText("✨", w * 0.87, h * 0.16);
+    ctx.fillText("🌸", w * 0.13, h * 0.84);
+    ctx.fillText("🎓", w * 0.87, h * 0.84);
+    ctx.restore();
   }
 
   function drawClassicCardToCanvas(out, ow, oh, photoSource) {
@@ -2149,6 +2250,31 @@
     });
   }
 
+  if (btnCopyWallLink) {
+    btnCopyWallLink.addEventListener("click", function () {
+      var link = buildWallViewLink();
+      function done(ok) {
+        if (wallLinkHint) {
+          wallLinkHint.textContent = ok ? "Đã copy!" : "Không copy được. Link: " + link;
+        }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(
+          function () { done(true); },
+          function () { done(false); }
+        );
+      } else {
+        done(false);
+      }
+    });
+  }
+
+  if (optStickers && camStickers) {
+    optStickers.addEventListener("change", function () {
+      camStickers.style.display = optStickers.checked ? "" : "none";
+    });
+  }
+
   function hasCloudinaryConfig() {
     return CLOUDINARY && CLOUDINARY.cloudName && CLOUDINARY.uploadPreset;
   }
@@ -2406,7 +2532,7 @@
     ctx.drawImage(video, 0, 0, vw, vh);
     ctx.filter = "none";
     ctx.restore();
-    applyPortraitEnhance(ctx, vw, vh);
+    if (!optBeauty || optBeauty.checked) applyPortraitEnhance(ctx, vw, vh);
     /* Render thiệp cổ điển ra canvas riêng (9:16) */
     var outW = 1080;
     var outH = 1920;
@@ -2415,6 +2541,7 @@
       cardCanvas.height = outH;
       var out = cardCanvas.getContext("2d");
       drawClassicCardToCanvas(out, outW, outH, snapCanvas);
+      if (!optStickers || optStickers.checked) drawCuteStickersOnCanvas(out, outW, outH);
     }
 
     (cardCanvas || snapCanvas).toBlob(function (blob) {
@@ -2530,7 +2657,19 @@
   refreshSecureBanner();
   initFirebaseMaybe();
   if (hasFirebaseConfig()) attachWallListener();
-  startSplash();
+  var view = getQuery("view");
+  if (view === "wall") {
+    // Link riêng cho HuyHa: chỉ xem Wall
+    showScreen(inviteScreen);
+    if (wishPanel) wishPanel.hidden = true;
+    if (camWrap) camWrap.parentElement.hidden = true;
+    if (photoPreview) photoPreview.hidden = true;
+    if (wallPanel) {
+      wallPanel.scrollIntoView({ behavior: "instant", block: "start" });
+    }
+  } else {
+    startSplash();
+  }
 })();
   </script>
 </body>
