@@ -280,7 +280,7 @@ button:active { transform: scale(0.97); }
 .classic-card__bg {
   position: absolute;
   inset: 0;
-  background-image: url("assets/paper.png");
+  background-image: url("assets/texture.png");
   background-size: cover;
   background-position: center;
   filter: contrast(1.02) saturate(0.95);
