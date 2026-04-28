@@ -534,6 +534,45 @@
       margin-top: 0.5rem;
     }
 
+    .photo-preview {
+      width: min(100%, 560px);
+      margin: 1rem auto 0;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 248, 231, 0.28);
+      border-radius: 12px;
+      padding: 0.7rem;
+    }
+
+    .photo-preview h4 {
+      margin: 0 0 0.55rem;
+      font-size: clamp(0.95rem, 2.1vw, 1.05rem);
+      color: var(--cream);
+    }
+
+    .photo-preview img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      border: 2px solid rgba(212, 165, 116, 0.75);
+      display: block;
+    }
+
+    .preview-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 0.65rem;
+      justify-content: center;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 248, 231, 0.16);
+      color: var(--cream);
+      border: 1px solid rgba(255, 248, 231, 0.38);
+      box-shadow: none;
+    }
+
     /* ========== Điện thoại: thu nhỏ form & thiệp (vẫn đọc được) ========== */
     @media (max-width: 640px) {
       .screen {
@@ -729,6 +768,22 @@
         max-width: none;
       }
 
+      .photo-preview {
+        width: 100%;
+        margin-top: 0.8rem;
+        padding: 0.5rem;
+      }
+
+      .photo-preview h4 {
+        font-size: 0.82rem;
+        margin-bottom: 0.42rem;
+      }
+
+      .preview-actions {
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+      }
+
       .secure-banner {
         font-size: 0.74rem;
         padding: 0.55rem 0.65rem;
@@ -879,6 +934,15 @@
       </div>
       <p class="cam-hint">Ảnh tải về PNG. Camera trên điện thoại: cần trang <strong>HTTPS</strong> (hoặc localhost). Mở mục “Điện thoại truy cập &amp; mở camera” ở màn form để xem cách dùng ngrok.</p>
       <p class="cam-error" id="cam-error" hidden></p>
+      <section class="photo-preview" id="photo-preview" hidden>
+        <h4>Ảnh vừa chụp</h4>
+        <img id="preview-img" alt="Ảnh kỷ niệm vừa chụp">
+        <div class="preview-actions">
+          <button type="button" class="btn-secondary" id="btn-retake">Chụp lại</button>
+          <button type="button" class="btn-primary" id="btn-download-again">Tải lại PNG</button>
+          <button type="button" class="btn-secondary" id="btn-share-photo">Chia sẻ</button>
+        </div>
+      </section>
     </div>
     <canvas id="snap-canvas"></canvas>
   </section>
@@ -1019,6 +1083,11 @@
   var btnCapture = document.getElementById("btn-capture");
   var camError = document.getElementById("cam-error");
   var snapCanvas = document.getElementById("snap-canvas");
+  var photoPreview = document.getElementById("photo-preview");
+  var previewImg = document.getElementById("preview-img");
+  var btnRetake = document.getElementById("btn-retake");
+  var btnDownloadAgain = document.getElementById("btn-download-again");
+  var btnSharePhoto = document.getElementById("btn-share-photo");
 
   var guestFullName = "";
   /** Dòng chức danh hiển thị trên thiệp + canvas (theo khách khớp hoặc mặc định) */
@@ -1142,32 +1211,68 @@
     ctx.closePath();
   }
 
-  /** Mũ cử nhân đơn giản (canvas) — góc khung ảnh */
+  /** Mũ cử nhân nhỏ gọn cho PNG */
   function drawMortarboardIcon(ctx, cx, cy, scale, flipX) {
     ctx.save();
     ctx.translate(cx, cy);
     if (flipX) ctx.scale(-1, 1);
     ctx.scale(scale, scale);
-    ctx.fillStyle = "#1e293b";
+    ctx.fillStyle = "#20314f";
     ctx.beginPath();
-    ctx.moveTo(0, -20);
-    ctx.lineTo(18, -6);
-    ctx.lineTo(0, 8);
-    ctx.lineTo(-18, -6);
+    ctx.moveTo(0, -12);
+    ctx.lineTo(11, -4);
+    ctx.lineTo(0, 4);
+    ctx.lineTo(-11, -4);
     ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = "#0f172a";
-    ctx.fillRect(-24, -4, 48, 7);
+    ctx.fillStyle = "#16253e";
+    ctx.fillRect(-12, -2.5, 24, 5);
     ctx.fillStyle = "#c9a227";
     ctx.beginPath();
-    ctx.arc(0, -12, 3.5, 0, Math.PI * 2);
+    ctx.arc(0, -7, 2, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "#e8c547";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#f0d66b";
+    ctx.lineWidth = 1.2;
     ctx.beginPath();
-    ctx.moveTo(16, 0);
-    ctx.quadraticCurveTo(24, 14, 20, 28);
+    ctx.moveTo(9, -2);
+    ctx.quadraticCurveTo(15, 6, 12, 13);
     ctx.stroke();
+    ctx.restore();
+  }
+
+  /** Bằng tốt nghiệp cuộn nhỏ */
+  function drawDiplomaIcon(ctx, cx, cy, scale) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(scale, scale);
+    ctx.fillStyle = "#f6eddb";
+    ctx.strokeStyle = "#8b5a2b";
+    ctx.lineWidth = 1.2;
+    pathRoundRect(ctx, -10, -5, 20, 10, 3);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#c9a227";
+    ctx.fillRect(-1.2, -6.2, 2.4, 12.4);
+    ctx.restore();
+  }
+
+  /** Hoa 5 cánh nhỏ */
+  function drawFlowerIcon(ctx, cx, cy, scale) {
+    var k;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(scale, scale);
+    ctx.fillStyle = "#fff4dd";
+    for (k = 0; k < 5; k++) {
+      ctx.rotate((Math.PI * 2) / 5);
+      ctx.beginPath();
+      ctx.ellipse(0, -4.6, 2.2, 3.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = "#d9a91f";
+    ctx.beginPath();
+    ctx.arc(0, 0, 2.1, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
   }
 
@@ -1232,17 +1337,23 @@
     pathRoundRect(ctx, ins + 4, ins + 4, w - 2 * ins - 8, h - 2 * ins - 8, Math.max(2, r - 3));
     ctx.stroke();
 
-    var sc = Math.min(w, h) * 0.028;
-    drawMortarboardIcon(ctx, ins + w * 0.05, ins + h * 0.07, sc, false);
-    drawMortarboardIcon(ctx, w - ins - w * 0.05, ins + h * 0.07, sc, true);
-    drawMortarboardIcon(ctx, ins + w * 0.05, h - ins - h * 0.07, sc, false);
-    drawMortarboardIcon(ctx, w - ins - w * 0.05, h - ins - h * 0.07, sc, true);
+    /* Icon nhỏ quanh viền, không che phần giữa khuôn mặt */
+    var iconScale = Math.min(w, h) * 0.03;
+    drawMortarboardIcon(ctx, ins + w * 0.07, ins + h * 0.09, iconScale, false);
+    drawDiplomaIcon(ctx, w * 0.5, ins + h * 0.08, iconScale * 0.95);
+    drawFlowerIcon(ctx, w - ins - w * 0.07, ins + h * 0.09, iconScale * 1.02);
+
+    drawFlowerIcon(ctx, ins + w * 0.07, h - ins - h * 0.09, iconScale * 1.02);
+    drawDiplomaIcon(ctx, w * 0.5, h - ins - h * 0.08, iconScale * 0.95);
+    drawMortarboardIcon(ctx, w - ins - w * 0.07, h - ins - h * 0.09, iconScale, true);
 
     var sparks = [
-      [0.1, 0.12],
-      [0.9, 0.12],
-      [0.1, 0.88],
-      [0.9, 0.88],
+      [0.14, 0.13],
+      [0.86, 0.13],
+      [0.2, 0.89],
+      [0.8, 0.89],
+      [0.05, 0.5],
+      [0.95, 0.5],
     ];
     var si;
     for (si = 0; si < sparks.length; si++) {
@@ -1261,6 +1372,31 @@
 
   /* ===== Camera + chụp (composite PNG) ===== */
   var stream = null;
+  var lastPhotoBlob = null;
+  var lastPhotoUrl = "";
+
+  function setPreview(url, blob) {
+    if (!photoPreview || !previewImg) return;
+    if (lastPhotoUrl) URL.revokeObjectURL(lastPhotoUrl);
+    lastPhotoBlob = blob || null;
+    lastPhotoUrl = url || "";
+    previewImg.src = lastPhotoUrl;
+    photoPreview.hidden = !lastPhotoUrl;
+  }
+
+  function downloadBlob(blob, filename) {
+    if (!blob) return;
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () {
+      URL.revokeObjectURL(url);
+    }, 2500);
+  }
 
   function setCamError(msg) {
     camError.textContent = msg;
@@ -1357,21 +1493,62 @@
 
     snapCanvas.toBlob(function (blob) {
       if (!blob) return;
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement("a");
-      a.href = url;
-      a.download = "ky-niem-tot-nghiep.png";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(function () {
-        URL.revokeObjectURL(url);
-      }, 2500);
+      var previewUrl = URL.createObjectURL(blob);
+      setPreview(previewUrl, blob);
+      downloadBlob(blob, "ky-niem-tot-nghiep.png");
     }, "image/png");
   });
 
+  if (btnRetake) {
+    btnRetake.addEventListener("click", function () {
+      if (photoPreview) photoPreview.hidden = true;
+      if (previewImg) previewImg.src = "";
+      if (lastPhotoUrl) {
+        URL.revokeObjectURL(lastPhotoUrl);
+        lastPhotoUrl = "";
+      }
+      lastPhotoBlob = null;
+    });
+  }
+
+  if (btnDownloadAgain) {
+    btnDownloadAgain.addEventListener("click", function () {
+      if (!lastPhotoBlob) return;
+      downloadBlob(lastPhotoBlob, "ky-niem-tot-nghiep.png");
+    });
+  }
+
+  if (btnSharePhoto) {
+    btnSharePhoto.addEventListener("click", function () {
+      if (!lastPhotoBlob) return;
+      if (!navigator.share) {
+        setCamError("Trình duyệt chưa hỗ trợ chia sẻ trực tiếp. Dùng nút Tải lại PNG.");
+        return;
+      }
+      var file = new File([lastPhotoBlob], "ky-niem-tot-nghiep.png", {
+        type: "image/png",
+      });
+      if (navigator.canShare && !navigator.canShare({ files: [file] })) {
+        setCamError("Thiết bị không hỗ trợ chia sẻ file ảnh trực tiếp.");
+        return;
+      }
+      navigator
+        .share({
+          title: "Ảnh kỷ niệm tốt nghiệp",
+          text: "Ảnh kỷ niệm tốt nghiệp",
+          files: [file],
+        })
+        .catch(function () {
+          /* người dùng huỷ thì bỏ qua */
+        });
+    });
+  }
+
   /* Khi rời màn thiệp thì tắt camera tiết kiệm pin (nếu có nút quay lại sau này) */
   window.addEventListener("beforeunload", stopCamera);
+  window.addEventListener("beforeunload", function () {
+    if (lastPhotoUrl) URL.revokeObjectURL(lastPhotoUrl);
+  });
 
   function buildRoleFromSelect() {
     var r = selectRelation.value;
