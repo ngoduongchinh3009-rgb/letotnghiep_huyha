@@ -49,8 +49,10 @@
     els.video.style.filter = css === "none" ? "" : css;
     if (els.optStickers && !els.optStickers.checked) {
       if (els.camStickers) els.camStickers.style.display = "none";
+      if (els.camOverlay) els.camOverlay.style.display = "none";
       return;
     }
+    if (els.camOverlay) els.camOverlay.style.display = "";
     APP.setStickerPack(APP.getSelectedStickerPack());
   };
 

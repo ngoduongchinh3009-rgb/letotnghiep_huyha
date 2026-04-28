@@ -29,6 +29,7 @@
 
     camWrap: document.getElementById("camera-wrap"),
     video: document.getElementById("cam-video"),
+    camOverlay: document.getElementById("cam-overlay"),
     btnStartCam: document.getElementById("btn-start-cam"),
     btnCapture: document.getElementById("btn-capture"),
     camError: document.getElementById("cam-error"),
@@ -93,6 +94,15 @@
     faceLandmarksAt: 0,
     faceMesh: null,
     faceMeshRunning: false,
+
+    // Smoothing for face-stickers (live + capture)
+    faceStickerSmooth: {
+      cx: null,
+      cy: null,
+      a: null,
+      cheekX: null,
+      cheekY: null,
+    },
   };
 
   // Preload texture (dùng cho canvas thiệp)

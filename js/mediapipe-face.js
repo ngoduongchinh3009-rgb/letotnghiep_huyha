@@ -110,57 +110,134 @@
   APP.drawFaceStickers = function drawFaceStickers(ctx, w, h, pack) {
     var pts = APP.state.faceLandmarks;
     if (!pts || !pts.length) return false;
+    if (pack === "none") return false;
 
-    // Kích thước theo bề ngang mặt (2 má)
-    var cheekL = lmXY(pts[234], w, h);
-    var cheekR = lmXY(pts[454], w, h);
-    var faceW = dist(cheekL, cheekR);
-    faceW = clamp(faceW, Math.min(w, h) * 0.2, Math.min(w, h) * 0.7);
-
-    // Góc nghiêng mặt dùng đường nối 2 mắt (outer corners)
+    // 1) Mirror landmarks correctly is already handled by lmXY().
+    // 2) Compute head rotation using eye landmarks (33 & 263).
     var eyeL = lmXY(pts[33], w, h);
     var eyeR = lmXY(pts[263], w, h);
-    var ang = rot(eyeL, eyeR);
+    var dx = eyeR.x - eyeL.x;
+    var dy = eyeR.y - eyeL.y;
+    var angle = Math.atan2(dy, dx);
 
-    // Điểm trán (10) và giữa mắt (168) để đặt mũ
-    var forehead = lmXY(pts[10], w, h);
-    var midEyes = lmXY(pts[168], w, h);
+    // 3) Compute scale from eye distance.
+    var eyeDist = Math.sqrt(dx * dx + dy * dy);
+    var size = eyeDist * 2.2;
 
-    // Điểm má để đặt hoa
-    var flowerOn = lmXY(pts[234], w, h); // má trái (theo ảnh đã mirror)
+    // 4) Compute center position.
+    var centerX = (eyeL.x + eyeR.x) * 0.5;
+    var centerY = (eyeL.y + eyeR.y) * 0.5;
 
-    // Center để đặt kính
-    var glassCx = (eyeL.x + eyeR.x) * 0.5;
-    var glassCy = (eyeL.y + eyeR.y) * 0.5;
+    // 6) Add smoothing to reduce jitter (x/y/angle).
+    var sm = APP.state.faceStickerSmooth || (APP.state.faceStickerSmooth = {});
+    var kOld = 0.7;
+    var kNew = 0.3;
 
-    var isNone = pack === "none";
-    if (isNone) return false;
-
-    // Pack mapping
-    var capEmoji = pack === "grad" ? "🎓" : "🎓";
-    var glassEmoji = pack === "grad" ? "👓" : "👓";
-    var flowerEmoji = pack === "grad" ? "🌼" : "🌸";
-
-    // Mũ cử nhân: đặt hơi phía trên trán, theo góc mặt
-    var capSize = faceW * 0.42;
-    var capX = forehead.x;
-    var capY = forehead.y - faceW * 0.18;
-    drawEmoji(ctx, capEmoji, capX, capY, capSize, ang * 0.25, 0.98);
-
-    // Kính: đặt tại giữa mắt
-    var glassSize = faceW * 0.38;
-    drawEmoji(ctx, glassEmoji, glassCx, glassCy, glassSize, ang, 0.92);
-
-    // Hoa: đặt má
-    var flowerSize = faceW * 0.22;
-    drawEmoji(ctx, flowerEmoji, flowerOn.x - faceW * 0.02, flowerOn.y + faceW * 0.02, flowerSize, 0, 0.96);
-
-    // Spark nhẹ gần thái dương
-    if (pack === "grad") {
-      var temple = lmXY(pts[356], w, h);
-      drawEmoji(ctx, "✨", temple.x + faceW * 0.12, temple.y - faceW * 0.06, faceW * 0.18, 0, 0.9);
+    function smoothVal(oldV, curV) {
+      return oldV == null ? curV : oldV * kOld + curV * kNew;
     }
+
+    function smoothAngle(oldA, curA) {
+      if (oldA == null) return curA;
+      var s = Math.sin(oldA) * kOld + Math.sin(curA) * kNew;
+      var c = Math.cos(oldA) * kOld + Math.cos(curA) * kNew;
+      return Math.atan2(s, c);
+    }
+
+    sm.cx = smoothVal(sm.cx, centerX);
+    sm.cy = smoothVal(sm.cy, centerY);
+    sm.a = smoothAngle(sm.a, angle);
+
+    // Optional: cheek anchor for flower (smoothed too, still mirrored by lmXY).
+    var cheek = lmXY(pts[234], w, h);
+    sm.cheekX = smoothVal(sm.cheekX, cheek.x);
+    sm.cheekY = smoothVal(sm.cheekY, cheek.y);
+
+    // Cache sticker images as small canvases (fast, works with ctx.drawImage).
+    var cache = APP.__stickerCache || (APP.__stickerCache = {});
+    function getStickerCanvas(key, emoji) {
+      if (cache[key]) return cache[key];
+      var c = document.createElement("canvas");
+      c.width = 256;
+      c.height = 256;
+      var cx = c.getContext("2d");
+      cx.clearRect(0, 0, 256, 256);
+      cx.font = "900 200px system-ui, Apple Color Emoji, Segoe UI Emoji";
+      cx.textAlign = "center";
+      cx.textBaseline = "middle";
+      cx.shadowColor = "rgba(0,0,0,0.35)";
+      cx.shadowBlur = 16;
+      cx.fillText(emoji, 128, 138);
+      cache[key] = c;
+      return c;
+    }
+
+    var capEmoji = pack === "grad" ? "🎓" : "🎓";
+    var glassEmoji = "👓";
+    var flowerEmoji = pack === "grad" ? "🌼" : "🌸";
+    var capImg = getStickerCanvas("cap_" + capEmoji, capEmoji);
+    var glassImg = getStickerCanvas("glass_" + glassEmoji, glassEmoji);
+    var flowerImg = getStickerCanvas("flower_" + flowerEmoji, flowerEmoji);
+
+    // 5) Draw sticker with proper transform (translate/rotate/drawImage).
+    // Cap: above head, follows rotation, scales with size.
+    ctx.save();
+    ctx.translate(sm.cx, sm.cy - size * 0.6);
+    ctx.rotate(sm.a);
+    ctx.globalAlpha = 0.95;
+    ctx.drawImage(capImg, -size / 2, -size / 2, size, size);
+    ctx.restore();
+
+    // Glasses: centered on eyes, rotate with head. Slightly smaller than cap.
+    var gSize = size * 0.92;
+    ctx.save();
+    ctx.translate(sm.cx, sm.cy);
+    ctx.rotate(sm.a);
+    ctx.globalAlpha = 0.9;
+    ctx.drawImage(glassImg, -gSize / 2, -gSize / 2, gSize, gSize);
+    ctx.restore();
+
+    // Flower: anchored near cheek; tiny rotate so it doesn't look rigid.
+    var fSize = size * 0.45;
+    ctx.save();
+    ctx.translate(sm.cheekX, sm.cheekY + fSize * 0.1);
+    ctx.rotate(sm.a * 0.2);
+    ctx.globalAlpha = 0.95;
+    ctx.drawImage(flowerImg, -fSize / 2, -fSize / 2, fSize, fSize);
+    ctx.restore();
+
+    // Spark for grad pack (rotate lightly too).
+    if (pack === "grad") {
+      var sparkImg = getStickerCanvas("spark_✨", "✨");
+      var sSize = size * 0.4;
+      ctx.save();
+      ctx.translate(sm.cx + size * 0.55, sm.cy - size * 0.25);
+      ctx.rotate(sm.a * 0.15);
+      ctx.globalAlpha = 0.85;
+      ctx.drawImage(sparkImg, -sSize / 2, -sSize / 2, sSize, sSize);
+      ctx.restore();
+    }
+
     return true;
+  };
+
+  APP.renderLiveFaceOverlay = function renderLiveFaceOverlay() {
+    if (!els.camOverlay) return;
+    if (!els.video || !els.video.videoWidth) return;
+    if (!els.optAR || !els.optAR.checked) return;
+    if (!els.optStickers || !els.optStickers.checked) return;
+    if (!APP.hasFreshFaceLandmarks || !APP.hasFreshFaceLandmarks(1400)) return;
+
+    // Match overlay canvas to displayed video size (CSS pixels).
+    var rect = els.video.getBoundingClientRect();
+    var cw = Math.max(1, Math.round(rect.width));
+    var ch = Math.max(1, Math.round(rect.height));
+    if (els.camOverlay.width !== cw) els.camOverlay.width = cw;
+    if (els.camOverlay.height !== ch) els.camOverlay.height = ch;
+
+    var c = els.camOverlay.getContext("2d");
+    c.clearRect(0, 0, cw, ch);
+    APP.drawFaceStickers(c, cw, ch, APP.getSelectedStickerPack());
   };
 
   APP.initFaceMeshMaybe = function initFaceMeshMaybe() {
@@ -208,6 +285,8 @@
       APP.state.faceMesh
         .send({ image: els.video })
         .then(function () {
+          // Live preview overlay render (lightweight)
+          if (APP.renderLiveFaceOverlay) APP.renderLiveFaceOverlay();
           requestAnimationFrame(tick);
         })
         .catch(function () {
