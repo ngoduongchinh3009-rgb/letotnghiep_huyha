@@ -2,6 +2,8 @@
 *::before,
 *::after { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 :root {
   --bg-deep: #0d0f14;
   --bg-warm: #141827;
