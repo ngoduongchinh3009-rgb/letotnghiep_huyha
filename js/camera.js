@@ -128,6 +128,14 @@
       }
     }
 
+    // Sticker bám theo mặt (AR) — vẽ lên snapCanvas để thiệp render ra đúng
+    var didFaceSticker = false;
+    if (els.optStickers && els.optStickers.checked && els.optAR && els.optAR.checked) {
+      if (APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400) && APP.drawFaceStickers) {
+        didFaceSticker = APP.drawFaceStickers(ctx, vw, vh, APP.getSelectedStickerPack());
+      }
+    }
+
     var outW = 1080;
     var outH = 1920;
     if (els.cardCanvas) {
@@ -136,7 +144,8 @@
       var out = els.cardCanvas.getContext("2d");
       APP.drawClassicCardToCanvas(out, outW, outH, els.snapCanvas);
       if (!els.optStickers || els.optStickers.checked) {
-        APP.drawStickerPackOnCanvas(out, outW, outH, APP.getSelectedStickerPack());
+        // Nếu đã vẽ sticker bám mặt lên snapCanvas thì không cần sticker góc nữa (tránh rối)
+        if (!didFaceSticker) APP.drawStickerPackOnCanvas(out, outW, outH, APP.getSelectedStickerPack());
       }
     }
 
