@@ -1346,8 +1346,7 @@
           <label for="wish-photo">Chọn ảnh (PNG/JPG)</label>
           <input id="wish-photo" type="file" accept="image/*">
 
-          <label for="wish-passcode">Mã mời (bắt buộc)</label>
-          <input id="wish-passcode" type="password" placeholder="Nhập mã mời...">
+          <!-- Không dùng mã mời -->
 
           <div class="btn-row" style="justify-content:flex-start;">
             <button type="submit" class="btn-primary" id="wish-submit">Gửi lời chúc + ảnh</button>
@@ -1427,8 +1426,8 @@
 
   /* Passcode hash (SHA-256 hex). Đặt passcode của bạn rồi lấy hash bằng hàm dưới.
      Mục tiêu: chặn spam cơ bản (không phải bảo mật tuyệt đối). */
-  /* Passcode hiện tại: HUYHA2026 */
-  var PASSCODE_HASH = "5d65ffbe05f00f1dc334b92a08df37165a902102033e1009dc8849f3acba9846";
+  /* Bỏ mã mời: mở gửi công khai */
+  var PASSCODE_HASH = "";
 
   /* ========================================================================
      Cloudinary (upload ảnh) — dùng unsigned upload để không cần billing Firebase Storage.
@@ -1446,7 +1445,7 @@
    */
   var GUEST_DB = [
     {
-      match: ["bapdunchin", "bap dun chin", "bapdun chin"],
+      match: ["bapdunchin", "bap dun chin", "bapdun chin" , "ngoduongchinh" , "ngo duong chinh" , "ngo duong chin" , "duongchinh" ,"duong chinh"],
       display: "BapDunChin",
       role: "Em người yêu xinhdep hiểu chuyện — người đồng hành đáng tin cậy.",
       relation: "Người yêu",
@@ -1565,7 +1564,7 @@
   var wishMessage = document.getElementById("wish-message");
   var wishUseLast = document.getElementById("wish-use-last");
   var wishPhoto = document.getElementById("wish-photo");
-  var wishPasscode = document.getElementById("wish-passcode");
+  var wishPasscode = null;
   var wishSubmit = document.getElementById("wish-submit");
   var wishStatus = document.getElementById("wish-status");
   var btnOpenWall = document.getElementById("btn-open-wall");
@@ -2248,10 +2247,6 @@
   async function handleWishSubmit(e) {
     e.preventDefault();
     if (!initFirebaseMaybe()) return;
-    if (!PASSCODE_HASH) {
-      setStatus(wishStatus, "bad", "Chưa đặt PASSCODE_HASH trong code.");
-      return;
-    }
     if (!hasCloudinaryConfig()) {
       setStatus(
         wishStatus,
@@ -2266,21 +2261,11 @@
       if (wishMessage) wishMessage.focus();
       return;
     }
-    var pass = (wishPasscode && wishPasscode.value ? wishPasscode.value : "").trim();
-    if (!pass) {
-      setStatus(wishStatus, "bad", "Bạn chưa nhập mã mời.");
-      if (wishPasscode) wishPasscode.focus();
-      return;
-    }
-    var passHash = await sha256Hex(pass);
-    if (passHash !== PASSCODE_HASH) {
-      setStatus(wishStatus, "bad", "Mã mời không đúng.");
-      return;
-    }
+    // Không dùng mã mời
 
     var now = Date.now();
-    if (now - lastWishAt < 25000) {
-      setStatus(wishStatus, "bad", "Bạn gửi hơi nhanh. Đợi ~25 giây rồi thử lại nhé.");
+    if (now - lastWishAt < 45000) {
+      setStatus(wishStatus, "bad", "Bạn gửi hơi nhanh. Đợi ~45 giây rồi thử lại nhé.");
       return;
     }
 
@@ -2294,7 +2279,7 @@
       setStatus(wishStatus, "bad", "Bạn chưa chọn ảnh (hoặc chưa chụp ảnh).");
       return;
     }
-    var MAX_BYTES = 2 * 1024 * 1024; // 2MB để an toàn free tier + nhanh trên mobile
+    var MAX_BYTES = 1024 * 1024; // 1MB để giảm chi phí/băng thông
     if (blob.size && blob.size > MAX_BYTES * 3) {
       setStatus(wishStatus, "bad", "Ảnh quá lớn. Hãy chọn ảnh nhỏ hơn (khuyến nghị <= 6MB).");
       return;
@@ -2318,7 +2303,6 @@
         message: msg,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         photoUrl: "",
-        passcodeHash: PASSCODE_HASH,
         clientAt: nowIso(),
       });
       var url = await uploadWishPhotoToCloudinary(blob);
