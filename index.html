@@ -344,52 +344,80 @@
       transform: scaleX(-1); /* gương cho selfie */
     }
 
-    /* Overlay thiệp nhỏ gọn trên camera (đọc được khi chiếu) */
+    .cam-strip-note {
+      font-size: clamp(0.78rem, 1.9vw, 0.9rem);
+      color: rgba(255, 248, 231, 0.8);
+      margin: 0 0 0.65rem;
+      max-width: 48ch;
+      line-height: 1.4;
+    }
+
+    /* Overlay: chỉ band nhỏ phía dưới — không che mặt */
     .card-overlay {
       position: absolute;
       left: 50%;
-      bottom: 8%;
+      bottom: 0;
       transform: translateX(-50%);
-      width: 88%;
-      max-width: 420px;
+      width: 100%;
+      max-width: none;
+      max-height: 30%;
+      padding: 0 0.35rem 0.35rem;
       pointer-events: none;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      box-sizing: border-box;
     }
 
-    .card-overlay .invite-card {
-      padding: 0.65rem 0.85rem;
-      border-width: 3px;
-      font-size: 0.85em;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    .card-overlay .invite-card--overlay-compact {
+      width: min(100%, 22rem);
+      max-height: 100%;
+      margin: 0 auto;
+      padding: 0.4rem 0.55rem 0.45rem;
+      border-width: 2px;
+      font-size: 0.8em;
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+      background: rgba(255, 253, 245, 0.88);
+      backdrop-filter: blur(4px);
+      overflow: hidden;
+      transform-origin: bottom center;
     }
 
-    .card-overlay .invite-card .guest {
-      font-size: clamp(0.95rem, 2.8vw, 1.15rem);
+    /* Ẩn phần dài trên preview camera (vẫn có trên thiệp lớn + ảnh PNG) */
+    .card-overlay .invite-card--overlay-compact .ornament,
+    .card-overlay .invite-card--overlay-compact .guest-role,
+    .card-overlay .invite-card--overlay-compact .meal,
+    .card-overlay .invite-card--overlay-compact .sponsor {
+      display: none !important;
     }
 
-    .card-overlay .invite-card h3,
-    .card-overlay .invite-card p,
-    .card-overlay .invite-card .detail {
-      font-size: clamp(0.72rem, 2vw, 0.88rem);
+    .card-overlay .invite-card--overlay-compact h3 {
+      font-size: clamp(0.68rem, 2.2vw, 0.8rem);
+      margin: 0 0 0.15rem;
     }
 
-    .card-overlay .invite-card .guest-role {
-      font-size: clamp(0.62rem, 1.8vw, 0.75rem);
-      margin-bottom: 0.25rem;
+    .card-overlay .invite-card--overlay-compact .guest {
+      font-size: clamp(0.82rem, 2.8vw, 0.98rem);
+      margin: 0.1rem 0 0.2rem;
     }
 
-    .card-overlay .invite-card .meal {
-      font-size: clamp(0.58rem, 1.6vw, 0.68rem);
-      margin-top: 0.35rem;
-      padding: 0.35rem 0.4rem;
-      line-height: 1.35;
+    .card-overlay .invite-card--overlay-compact p {
+      font-size: clamp(0.62rem, 1.9vw, 0.74rem);
+      margin: 0.08rem 0;
+      line-height: 1.25;
     }
 
-    .card-overlay .invite-card .sponsor {
-      font-size: clamp(0.55rem, 1.5vw, 0.65rem);
-      margin-bottom: 0.15rem;
+    .card-overlay .invite-card--overlay-compact .detail {
+      margin-top: 0.25rem;
+      padding-top: 0.25rem;
+      border-top-width: 1px;
+      font-size: clamp(0.58rem, 1.7vw, 0.68rem);
     }
 
-    .card-overlay .ornament { font-size: 1rem; margin-bottom: 0.25rem; }
+    .card-overlay .invite-card--overlay-compact .detail p {
+      margin: 0.06rem 0;
+      font-size: inherit;
+    }
 
     .cam-actions {
       display: flex;
@@ -475,6 +503,196 @@
       margin-top: 0.5rem;
     }
 
+    /* ========== Điện thoại: thu nhỏ form & thiệp (vẫn đọc được) ========== */
+    @media (max-width: 640px) {
+      .screen {
+        padding: 0.65rem 0.75rem;
+        justify-content: flex-start;
+        padding-top: max(0.65rem, env(safe-area-inset-top));
+        padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+      }
+
+      #screen-form.screen {
+        justify-content: flex-start;
+      }
+
+      #screen-invite.screen {
+        justify-content: flex-start;
+        overflow-y: auto;
+        align-items: stretch;
+      }
+
+      .panel {
+        width: 100%;
+        max-width: none;
+        padding: 0.85rem 0.75rem;
+        border-width: 2px;
+        border-radius: 12px;
+        box-shadow: 0 10px 28px var(--shadow);
+      }
+
+      .panel h2 {
+        font-size: 1.05rem;
+        margin-bottom: 0.65rem;
+      }
+
+      label {
+        font-size: 0.8rem;
+        margin-bottom: 0.2rem;
+      }
+
+      input[type="text"],
+      select {
+        font-size: 16px;
+        padding: 0.5rem 0.65rem;
+        margin-bottom: 0.45rem;
+        border-radius: 8px;
+      }
+
+      .guest-live {
+        min-height: 0;
+        font-size: 0.78rem;
+        padding: 0.4rem 0.5rem;
+        margin-bottom: 0.55rem;
+        border-left-width: 3px;
+      }
+
+      .guest-live.is-empty {
+        font-size: 0.74rem;
+      }
+
+      button {
+        font-size: 0.86rem;
+        padding: 0.5rem 0.95rem;
+      }
+
+      .btn-row {
+        gap: 0.45rem;
+        margin-top: 0.3rem;
+      }
+
+      .access-help {
+        width: 100%;
+        margin-top: 0.55rem;
+        padding: 0.35rem 0.55rem;
+      }
+
+      .access-help summary {
+        font-size: 0.84rem;
+      }
+
+      .access-help .access-help__body {
+        font-size: 0.74rem;
+        line-height: 1.5;
+      }
+
+      .access-help .access-help__body p {
+        margin: 0.35em 0;
+      }
+
+      .splash-text {
+        font-size: clamp(1rem, 4.2vw, 1.28rem);
+        max-width: 100%;
+      }
+
+      .loading-text {
+        font-size: 1.02rem;
+        margin-bottom: 1.25rem;
+        max-width: 100%;
+      }
+
+      .reveal-line {
+        font-size: clamp(0.95rem, 3.8vw, 1.15rem);
+        max-width: 100%;
+      }
+
+      .reveal-name {
+        font-size: clamp(1.35rem, 8vw, 2rem);
+        margin-top: 0.85rem;
+      }
+
+      .btn-continue {
+        margin-top: 1.25rem;
+        font-size: 0.88rem;
+        padding: 0.55rem 1.1rem;
+      }
+
+      .invite-wrap {
+        width: 100%;
+        max-width: none;
+      }
+
+      #invite-card-main.invite-card {
+        padding: 0.85rem 0.65rem;
+        border-width: 4px;
+      }
+
+      #invite-card-main .ornament {
+        font-size: 1rem;
+        letter-spacing: 0.2em;
+        margin-bottom: 0.25rem;
+      }
+
+      #invite-card-main h3 {
+        font-size: 0.88rem;
+        margin-bottom: 0.4rem;
+      }
+
+      #invite-card-main .guest {
+        font-size: 1.05rem;
+        margin: 0.35rem 0 0.2rem;
+      }
+
+      #invite-card-main .guest-role {
+        font-size: 0.76rem;
+        margin-bottom: 0.55rem;
+      }
+
+      #invite-card-main p {
+        font-size: 0.8rem;
+      }
+
+      #invite-card-main .meal {
+        font-size: 0.76rem;
+        margin: 0.55rem 0 0.25rem;
+        padding: 0.45rem 0.45rem;
+      }
+
+      #invite-card-main .sponsor {
+        font-size: 0.72rem;
+      }
+
+      #invite-card-main .detail {
+        margin-top: 0.65rem;
+        padding-top: 0.55rem;
+        font-size: 0.76rem;
+      }
+
+      .camera-block {
+        width: 100%;
+        margin-top: 0.85rem;
+      }
+
+      .cam-strip-note {
+        font-size: 0.72rem;
+        max-width: none;
+      }
+
+      .cam-hint {
+        font-size: 0.72rem;
+        max-width: none;
+      }
+
+      .secure-banner {
+        font-size: 0.74rem;
+        padding: 0.55rem 0.65rem;
+      }
+
+      .secure-banner strong {
+        font-size: 1em;
+      }
+    }
+
     canvas { display: none; }
 
     .sr-only {
@@ -527,7 +745,7 @@
         </div>
       </form>
 
-      <details class="access-help">
+      <!-- <details class="access-help">
         <summary>Điện thoại truy cập &amp; mở camera (bấm để xem)</summary>
         <div class="access-help__body">
           <p>
@@ -547,7 +765,7 @@
           <p><strong>Cách chắc chắn:</strong> dùng tunnel miễn phí có HTTPS, ví dụ cài <a href="https://ngrok.com/" target="_blank" rel="noopener noreferrer" style="color:#9ecfff">ngrok</a>, chạy <code>ngrok http 8080</code>, rồi mở link <code>https://…</code> ngrok cấp — điện thoại vào link đó là camera được phép (trình duyệt sẽ hỏi quyền).</p>
           <p><strong>5.</strong> Khi trình duyệt hỏi, chọn <strong>Cho phép</strong> quyền camera.</p>
         </div>
-      </details>
+      </details> -->
     </div>
   </section>
 
@@ -590,12 +808,13 @@
 
     <div class="camera-block">
       <p style="margin:0 0 0.5rem; font-size:clamp(1rem,2.5vw,1.15rem);">Chụp ảnh kỷ niệm cùng thiệp mời</p>
+      <p class="cam-strip-note">Trên camera chỉ hiện thiệp <strong>gọn</strong> ở mép dưới để thấy mặt; thiệp đầy đủ ở trên. Ảnh PNG tải về vẫn có đủ lời mời + bữa cơm.</p>
       <div id="secure-banner" class="secure-banner" hidden></div>
       <div class="camera-wrap" id="camera-wrap">
         <video id="cam-video" playsinline webkit-playsinline autoplay muted></video>
         <div class="card-overlay" id="card-overlay" aria-hidden="true">
           <!-- Bản sao thiệp để overlay lên video (JS đồng bộ nội dung) -->
-          <div class="invite-card" id="invite-card-overlay">
+          <div class="invite-card invite-card--overlay-compact" id="invite-card-overlay">
             <div class="ornament">✦ ✦ ✦</div>
             <h3>Trân trọng kính mời</h3>
             <p class="guest" id="overlay-guest">[Tên]</p>
