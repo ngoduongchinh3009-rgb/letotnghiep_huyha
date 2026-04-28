@@ -854,7 +854,7 @@
 
     <div class="camera-block">
       <p style="margin:0 0 0.5rem; font-size:clamp(1rem,2.5vw,1.15rem);">Chụp ảnh kỷ niệm</p>
-      <p class="cam-frame-note">Khung vàng + mũ cử nhân 🎓 trên camera; <strong>thiệp mời đầy đủ</strong> nằm ở phía trên. Ảnh tải về có cùng khung trang trí (không ghép nội dung thiệp).</p>
+      <p class="cam-frame-note">Khung + mũ 🎓 trên camera; thiệp đầy đủ ở phía trên. Ảnh PNG: khung mảnh, <strong>không tối nền giữa mặt</strong>, có chỉnh nhẹ sáng da / son rất nhẹ.</p>
       <div id="secure-banner" class="secure-banner" hidden></div>
       <div class="camera-wrap" id="camera-wrap">
         <video id="cam-video" playsinline webkit-playsinline autoplay muted></video>
@@ -1171,54 +1171,92 @@
     ctx.restore();
   }
 
-  /** Khung vàng + mũ + chút lấp lánh — không vẽ thiệp mời */
-  function drawGradFrameOnCanvas(ctx, w, h) {
-    var ins = Math.round(Math.min(w, h) * 0.028);
-    var r = Math.min(18, Math.round(Math.min(w, h) * 0.025));
-
-    var vg = ctx.createRadialGradient(w * 0.5, h * 0.45, Math.min(w, h) * 0.15, w * 0.5, h * 0.5, Math.max(w, h) * 0.65);
-    vg.addColorStop(0, "rgba(0,0,0,0)");
-    vg.addColorStop(1, "rgba(44, 24, 16, 0.18)");
-    ctx.fillStyle = vg;
+  /**
+   * Làm ảnh dịu hơn: sáng nhẹ, ấm da, son mỏng vùng dưới mặt, blur rất nhẹ (không đè nặng).
+   * Gọi ngay sau khi đã vẽ frame video lên canvas.
+   */
+  function applyPortraitEnhance(ctx, w, h) {
+    ctx.save();
+    ctx.globalCompositeOperation = "soft-light";
+    ctx.fillStyle = "rgba(255, 238, 232, 0.085)";
     ctx.fillRect(0, 0, w, h);
+    ctx.restore();
 
-    ctx.strokeStyle = "rgba(201, 162, 39, 0.92)";
-    ctx.lineWidth = Math.max(4, Math.min(w, h) * 0.012);
+    ctx.save();
+    ctx.globalCompositeOperation = "soft-light";
+    var lip = ctx.createRadialGradient(
+      w * 0.5,
+      h * 0.57,
+      1,
+      w * 0.5,
+      h * 0.57,
+      Math.min(w, h) * 0.14
+    );
+    lip.addColorStop(0, "rgba(230, 95, 118, 0.14)");
+    lip.addColorStop(0.4, "rgba(248, 180, 188, 0.06)");
+    lip.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = lip;
+    ctx.beginPath();
+    ctx.ellipse(w * 0.5, h * 0.57, w * 0.11, h * 0.048, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    try {
+      var soft = document.createElement("canvas");
+      soft.width = w;
+      soft.height = h;
+      var sx = soft.getContext("2d");
+      sx.filter = "blur(0.9px)";
+      sx.drawImage(snapCanvas, 0, 0, w, h);
+      ctx.save();
+      ctx.globalAlpha = 0.14;
+      ctx.globalCompositeOperation = "normal";
+      ctx.drawImage(soft, 0, 0);
+      ctx.restore();
+    } catch (e) {
+      /* bỏ qua nếu trình duyệt hạn chế */
+    }
+  }
+
+  /** Khung vàng + mũ — không vignette toàn khung, không chấm sáng giữa mặt */
+  function drawGradFrameOnCanvas(ctx, w, h) {
+    var ins = Math.round(Math.min(w, h) * 0.022);
+    var r = Math.min(16, Math.round(Math.min(w, h) * 0.022));
+
+    ctx.strokeStyle = "rgba(201, 162, 39, 0.88)";
+    ctx.lineWidth = Math.max(2.5, Math.min(w, h) * 0.007);
     pathRoundRect(ctx, ins, ins, w - 2 * ins, h - 2 * ins, r);
     ctx.stroke();
-    ctx.strokeStyle = "rgba(255, 250, 230, 0.55)";
-    ctx.lineWidth = Math.max(2, Math.min(w, h) * 0.005);
-    pathRoundRect(ctx, ins + 6, ins + 6, w - 2 * ins - 12, h - 2 * ins - 12, r - 4);
+    ctx.strokeStyle = "rgba(255, 250, 230, 0.45)";
+    ctx.lineWidth = Math.max(1.2, Math.min(w, h) * 0.0035);
+    pathRoundRect(ctx, ins + 4, ins + 4, w - 2 * ins - 8, h - 2 * ins - 8, Math.max(2, r - 3));
     ctx.stroke();
 
-    var sc = Math.min(w, h) * 0.034;
-    drawMortarboardIcon(ctx, ins + w * 0.06, ins + h * 0.08, sc, false);
-    drawMortarboardIcon(ctx, w - ins - w * 0.06, ins + h * 0.08, sc, true);
-    drawMortarboardIcon(ctx, ins + w * 0.06, h - ins - h * 0.08, sc, false);
-    drawMortarboardIcon(ctx, w - ins - w * 0.06, h - ins - h * 0.08, sc, true);
+    var sc = Math.min(w, h) * 0.028;
+    drawMortarboardIcon(ctx, ins + w * 0.05, ins + h * 0.07, sc, false);
+    drawMortarboardIcon(ctx, w - ins - w * 0.05, ins + h * 0.07, sc, true);
+    drawMortarboardIcon(ctx, ins + w * 0.05, h - ins - h * 0.07, sc, false);
+    drawMortarboardIcon(ctx, w - ins - w * 0.05, h - ins - h * 0.07, sc, true);
 
     var sparks = [
-      [0.14, 0.22],
-      [0.86, 0.28],
-      [0.18, 0.78],
-      [0.82, 0.72],
-      [0.08, 0.5],
-      [0.92, 0.52],
+      [0.1, 0.12],
+      [0.9, 0.12],
+      [0.1, 0.88],
+      [0.9, 0.88],
     ];
     var si;
     for (si = 0; si < sparks.length; si++) {
       var px = sparks[si][0] * w;
       var py = sparks[si][1] * h;
-      ctx.fillStyle = "rgba(255, 248, 220, 0.85)";
+      ctx.fillStyle = "rgba(255, 248, 220, 0.45)";
       ctx.beginPath();
-      ctx.arc(px, py, Math.max(3, Math.min(w, h) * 0.008), 0, Math.PI * 2);
+      ctx.arc(px, py, Math.max(2, Math.min(w, h) * 0.006), 0, Math.PI * 2);
       ctx.fill();
-      ctx.shadowColor = "#ffd700";
-      ctx.shadowBlur = 10;
+      ctx.shadowColor = "rgba(255, 215, 0, 0.5)";
+      ctx.shadowBlur = 6;
       ctx.fill();
       ctx.shadowBlur = 0;
     }
-
   }
 
   /* ===== Camera + chụp (composite PNG) ===== */
@@ -1309,8 +1347,12 @@
     ctx.save();
     ctx.translate(vw, 0);
     ctx.scale(-1, 1);
+    ctx.filter =
+      "brightness(1.05) contrast(0.98) saturate(1.08)";
     ctx.drawImage(video, 0, 0, vw, vh);
+    ctx.filter = "none";
     ctx.restore();
+    applyPortraitEnhance(ctx, vw, vh);
     drawGradFrameOnCanvas(ctx, vw, vh);
 
     snapCanvas.toBlob(function (blob) {
