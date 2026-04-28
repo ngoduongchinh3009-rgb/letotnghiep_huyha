@@ -363,6 +363,48 @@ button:active { transform: scale(0.97); }
   overflow: hidden;
 }
 
+.classic-card__empty {
+  position: absolute;
+  left: 50%;
+  top: 35%;
+  transform: translate(-50%, -50%);
+  width: 58%;
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 2px dashed rgba(255, 248, 231, 0.45);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  display: grid;
+  place-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem;
+}
+
+.classic-card__empty-year {
+  width: min(78%, 220px);
+  height: auto;
+  opacity: 0.92;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.45));
+}
+
+.classic-card__empty-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: clamp(0.78rem, 2.2vw, 0.95rem);
+  color: rgba(255, 248, 231, 0.92);
+  padding: 0.42rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 248, 231, 0.12);
+  border: 1px solid rgba(255, 248, 231, 0.22);
+}
+
+.classic-card__empty-cap {
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45));
+}
+
 .classic-card__photo {
   width: 100%;
   height: 100%;

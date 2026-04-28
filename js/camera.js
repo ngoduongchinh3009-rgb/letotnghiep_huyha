@@ -149,6 +149,7 @@
         APP.setPreview(previewUrl, blob);
         APP.downloadBlob(blob, "ky-niem-tot-nghiep.png");
         if (els.cardFrame) els.cardFrame.hidden = false;
+        if (els.cardEmpty) els.cardEmpty.hidden = true;
         if (els.cardPhoto) {
           els.cardPhoto.src = previewUrl;
           els.cardPhoto.hidden = false;

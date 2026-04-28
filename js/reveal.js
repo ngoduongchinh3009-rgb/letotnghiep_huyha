@@ -43,6 +43,7 @@
     if (els.cardThanks) els.cardThanks.textContent = "Cảm ơn vì sự có mặt của bạn.";
     // Không hiện khung ảnh lơ lửng trước khi chụp
     if (els.cardFrame) els.cardFrame.hidden = true;
+    if (els.cardEmpty) els.cardEmpty.hidden = false;
     if (els.cardPhoto) els.cardPhoto.hidden = true;
     if (els.cardPlaceholder) els.cardPlaceholder.hidden = false;
   };
