@@ -47,6 +47,10 @@
     if (els.cardInviteGuest) {
       els.cardInviteGuest.textContent = displayName || "Bạn và gia đình";
     }
+    if (els.cardInviteMessage) {
+      els.cardInviteMessage.textContent =
+        "Đến tham dự lễ tốt nghiệp của " + APP.CONFIG.studentName;
+    }
     if (els.cardThanks) els.cardThanks.textContent = "Cảm ơn vì sự có mặt của bạn.";
     if (els.cardFrame) els.cardFrame.hidden = true;
     if (els.cardEmpty) els.cardEmpty.hidden = false;
