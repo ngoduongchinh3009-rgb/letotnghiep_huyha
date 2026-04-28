@@ -845,6 +845,33 @@
       accent-color: #e8c76b;
     }
 
+    .picker-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 0.5rem 0 0.2rem;
+    }
+
+    .chip-select {
+      appearance: none;
+      font-family: var(--font-ui);
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 248, 231, 0.28);
+      background: rgba(255, 255, 255, 0.92);
+      color: #24150f;
+      cursor: pointer;
+    }
+
+    .chip-select:focus {
+      outline: 3px solid rgba(232, 199, 107, 0.85);
+      outline-offset: 2px;
+    }
+
     .status {
       margin-top: 0.5rem;
       font-size: 0.95rem;
@@ -1331,9 +1358,20 @@
         <button type="button" class="btn-capture" id="btn-start-cam">Mở camera</button>
         <button type="button" class="btn-primary" id="btn-capture" disabled>Chụp ảnh kỷ niệm</button>
       </div>
-      <div class="inline-row" style="margin-top:0.6rem;">
+      <div class="picker-row">
         <label class="pill"><input type="checkbox" id="opt-beauty" checked> Làm đẹp nhẹ</label>
-        <label class="pill"><input type="checkbox" id="opt-stickers" checked> Sticker cute</label>
+        <label class="pill"><input type="checkbox" id="opt-stickers" checked> Sticker</label>
+        <select class="chip-select" id="filter-select" aria-label="Chọn filter">
+          <option value="none">Filter: Tự nhiên</option>
+          <option value="warm">Filter: Ấm</option>
+          <option value="cool">Filter: Lạnh</option>
+          <option value="bw">Filter: Trắng đen</option>
+        </select>
+        <select class="chip-select" id="sticker-select" aria-label="Chọn sticker">
+          <option value="cute">Sticker: Cute</option>
+          <option value="grad">Sticker: Tốt nghiệp</option>
+          <option value="none">Sticker: Không</option>
+        </select>
       </div>
       <p class="cam-hint">Ảnh tải về PNG. Camera trên điện thoại: cần trang <strong>HTTPS</strong> (hoặc localhost). Mở mục “Điện thoại truy cập &amp; mở camera” ở màn form để xem cách dùng ngrok.</p>
       <p class="cam-error" id="cam-error" hidden></p>
@@ -1597,6 +1635,8 @@
   var optBeauty = document.getElementById("opt-beauty");
   var optStickers = document.getElementById("opt-stickers");
   var camStickers = document.getElementById("cam-stickers");
+  var filterSelect = document.getElementById("filter-select");
+  var stickerSelect = document.getElementById("sticker-select");
   var photoPreview = document.getElementById("photo-preview");
   var previewImg = document.getElementById("preview-img");
   var btnRetake = document.getElementById("btn-retake");
@@ -1753,6 +1793,42 @@
       .then(function () {
         btnToInvite.hidden = false;
       });
+  }
+
+  function setRevealLinesForGuest(hit, displayName) {
+    // Default
+    var l1 = "Sau 4 năm...";
+    var l2 = "Có rất nhiều người quan trọng...";
+    var l3 = "Nhưng người mình muốn mời nhất là...";
+
+    if (hit && hit.relation) {
+      if (hit.relation === "Bố" || hit.relation === "Mẹ") {
+        l1 = "Sau 4 năm...";
+        l2 = "Con vẫn luôn có một bệ đỡ phía sau...";
+        l3 = "Con muốn mời nhất chính là...";
+      } else if (hit.relation === "Người yêu") {
+        l1 = "Sau 4 năm...";
+        l2 = "Có những người làm mình thấy bình yên...";
+        l3 = "Người mình muốn mời nhất là...";
+      } else if (hit.relation === "Anh trai") {
+        l1 = "Sau 4 năm...";
+        l2 = "Có một người luôn ở đó kiểu... anh trai.";
+        l3 = "Mình muốn mời nhất là...";
+      } else if (hit.relation === "Người yêu (anh trai)") {
+        l1 = "Sau 4 năm...";
+        l2 = "Gia đình mở rộng cũng là điều đáng quý...";
+        l3 = "Mình muốn mời nhất là...";
+      } else if (hit.relation === "Người tốt nghiệp") {
+        l1 = "Sau 4 năm...";
+        l2 = "Hôm nay là ngày mình tự hào nhất...";
+        l3 = "Nhân vật chính của buổi lễ là...";
+      }
+    }
+
+    if (reveal1) reveal1.textContent = l1;
+    if (reveal2) reveal2.textContent = l2;
+    if (reveal3) reveal3.textContent = l3;
+    if (revealName) revealName.setAttribute("aria-label", "Tên người được mời: " + displayName);
   }
 
   /* Bo góc hình chữ nhật (canvas mọi trình duyệt) */
@@ -1916,6 +1992,73 @@
     ctx.fillText("🌸", w * 0.13, h * 0.84);
     ctx.fillText("🎓", w * 0.87, h * 0.84);
     ctx.restore();
+  }
+
+  function getSelectedFilter() {
+    return filterSelect ? String(filterSelect.value || "none") : "none";
+  }
+
+  function getSelectedStickerPack() {
+    return stickerSelect ? String(stickerSelect.value || "cute") : "cute";
+  }
+
+  function filterToCanvasString(kind) {
+    if (kind === "warm") return "brightness(1.06) contrast(1.02) saturate(1.18) sepia(0.12)";
+    if (kind === "cool") return "brightness(1.02) contrast(1.05) saturate(1.05) hue-rotate(185deg)";
+    if (kind === "bw") return "grayscale(1) contrast(1.08) brightness(1.03)";
+    return "none";
+  }
+
+  function filterToCssString(kind) {
+    // Preview trên video: nhẹ hơn canvas một chút
+    if (kind === "warm") return "brightness(1.04) contrast(1.02) saturate(1.12)";
+    if (kind === "cool") return "brightness(1.02) contrast(1.04) saturate(1.03) hue-rotate(190deg)";
+    if (kind === "bw") return "grayscale(1) contrast(1.06)";
+    return "none";
+  }
+
+  function setStickerPack(pack) {
+    if (!camStickers) return;
+    var nodes = camStickers.querySelectorAll(".sticker");
+    if (!nodes || nodes.length < 4) return;
+    if (pack === "none") {
+      camStickers.style.display = "none";
+      return;
+    }
+    camStickers.style.display = "";
+    if (pack === "grad") {
+      nodes[0].textContent = "🎓";
+      nodes[1].textContent = "📜";
+      nodes[2].textContent = "🌼";
+      nodes[3].textContent = "✨";
+      return;
+    }
+    // cute
+    nodes[0].textContent = "💗";
+    nodes[1].textContent = "✨";
+    nodes[2].textContent = "🌸";
+    nodes[3].textContent = "🎓";
+  }
+
+  function drawStickerPackOnCanvas(ctx, w, h, pack) {
+    if (pack === "none") return;
+    if (pack === "grad") {
+      // 4 góc
+      ctx.save();
+      ctx.font = "900 " + Math.max(28, Math.min(w, h) * 0.06) + "px system-ui, Apple Color Emoji, Segoe UI Emoji";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(0,0,0,0.35)";
+      ctx.shadowBlur = 10;
+      ctx.globalAlpha = 0.95;
+      ctx.fillText("🎓", w * 0.13, h * 0.16);
+      ctx.fillText("📜", w * 0.87, h * 0.16);
+      ctx.fillText("🌼", w * 0.13, h * 0.84);
+      ctx.fillText("✨", w * 0.87, h * 0.84);
+      ctx.restore();
+      return;
+    }
+    drawCuteStickersOnCanvas(ctx, w, h);
   }
 
   function drawClassicCardToCanvas(out, ow, oh, photoSource) {
@@ -2275,6 +2418,22 @@
     });
   }
 
+  function refreshCameraPreviewEffects() {
+    if (!video) return;
+    var f = getSelectedFilter();
+    var css = filterToCssString(f);
+    video.style.filter = css === "none" ? "" : css;
+    if (optStickers && !optStickers.checked) {
+      if (camStickers) camStickers.style.display = "none";
+      return;
+    }
+    setStickerPack(getSelectedStickerPack());
+  }
+
+  if (filterSelect) filterSelect.addEventListener("change", refreshCameraPreviewEffects);
+  if (stickerSelect) stickerSelect.addEventListener("change", refreshCameraPreviewEffects);
+  if (optStickers) optStickers.addEventListener("change", refreshCameraPreviewEffects);
+
   function hasCloudinaryConfig() {
     return CLOUDINARY && CLOUDINARY.cloudName && CLOUDINARY.uploadPreset;
   }
@@ -2527,8 +2686,9 @@
     ctx.save();
     ctx.translate(vw, 0);
     ctx.scale(-1, 1);
-    ctx.filter =
-      "brightness(1.05) contrast(0.98) saturate(1.08)";
+    var base = "brightness(1.05) contrast(0.98) saturate(1.08)";
+    var extra = filterToCanvasString(getSelectedFilter());
+    ctx.filter = extra === "none" ? base : base + " " + extra;
     ctx.drawImage(video, 0, 0, vw, vh);
     ctx.filter = "none";
     ctx.restore();
@@ -2541,7 +2701,7 @@
       cardCanvas.height = outH;
       var out = cardCanvas.getContext("2d");
       drawClassicCardToCanvas(out, outW, outH, snapCanvas);
-      if (!optStickers || optStickers.checked) drawCuteStickersOnCanvas(out, outW, outH);
+      if (!optStickers || optStickers.checked) drawStickerPackOnCanvas(out, outW, outH, getSelectedStickerPack());
     }
 
     (cardCanvas || snapCanvas).toBlob(function (blob) {
@@ -2632,6 +2792,7 @@
     var roleLine = hit ? hit.role : buildRoleFromSelect();
     guestFullName = displayName;
     fillInviteCard(displayName, roleLine);
+    setRevealLinesForGuest(hit, displayName);
     runRevealSequence(displayName);
   });
 
