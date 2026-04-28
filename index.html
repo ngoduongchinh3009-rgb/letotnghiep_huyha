@@ -30,9 +30,36 @@
       margin: 0;
       min-height: 100dvh;
       font-family: var(--font-ui);
-      background: radial-gradient(ellipse 120% 80% at 50% 0%, var(--bg-warm), var(--bg-deep));
+      background:
+        radial-gradient(ellipse 120% 80% at 50% 0%, rgba(44, 24, 16, 0.72), rgba(18, 8, 5, 0.92)),
+        url("assets/texture.png");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
       color: var(--cream);
       overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(900px 600px at 50% 15%, rgba(255, 248, 231, 0.08), transparent 60%),
+        radial-gradient(1100px 700px at 70% 80%, rgba(201, 162, 39, 0.06), transparent 65%);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.18);
+      z-index: 0;
     }
 
     /* Màn hình: chỉ hiện một khối tại một thời điểm */
@@ -44,6 +71,37 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Sticker decor (scrapbook) */
+    .screen::before,
+    .screen::after {
+      content: "";
+      position: absolute;
+      width: clamp(92px, 22vw, 150px);
+      height: clamp(92px, 22vw, 150px);
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.24;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.35));
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .screen::before {
+      top: clamp(10px, 3vw, 24px);
+      left: clamp(10px, 3vw, 24px);
+      transform: rotate(-10deg);
+      background-image: url("assets/cap.png");
+    }
+
+    .screen::after {
+      bottom: clamp(10px, 3vw, 24px);
+      right: clamp(10px, 3vw, 24px);
+      transform: rotate(8deg);
+      background-image: url("assets/books.png");
     }
 
     .screen.is-active {
@@ -680,6 +738,203 @@
       box-shadow: none;
     }
 
+    /* Wishes + Wall */
+    .section-title {
+      margin: 0.25rem 0 0.65rem;
+      font-family: var(--font);
+      font-size: clamp(1.1rem, 2.8vw, 1.35rem);
+      color: rgba(255, 248, 231, 0.95);
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+    }
+
+    .wish-panel {
+      width: min(100%, 560px);
+      margin: 1rem auto 0;
+      padding: 1rem;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 248, 231, 0.22);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+      text-align: left;
+    }
+
+    .wish-panel label {
+      color: rgba(255, 248, 231, 0.92);
+      font-weight: 700;
+    }
+
+    .wish-panel input[type="text"],
+    .wish-panel input[type="password"],
+    .wish-panel textarea,
+    .wish-panel input[type="file"] {
+      width: 100%;
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      padding: 0.65rem 0.8rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 248, 231, 0.28);
+      background: rgba(255, 255, 255, 0.92);
+      color: #24150f;
+      margin-bottom: 0.7rem;
+    }
+
+    .wish-panel textarea {
+      min-height: 7.5rem;
+      resize: vertical;
+    }
+
+    .hintline {
+      margin: 0.2rem 0 0.75rem;
+      font-size: 0.9rem;
+      color: rgba(255, 248, 231, 0.78);
+      line-height: 1.45;
+    }
+
+    .inline-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 0.15rem 0 0.75rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      gap: 0.5rem;
+      align-items: center;
+      padding: 0.45rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(255, 248, 231, 0.14);
+      border: 1px solid rgba(255, 248, 231, 0.22);
+      color: rgba(255, 248, 231, 0.92);
+      font-size: 0.9rem;
+      font-weight: 700;
+      user-select: none;
+    }
+
+    .pill input {
+      margin: 0;
+      accent-color: #e8c76b;
+    }
+
+    .status {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .status.ok { color: #b7f7c6; }
+    .status.bad { color: #ffb4a8; }
+    .status.muted { color: rgba(255, 248, 231, 0.75); }
+
+    .wall {
+      width: min(100%, 860px);
+      margin: 1.2rem auto 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 0.85rem;
+      align-items: stretch;
+    }
+
+    .wish-card {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 248, 231, 0.18);
+      background: rgba(0, 0, 0, 0.25);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      min-height: 220px;
+    }
+
+    .wish-card__thumb {
+      aspect-ratio: 9 / 16;
+      background: #1a0f0a;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .wish-card__thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: scale(1.01);
+    }
+
+    .wish-card__body {
+      padding: 0.7rem 0.8rem 0.85rem;
+      color: rgba(255, 248, 231, 0.93);
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      flex: 1;
+    }
+
+    .wish-card__from {
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .wish-card__msg {
+      font-size: 0.95rem;
+      line-height: 1.45;
+      color: rgba(255, 248, 231, 0.88);
+      white-space: pre-wrap;
+    }
+
+    .wish-card__meta {
+      margin-top: auto;
+      font-size: 0.8rem;
+      color: rgba(255, 248, 231, 0.65);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 1rem;
+    }
+
+    .modal.is-open { display: flex; }
+
+    .modal__inner {
+      width: min(100%, 520px);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #0f0b08;
+      border: 1px solid rgba(255, 248, 231, 0.2);
+      box-shadow: 0 18px 55px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal__inner img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .modal__bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0.7rem;
+      background: rgba(255, 248, 231, 0.08);
+      color: rgba(255, 248, 231, 0.9);
+      font-weight: 800;
+      gap: 0.75rem;
+    }
+
+    .modal__bar button {
+      font-size: 0.9rem;
+      padding: 0.45rem 0.9rem;
+    }
+
     /* ========== Điện thoại: thu nhỏ form & thiệp (vẫn đọc được) ========== */
     @media (max-width: 640px) {
       .screen {
@@ -1054,10 +1309,88 @@
           <button type="button" class="btn-secondary" id="btn-share-photo">Chia sẻ</button>
         </div>
       </section>
+
+      <section class="wish-panel" id="wish-panel" aria-labelledby="wish-title">
+        <h3 class="section-title" id="wish-title">Gửi lời chúc cho HuyHa</h3>
+        <p class="hintline">
+          Mỗi người gửi một lời chúc + ảnh kỷ niệm. HuyHa sẽ xem được tất cả trong “Wall” phía dưới.
+        </p>
+        <details class="access-help" style="margin:0 0 0.8rem; width:100%; max-width:none;">
+          <summary>Thiết lập Firebase (admin) + mã mời (bấm để xem)</summary>
+          <div class="access-help__body">
+            <p><strong>1)</strong> Tạo Firebase Project → bật <strong>Firestore</strong> + <strong>Storage</strong>.</p>
+            <p><strong>2)</strong> Tạo Web App, copy <code>firebaseConfig</code> rồi dán vào biến <code>FIREBASE_CONFIG</code> trong file <code>index.html</code>.</p>
+            <p><strong>3)</strong> Chọn <strong>mã mời</strong> (passcode), rồi tạo <strong>SHA-256 hex</strong> và dán vào <code>PASSCODE_HASH</code>.</p>
+            <p>Gợi ý nhanh (Console):</p>
+            <p><code>(async()=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('MA_MOI'));console.log([...new Uint8Array(b)].map(x=&gt;x.toString(16).padStart(2,'0')).join(''))})()</code></p>
+            <p><strong>4)</strong> Firestore rules mẫu (chặn spam cơ bản):</p>
+            <p><code>match /wishes/{id} { allow read: if true; allow create: if request.resource.data.passcodeHash == \"&lt;PASSCODE_HASH&gt;\"; allow update, delete: if false; }</code></p>
+            <p><strong>5)</strong> Storage rules mẫu:</p>
+            <p><code>match /wishes/{id}/{file} { allow read: if true; allow write: if request.resource.metadata.passcodeHash == \"&lt;PASSCODE_HASH&gt;\" \n  && request.resource.size &lt; 6 * 1024 * 1024; }</code></p>
+            <p><strong>Lưu ý:</strong> Đây là chống spam cơ bản (ai xem được source vẫn thấy hash). Muốn chặt hơn cần Auth hoặc backend.</p>
+          </div>
+        </details>
+        <form id="wish-form" novalidate>
+          <label for="wish-from">Tên bạn (tuỳ chọn)</label>
+          <input id="wish-from" type="text" placeholder="Ví dụ: Lan, Nam, ...">
+
+          <label for="wish-message">Lời chúc (bắt buộc)</label>
+          <textarea id="wish-message" placeholder="Viết vài dòng gửi HuyHa..."></textarea>
+
+          <div class="inline-row">
+            <label class="pill"><input type="checkbox" id="wish-use-last"> Dùng ảnh vừa chụp</label>
+            <span class="hintline" style="margin:0;">(hoặc chọn ảnh khác)</span>
+          </div>
+
+          <label for="wish-photo">Chọn ảnh (PNG/JPG)</label>
+          <input id="wish-photo" type="file" accept="image/*">
+
+          <label for="wish-passcode">Mã mời (bắt buộc)</label>
+          <input id="wish-passcode" type="password" placeholder="Nhập mã mời...">
+
+          <div class="btn-row" style="justify-content:flex-start;">
+            <button type="submit" class="btn-primary" id="wish-submit">Gửi lời chúc + ảnh</button>
+            <button type="button" class="btn-secondary" id="btn-open-wall">Xem Wall</button>
+          </div>
+          <p class="status muted" id="wish-status">Chưa kết nối lưu trữ. Hãy cấu hình Firebase để bật tính năng này.</p>
+        </form>
+      </section>
     </div>
     <canvas id="snap-canvas"></canvas>
     <canvas id="card-canvas"></canvas>
+    <section class="wish-panel" id="wall-panel" aria-labelledby="wall-title">
+      <div class="inline-row" style="justify-content:space-between;">
+        <h3 class="section-title" id="wall-title" style="margin:0;">Wall lời chúc</h3>
+        <input id="wall-search" type="text" placeholder="Tìm theo tên..." style="max-width: 220px;">
+      </div>
+      <p class="hintline" id="wall-hint">Các lời chúc sẽ hiện ở đây sau khi kết nối Firebase.</p>
+        <details class="access-help" style="margin:0.6rem 0 0; width:100%; max-width:none;">
+          <summary>Hướng dẫn vận hành (HuyHa) / GitHub Pages</summary>
+          <div class="access-help__body">
+            <p><strong>Link Wall:</strong> dùng chính link GitHub Pages hiện tại. Kéo xuống “Wall lời chúc”.</p>
+            <p><strong>Chụp &amp; gửi:</strong> người dùng chụp ảnh → preview → tick “Dùng ảnh vừa chụp” → nhập lời chúc + mã mời → Gửi.</p>
+            <p><strong>Xem ảnh lớn:</strong> bấm vào thumbnail trong Wall.</p>
+            <p><strong>Mobile vẫn thấy bản cũ:</strong> Safari/Chrome hay cache. Thử refresh mạnh hoặc mở tab ẩn danh.</p>
+          </div>
+        </details>
+      <div class="wall" id="wall"></div>
+    </section>
+
+    <div class="modal" id="photo-modal" aria-hidden="true">
+      <div class="modal__inner" role="dialog" aria-modal="true" aria-label="Xem ảnh">
+        <div class="modal__bar">
+          <span id="modal-title">Ảnh kỷ niệm</span>
+          <button type="button" class="btn-secondary" id="modal-close">Đóng</button>
+        </div>
+        <img id="modal-img" alt="Ảnh kỷ niệm">
+      </div>
+    </div>
   </section>
+
+  <!-- Firebase (CDN compat) — cần internet/HTTPS (GitHub Pages OK) -->
+  <script src="https://www.gstatic.com/firebasejs/12.12.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.12.1/firebase-storage-compat.js"></script>
 
   <script>
 (function () {
@@ -1078,6 +1411,22 @@
     revealGapMs: 2200,
     nameHoldMs: 2200
   };
+
+  /* ========================================================================
+     Firebase config — BẮT BUỘC thay bằng config của bạn để bật Wall.
+     (Firebase Web App config, lấy trong Firebase Console)
+     ======================================================================== */
+  var FIREBASE_CONFIG = {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    appId: "",
+  };
+
+  /* Passcode hash (SHA-256 hex). Đặt passcode của bạn rồi lấy hash bằng hàm dưới.
+     Mục tiêu: chặn spam cơ bản (không phải bảo mật tuyệt đối). */
+  var PASSCODE_HASH = "";
 
   /**
    * Danh sách khách mời: khớp theo tên gõ (không phân biệt hoa thường, bỏ dấu).
@@ -1198,6 +1547,24 @@
   var btnRetake = document.getElementById("btn-retake");
   var btnDownloadAgain = document.getElementById("btn-download-again");
   var btnSharePhoto = document.getElementById("btn-share-photo");
+  var wishPanel = document.getElementById("wish-panel");
+  var wishForm = document.getElementById("wish-form");
+  var wishFrom = document.getElementById("wish-from");
+  var wishMessage = document.getElementById("wish-message");
+  var wishUseLast = document.getElementById("wish-use-last");
+  var wishPhoto = document.getElementById("wish-photo");
+  var wishPasscode = document.getElementById("wish-passcode");
+  var wishSubmit = document.getElementById("wish-submit");
+  var wishStatus = document.getElementById("wish-status");
+  var btnOpenWall = document.getElementById("btn-open-wall");
+  var wallPanel = document.getElementById("wall-panel");
+  var wallEl = document.getElementById("wall");
+  var wallSearch = document.getElementById("wall-search");
+  var wallHint = document.getElementById("wall-hint");
+  var photoModal = document.getElementById("photo-modal");
+  var modalImg = document.getElementById("modal-img");
+  var modalClose = document.getElementById("modal-close");
+  var modalTitle = document.getElementById("modal-title");
 
   var guestFullName = "";
   /** Dòng chức danh hiển thị trên thiệp + canvas (theo khách khớp hoặc mặc định) */
@@ -1528,6 +1895,13 @@
   var stream = null;
   var lastPhotoBlob = null;
   var lastPhotoUrl = "";
+  var firebaseApp = null;
+  var db = null;
+  var storage = null;
+  var wallUnsub = null;
+  var lastWishAt = 0;
+  var lastWishPhotoBlob = null;
+  var lastWishPreviewUrl = "";
 
   function setPreview(url, blob) {
     if (!photoPreview || !previewImg) return;
@@ -1552,6 +1926,45 @@
     }, 2500);
   }
 
+  function setStatus(el, kind, text) {
+    if (!el) return;
+    el.classList.remove("ok", "bad", "muted");
+    el.classList.add(kind);
+    el.textContent = text;
+  }
+
+  function hasFirebaseConfig() {
+    return (
+      FIREBASE_CONFIG &&
+      FIREBASE_CONFIG.apiKey &&
+      FIREBASE_CONFIG.projectId &&
+      FIREBASE_CONFIG.storageBucket &&
+      FIREBASE_CONFIG.appId
+    );
+  }
+
+  function bytesToHex(bytes) {
+    var hex = "";
+    var i;
+    for (i = 0; i < bytes.length; i++) {
+      var h = bytes[i].toString(16);
+      if (h.length === 1) h = "0" + h;
+      hex += h;
+    }
+    return hex;
+  }
+
+  async function sha256Hex(text) {
+    var enc = new TextEncoder();
+    var data = enc.encode(text);
+    var hash = await crypto.subtle.digest("SHA-256", data);
+    return bytesToHex(new Uint8Array(hash));
+  }
+
+  function nowIso() {
+    return new Date().toISOString();
+  }
+
   function setCamError(msg) {
     camError.textContent = msg;
     camError.hidden = !msg;
@@ -1566,6 +1979,269 @@
     }
     video.srcObject = null;
   }
+
+  function initFirebaseMaybe() {
+    if (!hasFirebaseConfig()) {
+      setStatus(
+        wishStatus,
+        "bad",
+        "Chưa cấu hình Firebase. Mở file và điền FIREBASE_CONFIG + PASSCODE_HASH để bật gửi lời chúc."
+      );
+      setStatus(wallHint, "muted", "Chưa cấu hình Firebase nên chưa tải được Wall.");
+      return false;
+    }
+    if (typeof firebase === "undefined") {
+      setStatus(
+        wishStatus,
+        "bad",
+        "Không tải được Firebase SDK (cần internet/HTTPS). Thử reload trang."
+      );
+      return false;
+    }
+    try {
+      firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
+      db = firebase.firestore();
+      storage = firebase.storage();
+      setStatus(wishStatus, "muted", "Sẵn sàng. Hãy viết lời chúc và gửi.");
+      return true;
+    } catch (e) {
+      setStatus(
+        wishStatus,
+        "bad",
+        "Lỗi khởi tạo Firebase: " + (e && e.message ? e.message : String(e))
+      );
+      return false;
+    }
+  }
+
+  function formatCreatedAt(ts) {
+    try {
+      if (!ts) return "";
+      var d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleString("vi-VN", { hour12: false });
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function openModal(url, title) {
+    if (!photoModal || !modalImg) return;
+    modalImg.src = url;
+    if (modalTitle) modalTitle.textContent = title || "Ảnh kỷ niệm";
+    photoModal.classList.add("is-open");
+    photoModal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeModal() {
+    if (!photoModal) return;
+    photoModal.classList.remove("is-open");
+    photoModal.setAttribute("aria-hidden", "true");
+    if (modalImg) modalImg.src = "";
+  }
+
+  if (modalClose) modalClose.addEventListener("click", closeModal);
+  if (photoModal) {
+    photoModal.addEventListener("click", function (e) {
+      if (e.target === photoModal) closeModal();
+    });
+  }
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeModal();
+  });
+
+  function renderWall(items) {
+    if (!wallEl) return;
+    var q = (wallSearch && wallSearch.value ? wallSearch.value : "").trim().toLowerCase();
+    wallEl.innerHTML = "";
+    if (!items.length) {
+      setStatus(wallHint, "muted", "Chưa có lời chúc nào.");
+      return;
+    }
+    setStatus(wallHint, "muted", "Tổng: " + items.length + " lời chúc.");
+    var i;
+    for (i = 0; i < items.length; i++) {
+      var w = items[i];
+      if (q) {
+        var s = ((w.fromName || "") + " " + (w.message || "")).toLowerCase();
+        if (s.indexOf(q) === -1) continue;
+      }
+      var card = document.createElement("div");
+      card.className = "wish-card";
+      var thumb = document.createElement("div");
+      thumb.className = "wish-card__thumb";
+      var img = document.createElement("img");
+      img.src = w.photoUrl || "";
+      img.alt = "Ảnh kỷ niệm";
+      thumb.appendChild(img);
+      thumb.addEventListener("click", function (url, title) {
+        return function () {
+          openModal(url, title);
+        };
+      }(w.photoUrl, (w.fromName ? w.fromName : "Một người bạn") + " · " + formatCreatedAt(w.createdAt)));
+      var body = document.createElement("div");
+      body.className = "wish-card__body";
+      var from = document.createElement("div");
+      from.className = "wish-card__from";
+      from.textContent = w.fromName ? w.fromName : "Ẩn danh";
+      var msg = document.createElement("div");
+      msg.className = "wish-card__msg";
+      msg.textContent = w.message || "";
+      var meta = document.createElement("div");
+      meta.className = "wish-card__meta";
+      meta.textContent = formatCreatedAt(w.createdAt);
+      body.appendChild(from);
+      body.appendChild(msg);
+      body.appendChild(meta);
+      card.appendChild(thumb);
+      card.appendChild(body);
+      wallEl.appendChild(card);
+    }
+  }
+
+  function attachWallListener() {
+    if (!db) return;
+    if (wallUnsub) wallUnsub();
+    setStatus(wallHint, "muted", "Đang tải Wall...");
+    wallUnsub = db
+      .collection("wishes")
+      .orderBy("createdAt", "desc")
+      .limit(60)
+      .onSnapshot(
+        function (snap) {
+          var items = [];
+          snap.forEach(function (doc) {
+            var d = doc.data() || {};
+            d.id = doc.id;
+            items.push(d);
+          });
+          renderWall(items);
+          wallEl.__items = items;
+        },
+        function (err) {
+          setStatus(
+            wallHint,
+            "bad",
+            "Không tải được Wall: " + (err && err.message ? err.message : String(err))
+          );
+        }
+      );
+  }
+
+  if (wallSearch) {
+    wallSearch.addEventListener("input", function () {
+      if (wallEl && wallEl.__items) renderWall(wallEl.__items);
+    });
+  }
+
+  if (btnOpenWall) {
+    btnOpenWall.addEventListener("click", function () {
+      if (wallPanel) wallPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  async function uploadWishPhoto(blob, wishId, passcodeHash) {
+    if (!storage) throw new Error("Storage chưa sẵn sàng");
+    var ext = "png";
+    var filename = "photo-" + Date.now() + "." + ext;
+    var ref = storage.ref().child("wishes/" + wishId + "/" + filename);
+    var meta = {
+      contentType: "image/png",
+      customMetadata: {
+        passcodeHash: passcodeHash,
+      },
+    };
+    await ref.put(blob, meta);
+    return await ref.getDownloadURL();
+  }
+
+  function createWishDoc(data) {
+    if (!db) throw new Error("Firestore chưa sẵn sàng");
+    return db.collection("wishes").add(data);
+  }
+
+  async function handleWishSubmit(e) {
+    e.preventDefault();
+    if (!initFirebaseMaybe()) return;
+    if (!PASSCODE_HASH) {
+      setStatus(wishStatus, "bad", "Chưa đặt PASSCODE_HASH trong code.");
+      return;
+    }
+    var msg = (wishMessage && wishMessage.value ? wishMessage.value : "").trim();
+    if (!msg) {
+      setStatus(wishStatus, "bad", "Bạn chưa nhập lời chúc.");
+      if (wishMessage) wishMessage.focus();
+      return;
+    }
+    var pass = (wishPasscode && wishPasscode.value ? wishPasscode.value : "").trim();
+    if (!pass) {
+      setStatus(wishStatus, "bad", "Bạn chưa nhập mã mời.");
+      if (wishPasscode) wishPasscode.focus();
+      return;
+    }
+    var passHash = await sha256Hex(pass);
+    if (passHash !== PASSCODE_HASH) {
+      setStatus(wishStatus, "bad", "Mã mời không đúng.");
+      return;
+    }
+
+    var now = Date.now();
+    if (now - lastWishAt < 25000) {
+      setStatus(wishStatus, "bad", "Bạn gửi hơi nhanh. Đợi ~25 giây rồi thử lại nhé.");
+      return;
+    }
+
+    var fromName = (wishFrom && wishFrom.value ? wishFrom.value : "").trim();
+    var blob = null;
+    if (wishUseLast && wishUseLast.checked) blob = lastPhotoBlob;
+    if (!blob && wishPhoto && wishPhoto.files && wishPhoto.files[0]) {
+      blob = wishPhoto.files[0];
+    }
+    if (!blob) {
+      setStatus(wishStatus, "bad", "Bạn chưa chọn ảnh (hoặc chưa chụp ảnh).");
+      return;
+    }
+    if (blob.size > 6 * 1024 * 1024) {
+      setStatus(wishStatus, "bad", "Ảnh quá lớn (>6MB). Hãy chọn ảnh nhỏ hơn.");
+      return;
+    }
+
+    wishSubmit.disabled = true;
+    setStatus(wishStatus, "muted", "Đang gửi... (upload ảnh)");
+
+    try {
+      var docRef = await createWishDoc({
+        fromName: fromName || "",
+        message: msg,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        photoUrl: "",
+        passcodeHash: PASSCODE_HASH,
+        clientAt: nowIso(),
+      });
+      var url = await uploadWishPhoto(blob, docRef.id, PASSCODE_HASH);
+      await docRef.update({ photoUrl: url });
+      lastWishAt = Date.now();
+      setStatus(wishStatus, "ok", "Đã gửi! Cảm ơn bạn.");
+
+      if (lastWishPreviewUrl) URL.revokeObjectURL(lastWishPreviewUrl);
+      try {
+        lastWishPhotoBlob = blob;
+        lastWishPreviewUrl = URL.createObjectURL(blob);
+      } catch (e2) {}
+      attachWallListener();
+    } catch (err) {
+      setStatus(
+        wishStatus,
+        "bad",
+        "Gửi thất bại: " + (err && err.message ? err.message : String(err))
+      );
+    } finally {
+      wishSubmit.disabled = false;
+    }
+  }
+
+  if (wishForm) wishForm.addEventListener("submit", function (e) {
+    handleWishSubmit(e);
+  });
 
   function refreshSecureBanner() {
     var el = document.getElementById("secure-banner");
@@ -1663,6 +2339,7 @@
         cardPhoto.hidden = false;
       }
       if (cardPlaceholder) cardPlaceholder.hidden = true;
+      if (wishUseLast) wishUseLast.checked = true;
     }, "image/png");
   });
 
@@ -1758,16 +2435,13 @@
     window.scrollTo(0, 0);
   });
 
-  /* Điền sẵn phần tĩnh trên thiệp (SV, giờ, địa điểm, bữa cơm — trước khi xác thực) */
-  inviteStudent.textContent = CONFIG.studentName;
-  inviteMeal.textContent = CONFIG.mealLine;
-  inviteSponsor.textContent = CONFIG.sponsorLine;
-  inviteTime.textContent = CONFIG.eventTime;
-  invitePlace.textContent = CONFIG.eventPlace;
-  inviteRole.textContent = "";
+  /* Khởi tạo thiệp cổ điển (text) */
+  fillInviteCard("", "");
 
   /* ===== Khởi động ===== */
   refreshSecureBanner();
+  initFirebaseMaybe();
+  if (hasFirebaseConfig()) attachWallListener();
   startSplash();
 })();
   </script>
