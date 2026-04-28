@@ -59,22 +59,8 @@
   }
 
   function bindCameraUi() {
-    if (els.optStickers && els.camStickers) {
-      els.optStickers.addEventListener("change", function () {
-        els.camStickers.style.display = els.optStickers.checked ? "" : "none";
-      });
-    }
     if (els.filterSelect) els.filterSelect.addEventListener("change", APP.refreshCameraPreviewEffects);
     if (els.stickerSelect) els.stickerSelect.addEventListener("change", APP.refreshCameraPreviewEffects);
-    if (els.optStickers) els.optStickers.addEventListener("change", APP.refreshCameraPreviewEffects);
-    if (els.optAR) els.optAR.addEventListener("change", function () {
-      // bật/tắt loop MediaPipe theo toggle
-      if (els.optAR.checked) {
-        if (APP.startFaceMeshLoop) APP.startFaceMeshLoop();
-      } else {
-        if (APP.stopFaceMeshLoop) APP.stopFaceMeshLoop();
-      }
-    });
 
     if (els.btnStartCam) els.btnStartCam.addEventListener("click", APP.startCamera);
     if (els.btnCapture) els.btnCapture.addEventListener("click", APP.capturePhoto);

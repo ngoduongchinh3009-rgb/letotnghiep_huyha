@@ -47,17 +47,11 @@
     var f = APP.getSelectedFilter();
     var css = APP.filterToCssString(f);
     // Preview làm đẹp nhẹ (không nặng như canvas) để người dùng thấy "đẹp" ngay khi mở cam
-    if (els.optBeauty && els.optBeauty.checked) {
-      var beautyCss = "brightness(1.04) contrast(1.03) saturate(1.10)";
-      css = css === "none" ? beautyCss : css + " " + beautyCss;
-    }
+    var beautyCss = "brightness(1.04) contrast(1.03) saturate(1.10)";
+    css = css === "none" ? beautyCss : css + " " + beautyCss;
     els.video.style.filter = css === "none" ? "" : css;
-    if (els.optStickers && !els.optStickers.checked) {
-      if (els.camStickers) els.camStickers.style.display = "none";
-      if (els.camOverlay) els.camOverlay.style.display = "none";
-      return;
-    }
     if (els.camOverlay) els.camOverlay.style.display = "";
+    if (els.camStickers) els.camStickers.style.display = "";
     APP.setStickerPack(APP.getSelectedStickerPack());
   };
 
@@ -127,20 +121,14 @@
     ctx.filter = "none";
     ctx.restore();
 
-    if (!els.optBeauty || els.optBeauty.checked) {
-      APP.applyPortraitEnhance(ctx, vw, vh);
-      // MediaPipe AR makeup (lip/blush) – để rất nhẹ cho tự nhiên
-      if (els.optAR && els.optAR.checked && APP.applyFaceMakeup) {
-        APP.applyFaceMakeup(ctx, vw, vh, 0.7);
-      }
-    }
+    // Always-on làm đẹp nhẹ + AR makeup
+    APP.applyPortraitEnhance(ctx, vw, vh);
+    if (APP.applyFaceMakeup) APP.applyFaceMakeup(ctx, vw, vh, 0.7);
 
     // Sticker bám theo mặt (AR) — vẽ lên snapCanvas để thiệp render ra đúng
     var didFaceSticker = false;
-    if (els.optStickers && els.optStickers.checked && els.optAR && els.optAR.checked) {
-      if (APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400) && APP.drawFaceStickers) {
-        didFaceSticker = APP.drawFaceStickers(ctx, vw, vh, APP.getSelectedStickerPack());
-      }
+    if (APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400) && APP.drawFaceStickers) {
+      didFaceSticker = APP.drawFaceStickers(ctx, vw, vh, APP.getSelectedStickerPack());
     }
 
     var outW = 1080;
@@ -150,10 +138,8 @@
       els.cardCanvas.height = outH;
       var out = els.cardCanvas.getContext("2d");
       APP.drawClassicCardToCanvas(out, outW, outH, els.snapCanvas);
-      if (!els.optStickers || els.optStickers.checked) {
-        // Nếu đã vẽ sticker bám mặt lên snapCanvas thì không cần sticker góc nữa (tránh rối)
-        if (!didFaceSticker) APP.drawStickerPackOnCanvas(out, outW, outH, APP.getSelectedStickerPack());
-      }
+      // Nếu đã vẽ sticker bám mặt lên snapCanvas thì không cần sticker góc nữa (tránh rối)
+      if (!didFaceSticker) APP.drawStickerPackOnCanvas(out, outW, outH, APP.getSelectedStickerPack());
     }
 
     (els.cardCanvas || els.snapCanvas).toBlob(

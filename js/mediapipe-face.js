@@ -224,7 +224,6 @@
   APP.renderLiveFaceOverlay = function renderLiveFaceOverlay() {
     if (!els.camOverlay) return;
     if (!els.video || !els.video.videoWidth) return;
-    if (!els.optAR || !els.optAR.checked) return;
 
     // Match overlay canvas to displayed video size (CSS pixels).
     var rect = els.video.getBoundingClientRect();
@@ -237,7 +236,7 @@
     c.clearRect(0, 0, cw, ch);
     // Nếu chưa có landmark (hoặc bị chặn CDN), vẫn hiện một mũ 🎓 nhẹ để user biết AR đang bật
     var canTrack = APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400);
-    if (!els.optStickers || !els.optStickers.checked) return;
+    if (APP.getSelectedStickerPack && APP.getSelectedStickerPack() === "none") return;
     if (canTrack) {
       APP.drawFaceStickers(c, cw, ch, APP.getSelectedStickerPack());
     } else {
@@ -254,7 +253,6 @@
   };
 
   APP.initFaceMeshMaybe = function initFaceMeshMaybe() {
-    if (!els.optAR || !els.optAR.checked) return false;
     if (!APP.isMediaPipeReady()) return false;
     if (APP.state.faceMesh) return true;
 
@@ -284,7 +282,6 @@
   };
 
   APP.startFaceMeshLoop = function startFaceMeshLoop() {
-    if (!els.optAR || !els.optAR.checked) return;
     if (!APP.initFaceMeshMaybe()) return;
     if (APP.state.faceMeshRunning) return;
 
