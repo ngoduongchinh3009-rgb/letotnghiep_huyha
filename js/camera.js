@@ -44,15 +44,8 @@
 
   APP.refreshCameraPreviewEffects = function refreshCameraPreviewEffects() {
     if (!els.video) return;
-    var f = APP.getSelectedFilter();
-    var css = APP.filterToCssString(f);
-    // Preview làm đẹp nhẹ (không nặng như canvas) để người dùng thấy "đẹp" ngay khi mở cam
-    var beautyCss = "brightness(1.04) contrast(1.03) saturate(1.10)";
-    css = css === "none" ? beautyCss : css + " " + beautyCss;
-    els.video.style.filter = css === "none" ? "" : css;
+    els.video.style.filter = "brightness(1.04) contrast(1.03) saturate(1.10)";
     if (els.camOverlay) els.camOverlay.style.display = "";
-    if (els.camStickers) els.camStickers.style.display = "";
-    APP.setStickerPack(APP.getSelectedStickerPack());
   };
 
   APP.startCamera = function startCamera() {
@@ -114,21 +107,17 @@
     ctx.save();
     ctx.translate(vw, 0);
     ctx.scale(-1, 1);
-    var base = "brightness(1.05) contrast(0.98) saturate(1.08)";
-    var extra = APP.filterToCanvasString(APP.getSelectedFilter());
-    ctx.filter = extra === "none" ? base : base + " " + extra;
+    ctx.filter = "brightness(1.05) contrast(0.98) saturate(1.08)";
     ctx.drawImage(els.video, 0, 0, vw, vh);
     ctx.filter = "none";
     ctx.restore();
 
-    // Always-on làm đẹp nhẹ + AR makeup
     APP.applyPortraitEnhance(ctx, vw, vh);
     if (APP.applyFaceMakeup) APP.applyFaceMakeup(ctx, vw, vh, 0.7);
 
-    // Sticker bám theo mặt (AR) — vẽ lên snapCanvas để thiệp render ra đúng
     var didFaceSticker = false;
     if (APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400) && APP.drawFaceStickers) {
-      didFaceSticker = APP.drawFaceStickers(ctx, vw, vh, APP.getSelectedStickerPack());
+      didFaceSticker = APP.drawFaceStickers(ctx, vw, vh);
     }
 
     var outW = 1080;
@@ -138,8 +127,6 @@
       els.cardCanvas.height = outH;
       var out = els.cardCanvas.getContext("2d");
       APP.drawClassicCardToCanvas(out, outW, outH, els.snapCanvas);
-      // Nếu đã vẽ sticker bám mặt lên snapCanvas thì không cần sticker góc nữa (tránh rối)
-      if (!didFaceSticker) APP.drawStickerPackOnCanvas(out, outW, outH, APP.getSelectedStickerPack());
     }
 
     (els.cardCanvas || els.snapCanvas).toBlob(
@@ -148,13 +135,13 @@
         var previewUrl = URL.createObjectURL(blob);
         APP.setPreview(previewUrl, blob);
         APP.downloadBlob(blob, "ky-niem-tot-nghiep.png");
-        if (els.cardFrame) els.cardFrame.hidden = false;
-        if (els.cardEmpty) els.cardEmpty.hidden = true;
-        if (els.cardPhoto) {
-          els.cardPhoto.src = previewUrl;
-          els.cardPhoto.hidden = false;
+        if (els.inviteWrapPhoto) els.inviteWrapPhoto.hidden = false;
+        if (els.cardSub2) {
+          els.cardSub2.textContent =
+            APP.CONFIG.studentName + " · " + APP.CONFIG.eventTime + " · " + APP.CONFIG.eventPlace;
         }
-        if (els.cardPlaceholder) els.cardPlaceholder.hidden = true;
+        if (els.cardPhoto2) els.cardPhoto2.src = previewUrl;
+        if (els.inviteWrapPhoto) els.inviteWrapPhoto.scrollIntoView({ behavior: "smooth", block: "start" });
         if (els.wishUseLast) els.wishUseLast.checked = true;
       },
       "image/png"

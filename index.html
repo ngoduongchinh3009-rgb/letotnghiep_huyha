@@ -119,48 +119,15 @@
 
     <div class="camera-block">
       <p style="margin:0 0 0.5rem; font-size:clamp(1rem,2.5vw,1.15rem);">Chụp ảnh kỷ niệm</p>
-      <p class="cam-frame-note">Khung + mũ 🎓 trên camera; thiệp đầy đủ ở phía trên. Ảnh PNG: khung mảnh, <strong>không tối nền giữa mặt</strong>, có chỉnh nhẹ sáng da / son rất nhẹ.</p>
+      <p class="cam-frame-note">Mở camera là đã làm đẹp nhẹ (trắng da, mịn da, má hồng, đánh son). Khi chụp xong sẽ tạo thêm một thiệp kèm ảnh ở phía dưới.</p>
       <div id="secure-banner" class="secure-banner" hidden></div>
       <div class="camera-wrap" id="camera-wrap">
         <video id="cam-video" playsinline webkit-playsinline autoplay muted></video>
         <canvas id="cam-overlay" class="cam-overlay" aria-hidden="true"></canvas>
-        <div class="cam-frame" id="cam-frame" aria-hidden="true">
-          <div class="cam-frame__shine"></div>
-          <div class="cam-frame__edge"></div>
-          <span class="cam-spark cam-spark--1"></span>
-          <span class="cam-spark cam-spark--2"></span>
-          <span class="cam-spark cam-spark--3"></span>
-          <span class="cam-spark cam-spark--4"></span>
-          <span class="cam-spark cam-spark--5"></span>
-          <span class="cam-spark cam-spark--6"></span>
-          <span class="cam-cap cam-cap--tl" title="Cử nhân">🎓</span>
-          <span class="cam-cap cam-cap--tr" title="Cử nhân">🎓</span>
-          <span class="cam-cap cam-cap--bl" title="Cử nhân">🎓</span>
-          <span class="cam-cap cam-cap--br" title="Cử nhân">🎓</span>
-        </div>
-        <div class="cam-stickers" id="cam-stickers" aria-hidden="true">
-          <span class="sticker sticker--heart">💗</span>
-          <span class="sticker sticker--spark">✨</span>
-          <span class="sticker sticker--flower">🌸</span>
-          <span class="sticker sticker--cap">🎓</span>
-        </div>
       </div>
       <div class="cam-actions">
         <button type="button" class="btn-capture" id="btn-start-cam">Mở camera</button>
         <button type="button" class="btn-primary" id="btn-capture" disabled>Chụp ảnh kỷ niệm</button>
-      </div>
-      <div class="picker-row">
-        <select class="chip-select" id="filter-select" aria-label="Chọn filter">
-          <option value="none">Filter: Tự nhiên</option>
-          <option value="warm">Filter: Ấm</option>
-          <option value="cool">Filter: Lạnh</option>
-          <option value="bw">Filter: Trắng đen</option>
-        </select>
-        <select class="chip-select" id="sticker-select" aria-label="Chọn sticker">
-          <option value="cute">Sticker: Cute</option>
-          <option value="grad">Sticker: Tốt nghiệp</option>
-          <option value="none">Sticker: Không</option>
-        </select>
       </div>
       <p class="cam-hint">Ảnh tải về PNG. Camera trên điện thoại: cần trang <strong>HTTPS</strong> (hoặc localhost). Mở mục “Điện thoại truy cập &amp; mở camera” ở màn form để xem cách dùng ngrok.</p>
       <p class="cam-error" id="cam-error" hidden></p>
@@ -171,6 +138,26 @@
           <button type="button" class="btn-secondary" id="btn-retake">Chụp lại</button>
           <button type="button" class="btn-primary" id="btn-download-again">Tải lại PNG</button>
           <button type="button" class="btn-secondary" id="btn-share-photo">Chia sẻ</button>
+        </div>
+      </section>
+
+      <section class="invite-wrap" id="invite-wrap-photo" hidden>
+        <div class="classic-card" id="invite-card-photo" aria-live="polite">
+          <div class="classic-card__bg" aria-hidden="true"></div>
+          <div class="classic-card__shade" aria-hidden="true"></div>
+          <div class="classic-card__text-top">
+            Thiệp kỷ niệm
+            <span class="classic-card__text-sub" id="card-sub-2">
+              Nguyễn Huy Hà · 10h · Đại học Bách Khoa Hà Nội
+            </span>
+          </div>
+          <div class="classic-card__frame" id="card-frame-2" aria-label="Khung ảnh kỷ niệm">
+            <img class="classic-card__photo" id="card-photo-2" alt="Ảnh kỷ niệm">
+          </div>
+          <div class="classic-card__text-bottom">
+            Trân trọng kính mời
+            <span class="classic-card__thanks">Cảm ơn vì sự có mặt của bạn.</span>
+          </div>
         </div>
       </section>
 

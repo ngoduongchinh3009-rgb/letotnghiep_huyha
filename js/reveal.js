@@ -40,6 +40,10 @@
       els.cardSub.textContent =
         APP.CONFIG.studentName + " · " + APP.CONFIG.eventTime + " · " + APP.CONFIG.eventPlace;
     }
+    if (els.cardSub2) {
+      els.cardSub2.textContent =
+        APP.CONFIG.studentName + " · " + APP.CONFIG.eventTime + " · " + APP.CONFIG.eventPlace;
+    }
     if (els.cardThanks) els.cardThanks.textContent = "Cảm ơn vì sự có mặt của bạn.";
     // Không hiện khung ảnh lơ lửng trước khi chụp
     if (els.cardFrame) els.cardFrame.hidden = true;
@@ -82,7 +86,7 @@
       })
       .then(function () {
         els.revealName.textContent = displayName;
-        void els.revealName.offsetWidth; // reflow
+        void els.revealName.offsetWidth;
         els.revealName.classList.add("is-visible");
         return APP.wait(APP.CONFIG.nameHoldMs);
       })

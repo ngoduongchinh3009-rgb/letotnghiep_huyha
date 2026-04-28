@@ -38,8 +38,6 @@
     snapCanvas: document.getElementById("snap-canvas"),
     cardCanvas: document.getElementById("card-canvas"),
     camStickers: document.getElementById("cam-stickers"),
-    filterSelect: document.getElementById("filter-select"),
-    stickerSelect: document.getElementById("sticker-select"),
 
     photoPreview: document.getElementById("photo-preview"),
     previewImg: document.getElementById("preview-img"),
@@ -68,6 +66,11 @@
     modalTitle: document.getElementById("modal-title"),
     btnCopyWallLink: document.getElementById("btn-copy-wall-link"),
     wallLinkHint: document.getElementById("wall-link-hint"),
+
+    inviteWrapPhoto: document.getElementById("invite-wrap-photo"),
+    cardSub2: document.getElementById("card-sub-2"),
+    cardFrame2: document.getElementById("card-frame-2"),
+    cardPhoto2: document.getElementById("card-photo-2"),
   };
 
   APP.state = {
@@ -88,13 +91,11 @@
     lastWishPhotoBlob: null,
     lastWishPreviewUrl: "",
 
-    // MediaPipe face landmarks
     faceLandmarks: null,
     faceLandmarksAt: 0,
     faceMesh: null,
     faceMeshRunning: false,
 
-    // Smoothing for face-stickers (live + capture)
     faceStickerSmooth: {
       cx: null,
       cy: null,
@@ -104,7 +105,6 @@
     },
   };
 
-  // Preload texture (dùng cho canvas thiệp)
   APP.state.classicBgImg = new Image();
   APP.state.classicBgImg.onload = function () {
     APP.state.classicBgReady = true;
