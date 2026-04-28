@@ -280,7 +280,7 @@ button:active { transform: scale(0.97); }
 .classic-card__bg {
   position: absolute;
   inset: 0;
-  background-image: url("assets/c__Users_chinhnd_AppData_Roaming_Cursor_User_workspaceStorage_163e434caa8fd640c6e47a34c1e39511_images_image-e47b6f3d-aa24-486f-aba5-07ab7949a923.png");
+  background-image: url("assets/paper.png");
   background-size: cover;
   background-position: center;
   filter: contrast(1.02) saturate(0.95);
