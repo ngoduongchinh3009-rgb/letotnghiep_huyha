@@ -344,7 +344,7 @@
       transform: scaleX(-1); /* gương cho selfie */
     }
 
-    .cam-strip-note {
+    .cam-frame-note {
       font-size: clamp(0.78rem, 1.9vw, 0.9rem);
       color: rgba(255, 248, 231, 0.8);
       margin: 0 0 0.65rem;
@@ -352,71 +352,102 @@
       line-height: 1.4;
     }
 
-    /* Overlay: chỉ band nhỏ phía dưới — không che mặt */
-    .card-overlay {
+    /* Khung trang trí trên camera — không dùng thiệp mời */
+    .cam-frame {
       position: absolute;
-      left: 50%;
-      bottom: 0;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: none;
-      max-height: 30%;
-      padding: 0 0.35rem 0.35rem;
+      inset: 0;
       pointer-events: none;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-
-    .card-overlay .invite-card--overlay-compact {
-      width: min(100%, 22rem);
-      max-height: 100%;
-      margin: 0 auto;
-      padding: 0.4rem 0.55rem 0.45rem;
-      border-width: 2px;
-      font-size: 0.8em;
-      box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
-      background: rgba(255, 253, 245, 0.88);
-      backdrop-filter: blur(4px);
+      z-index: 2;
+      border-radius: 10px;
       overflow: hidden;
-      transform-origin: bottom center;
     }
 
-    /* Ẩn phần dài trên preview camera (vẫn có trên thiệp lớn + ảnh PNG) */
-    .card-overlay .invite-card--overlay-compact .ornament,
-    .card-overlay .invite-card--overlay-compact .guest-role,
-    .card-overlay .invite-card--overlay-compact .meal,
-    .card-overlay .invite-card--overlay-compact .sponsor {
-      display: none !important;
+    .cam-frame__edge {
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      box-shadow:
+        inset 0 0 0 4px rgba(201, 162, 39, 0.95),
+        inset 0 0 0 8px rgba(255, 250, 230, 0.35),
+        inset 0 0 36px rgba(255, 215, 120, 0.12);
+      animation: camFramePulse 2.8s ease-in-out infinite;
     }
 
-    .card-overlay .invite-card--overlay-compact h3 {
-      font-size: clamp(0.68rem, 2.2vw, 0.8rem);
-      margin: 0 0 0.15rem;
+    @keyframes camFramePulse {
+      0%, 100% {
+        box-shadow:
+          inset 0 0 0 4px rgba(201, 162, 39, 0.85),
+          inset 0 0 0 8px rgba(255, 250, 230, 0.28),
+          inset 0 0 28px rgba(255, 215, 120, 0.1);
+      }
+      50% {
+        box-shadow:
+          inset 0 0 0 5px rgba(255, 224, 130, 0.98),
+          inset 0 0 0 10px rgba(255, 255, 255, 0.45),
+          inset 0 0 48px rgba(255, 200, 80, 0.22);
+      }
     }
 
-    .card-overlay .invite-card--overlay-compact .guest {
-      font-size: clamp(0.82rem, 2.8vw, 0.98rem);
-      margin: 0.1rem 0 0.2rem;
+    .cam-frame__shine {
+      position: absolute;
+      inset: -40% -20%;
+      background: linear-gradient(
+        115deg,
+        transparent 40%,
+        rgba(255, 255, 255, 0.14) 48%,
+        rgba(255, 255, 255, 0.22) 50%,
+        rgba(255, 255, 255, 0.12) 52%,
+        transparent 60%
+      );
+      animation: camShine 5s ease-in-out infinite;
     }
 
-    .card-overlay .invite-card--overlay-compact p {
-      font-size: clamp(0.62rem, 1.9vw, 0.74rem);
-      margin: 0.08rem 0;
-      line-height: 1.25;
+    @keyframes camShine {
+      0% { transform: translateX(-35%) rotate(0deg); opacity: 0.5; }
+      40% { opacity: 0.85; }
+      100% { transform: translateX(35%) rotate(0deg); opacity: 0.5; }
     }
 
-    .card-overlay .invite-card--overlay-compact .detail {
-      margin-top: 0.25rem;
-      padding-top: 0.25rem;
-      border-top-width: 1px;
-      font-size: clamp(0.58rem, 1.7vw, 0.68rem);
+    .cam-cap {
+      position: absolute;
+      font-size: clamp(1.35rem, 7vw, 2.1rem);
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+      animation: capBob 2.2s ease-in-out infinite;
+      user-select: none;
     }
 
-    .card-overlay .invite-card--overlay-compact .detail p {
-      margin: 0.06rem 0;
-      font-size: inherit;
+    .cam-cap--tl { top: 5%; left: 4%; animation-delay: 0s; }
+    .cam-cap--tr { top: 5%; right: 4%; animation-delay: 0.35s; }
+    .cam-cap--bl { bottom: 6%; left: 4%; animation-delay: 0.7s; }
+    .cam-cap--br { bottom: 6%; right: 4%; animation-delay: 1.05s; }
+
+    @keyframes capBob {
+      0%, 100% { transform: translateY(0) rotate(-6deg); }
+      50% { transform: translateY(-5px) rotate(6deg); }
+    }
+
+    .cam-spark {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff8dc;
+      box-shadow: 0 0 10px #ffd700;
+      opacity: 0.35;
+      animation: sparkTw 2.4s ease-in-out infinite;
+    }
+
+    .cam-spark--1 { top: 22%; left: 12%; animation-delay: 0s; }
+    .cam-spark--2 { top: 30%; right: 15%; animation-delay: 0.4s; }
+    .cam-spark--3 { bottom: 28%; left: 18%; animation-delay: 0.8s; }
+    .cam-spark--4 { bottom: 22%; right: 12%; animation-delay: 1.2s; }
+    .cam-spark--5 { top: 48%; left: 6%; animation-delay: 0.2s; }
+    .cam-spark--6 { top: 52%; right: 7%; animation-delay: 0.9s; }
+
+    @keyframes sparkTw {
+      0%, 100% { opacity: 0.25; transform: scale(0.85); }
+      50% { opacity: 0.95; transform: scale(1.15); }
     }
 
     .cam-actions {
@@ -641,31 +672,42 @@
       #invite-card-main .guest {
         font-size: 1.05rem;
         margin: 0.35rem 0 0.2rem;
+        line-height: 1.25;
       }
 
       #invite-card-main .guest-role {
         font-size: 0.76rem;
-        margin-bottom: 0.55rem;
+        margin: 0.25rem 0 0.55rem;
+        line-height: 1.45;
       }
 
       #invite-card-main p {
         font-size: 0.8rem;
+        line-height: 1.45;
       }
 
       #invite-card-main .meal {
         font-size: 0.76rem;
-        margin: 0.55rem 0 0.25rem;
-        padding: 0.45rem 0.45rem;
+        margin: 0.65rem 0 0.35rem;
+        padding: 0.5rem 0.45rem;
+        line-height: 1.45;
       }
 
       #invite-card-main .sponsor {
         font-size: 0.72rem;
+        line-height: 1.35;
+        margin: 0.35rem 0 0.15rem;
       }
 
       #invite-card-main .detail {
-        margin-top: 0.65rem;
-        padding-top: 0.55rem;
+        margin-top: 0.75rem;
+        padding-top: 0.6rem;
         font-size: 0.76rem;
+      }
+
+      #invite-card-main .detail p {
+        line-height: 1.4;
+        margin: 0.2rem 0;
       }
 
       .camera-block {
@@ -673,7 +715,11 @@
         margin-top: 0.85rem;
       }
 
-      .cam-strip-note {
+      .cam-cap {
+        font-size: clamp(1.1rem, 6vw, 1.55rem);
+      }
+
+      .cam-frame-note {
         font-size: 0.72rem;
         max-width: none;
       }
@@ -807,27 +853,24 @@
     </div>
 
     <div class="camera-block">
-      <p style="margin:0 0 0.5rem; font-size:clamp(1rem,2.5vw,1.15rem);">Chụp ảnh kỷ niệm cùng thiệp mời</p>
-      <p class="cam-strip-note">Trên camera chỉ hiện thiệp <strong>gọn</strong> ở mép dưới để thấy mặt; thiệp đầy đủ ở trên. Ảnh PNG tải về vẫn có đủ lời mời + bữa cơm.</p>
+      <p style="margin:0 0 0.5rem; font-size:clamp(1rem,2.5vw,1.15rem);">Chụp ảnh kỷ niệm</p>
+      <p class="cam-frame-note">Khung vàng + mũ cử nhân 🎓 trên camera; <strong>thiệp mời đầy đủ</strong> nằm ở phía trên. Ảnh tải về có cùng khung trang trí (không ghép nội dung thiệp).</p>
       <div id="secure-banner" class="secure-banner" hidden></div>
       <div class="camera-wrap" id="camera-wrap">
         <video id="cam-video" playsinline webkit-playsinline autoplay muted></video>
-        <div class="card-overlay" id="card-overlay" aria-hidden="true">
-          <!-- Bản sao thiệp để overlay lên video (JS đồng bộ nội dung) -->
-          <div class="invite-card invite-card--overlay-compact" id="invite-card-overlay">
-            <div class="ornament">✦ ✦ ✦</div>
-            <h3>Trân trọng kính mời</h3>
-            <p class="guest" id="overlay-guest">[Tên]</p>
-            <p class="guest-role" id="overlay-role"></p>
-            <p>Đến tham dự lễ tốt nghiệp</p>
-            <p><strong id="overlay-student">[SV]</strong></p>
-            <p class="meal" id="overlay-meal"></p>
-            <p class="sponsor" id="overlay-sponsor"></p>
-            <div class="detail">
-              <p><strong>Thời gian:</strong> <span id="overlay-time"></span></p>
-              <p><strong>Địa điểm:</strong> <span id="overlay-place"></span></p>
-            </div>
-          </div>
+        <div class="cam-frame" id="cam-frame" aria-hidden="true">
+          <div class="cam-frame__shine"></div>
+          <div class="cam-frame__edge"></div>
+          <span class="cam-spark cam-spark--1"></span>
+          <span class="cam-spark cam-spark--2"></span>
+          <span class="cam-spark cam-spark--3"></span>
+          <span class="cam-spark cam-spark--4"></span>
+          <span class="cam-spark cam-spark--5"></span>
+          <span class="cam-spark cam-spark--6"></span>
+          <span class="cam-cap cam-cap--tl" title="Cử nhân">🎓</span>
+          <span class="cam-cap cam-cap--tr" title="Cử nhân">🎓</span>
+          <span class="cam-cap cam-cap--bl" title="Cử nhân">🎓</span>
+          <span class="cam-cap cam-cap--br" title="Cử nhân">🎓</span>
         </div>
       </div>
       <div class="cam-actions">
@@ -970,14 +1013,6 @@
   var inviteTime = document.getElementById("invite-time");
   var invitePlace = document.getElementById("invite-place");
 
-  var overlayGuest = document.getElementById("overlay-guest");
-  var overlayRole = document.getElementById("overlay-role");
-  var overlayStudent = document.getElementById("overlay-student");
-  var overlayMeal = document.getElementById("overlay-meal");
-  var overlaySponsor = document.getElementById("overlay-sponsor");
-  var overlayTime = document.getElementById("overlay-time");
-  var overlayPlace = document.getElementById("overlay-place");
-
   var camWrap = document.getElementById("camera-wrap");
   var video = document.getElementById("cam-video");
   var btnStartCam = document.getElementById("btn-start-cam");
@@ -1033,7 +1068,7 @@
     }
   }
 
-  /* Đồng bộ nội dung thiệp (bản lớn + overlay camera) */
+  /* Đồng bộ thiệp lớn (camera chỉ có khung trang trí — không đồng bộ thiệp lên video) */
   function fillInviteCard(displayName, roleLine) {
     guestRoleLine = roleLine || "";
     inviteGuest.textContent = displayName;
@@ -1043,13 +1078,6 @@
     inviteSponsor.textContent = CONFIG.sponsorLine;
     inviteTime.textContent = CONFIG.eventTime;
     invitePlace.textContent = CONFIG.eventPlace;
-    overlayGuest.textContent = displayName;
-    overlayRole.textContent = guestRoleLine;
-    overlayStudent.textContent = CONFIG.studentName;
-    overlayMeal.textContent = CONFIG.mealLine;
-    overlaySponsor.textContent = CONFIG.sponsorLine;
-    overlayTime.textContent = CONFIG.eventTime;
-    overlayPlace.textContent = CONFIG.eventPlace;
   }
 
   /* ===== 1) Splash → Form ===== */
@@ -1114,102 +1142,83 @@
     ctx.closePath();
   }
 
-  /* Vẽ thiệp đơn giản lên canvas (offline, không cần thư viện) — tông vàng/trắng */
-  function drawInviteOnCanvas(ctx, w, h, name) {
-    var pad = Math.round(Math.min(w, h) * 0.05);
-    var cardW = w - pad * 2;
-    var cardH = Math.round(h * 0.5);
-    var x = pad;
-    var y = h - pad - cardH;
-
+  /** Mũ cử nhân đơn giản (canvas) — góc khung ảnh */
+  function drawMortarboardIcon(ctx, cx, cy, scale, flipX) {
     ctx.save();
-    ctx.fillStyle = "rgba(42, 24, 16, 0.35)";
-    pathRoundRect(ctx, x + 4, y + 6, cardW, cardH, 10);
+    ctx.translate(cx, cy);
+    if (flipX) ctx.scale(-1, 1);
+    ctx.scale(scale, scale);
+    ctx.fillStyle = "#1e293b";
+    ctx.beginPath();
+    ctx.moveTo(0, -20);
+    ctx.lineTo(18, -6);
+    ctx.lineTo(0, 8);
+    ctx.lineTo(-18, -6);
+    ctx.closePath();
     ctx.fill();
-    ctx.restore();
-
-    var grd = ctx.createLinearGradient(x, y, x, y + cardH);
-    grd.addColorStop(0, "#fffdf5");
-    grd.addColorStop(1, "#edd9b8");
-    ctx.fillStyle = grd;
-    ctx.strokeStyle = "#8b5a2b";
-    ctx.lineWidth = 5;
-    pathRoundRect(ctx, x, y, cardW, cardH, 8);
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(-24, -4, 48, 7);
+    ctx.fillStyle = "#c9a227";
+    ctx.beginPath();
+    ctx.arc(0, -12, 3.5, 0, Math.PI * 2);
     ctx.fill();
-    ctx.stroke();
-
-    ctx.textAlign = "center";
-    var cx = x + cardW / 2;
-    var cy = y + cardH * 0.09;
-    var lh;
-
-    ctx.fillStyle = "#8b5a2b";
-    ctx.font = "600 " + Math.max(13, cardH * 0.065) + "px Palatino Linotype, Georgia, serif";
-    ctx.fillText("Trân trọng kính mời", cx, cy);
-    cy += cardH * 0.095;
-
-    ctx.fillStyle = "#5c3d2e";
-    ctx.font = "700 " + Math.max(16, cardH * 0.11) + "px Palatino Linotype, Georgia, serif";
-    ctx.fillText(name, cx, cy);
-    cy += cardH * 0.1;
-
-    ctx.fillStyle = "#6b5344";
-    ctx.font = "600 " + Math.max(10, cardH * 0.048) + "px Segoe UI, sans-serif";
-    lh = Math.max(11, cardH * 0.05);
-    if (guestRoleLine) cy = wrapFillCenter(ctx, guestRoleLine, cx, cy, cardW * 0.9, lh) + lh * 0.2;
-
-    ctx.fillStyle = "#4a3528";
-    ctx.font = "500 " + Math.max(11, cardH * 0.055) + "px Palatino Linotype, Georgia, serif";
-    ctx.fillText("Đến tham dự lễ tốt nghiệp", cx, cy);
-    cy += cardH * 0.075;
-
-    ctx.font = "700 " + Math.max(12, cardH * 0.058) + "px Palatino Linotype, Georgia, serif";
-    ctx.fillText(CONFIG.studentName, cx, cy);
-    cy += cardH * 0.085;
-
-    ctx.fillStyle = "#5c4a3a";
-    ctx.font = "500 " + Math.max(9, cardH * 0.042) + "px Segoe UI, sans-serif";
-    lh = Math.max(10, cardH * 0.045);
-    cy = wrapFillCenter(ctx, CONFIG.mealLine, cx, cy, cardW * 0.9, lh) + lh * 0.25;
-
-    ctx.fillStyle = "#8b5a2b";
-    ctx.font = "600 " + Math.max(9, cardH * 0.04) + "px Segoe UI, sans-serif";
-    cy = wrapFillCenter(ctx, CONFIG.sponsorLine, cx, cy, cardW * 0.9, lh) + lh * 0.35;
-
-    ctx.strokeStyle = "#d4a574";
+    ctx.strokeStyle = "#e8c547";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(x + cardW * 0.08, cy);
-    ctx.lineTo(x + cardW * 0.92, cy);
+    ctx.moveTo(16, 0);
+    ctx.quadraticCurveTo(24, 14, 20, 28);
     ctx.stroke();
-    cy += cardH * 0.055;
-
-    ctx.fillStyle = "#6b5344";
-    var sub = Math.max(9, cardH * 0.038);
-    ctx.font = "500 " + sub + "px Segoe UI, sans-serif";
-    cy = wrapFillCenter(ctx, "Thời gian: " + CONFIG.eventTime, cx, cy, cardW * 0.88, sub * 1.12);
-    wrapFillCenter(ctx, "Địa điểm: " + CONFIG.eventPlace, cx, cy, cardW * 0.88, sub * 1.12);
+    ctx.restore();
   }
 
-  /* Xuống dòng ngắn cho canvas nếu chuỗi dài */
-  /** Vẽ text xuống dòng theo từ; trả về y sau dòng cuối */
-  function wrapFillCenter(ctx, text, cx, startY, maxWidth, lineHeight) {
-    var words = String(text).split(/\s+/);
-    var line = "";
-    var y = startY;
-    var n;
-    for (n = 0; n < words.length; n++) {
-      var test = line ? line + " " + words[n] : words[n];
-      if (ctx.measureText(test).width > maxWidth && line) {
-        ctx.fillText(line, cx, y);
-        y += lineHeight;
-        line = words[n];
-      } else {
-        line = test;
-      }
+  /** Khung vàng + mũ + chút lấp lánh — không vẽ thiệp mời */
+  function drawGradFrameOnCanvas(ctx, w, h) {
+    var ins = Math.round(Math.min(w, h) * 0.028);
+    var r = Math.min(18, Math.round(Math.min(w, h) * 0.025));
+
+    var vg = ctx.createRadialGradient(w * 0.5, h * 0.45, Math.min(w, h) * 0.15, w * 0.5, h * 0.5, Math.max(w, h) * 0.65);
+    vg.addColorStop(0, "rgba(0,0,0,0)");
+    vg.addColorStop(1, "rgba(44, 24, 16, 0.18)");
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = "rgba(201, 162, 39, 0.92)";
+    ctx.lineWidth = Math.max(4, Math.min(w, h) * 0.012);
+    pathRoundRect(ctx, ins, ins, w - 2 * ins, h - 2 * ins, r);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255, 250, 230, 0.55)";
+    ctx.lineWidth = Math.max(2, Math.min(w, h) * 0.005);
+    pathRoundRect(ctx, ins + 6, ins + 6, w - 2 * ins - 12, h - 2 * ins - 12, r - 4);
+    ctx.stroke();
+
+    var sc = Math.min(w, h) * 0.034;
+    drawMortarboardIcon(ctx, ins + w * 0.06, ins + h * 0.08, sc, false);
+    drawMortarboardIcon(ctx, w - ins - w * 0.06, ins + h * 0.08, sc, true);
+    drawMortarboardIcon(ctx, ins + w * 0.06, h - ins - h * 0.08, sc, false);
+    drawMortarboardIcon(ctx, w - ins - w * 0.06, h - ins - h * 0.08, sc, true);
+
+    var sparks = [
+      [0.14, 0.22],
+      [0.86, 0.28],
+      [0.18, 0.78],
+      [0.82, 0.72],
+      [0.08, 0.5],
+      [0.92, 0.52],
+    ];
+    var si;
+    for (si = 0; si < sparks.length; si++) {
+      var px = sparks[si][0] * w;
+      var py = sparks[si][1] * h;
+      ctx.fillStyle = "rgba(255, 248, 220, 0.85)";
+      ctx.beginPath();
+      ctx.arc(px, py, Math.max(3, Math.min(w, h) * 0.008), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowColor = "#ffd700";
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
     }
-    if (line) ctx.fillText(line, cx, y);
-    return y;
+
   }
 
   /* ===== Camera + chụp (composite PNG) ===== */
@@ -1302,7 +1311,7 @@
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, vw, vh);
     ctx.restore();
-    drawInviteOnCanvas(ctx, vw, vh, guestFullName);
+    drawGradFrameOnCanvas(ctx, vw, vh);
 
     snapCanvas.toBlob(function (blob) {
       if (!blob) return;
@@ -1370,12 +1379,6 @@
   inviteTime.textContent = CONFIG.eventTime;
   invitePlace.textContent = CONFIG.eventPlace;
   inviteRole.textContent = "";
-  overlayStudent.textContent = CONFIG.studentName;
-  overlayMeal.textContent = CONFIG.mealLine;
-  overlaySponsor.textContent = CONFIG.sponsorLine;
-  overlayTime.textContent = CONFIG.eventTime;
-  overlayPlace.textContent = CONFIG.eventPlace;
-  overlayRole.textContent = "";
 
   /* ===== Khởi động ===== */
   refreshSecureBanner();
