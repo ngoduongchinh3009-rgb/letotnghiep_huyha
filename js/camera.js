@@ -46,6 +46,11 @@
     if (!els.video) return;
     var f = APP.getSelectedFilter();
     var css = APP.filterToCssString(f);
+    // Preview làm đẹp nhẹ (không nặng như canvas) để người dùng thấy "đẹp" ngay khi mở cam
+    if (els.optBeauty && els.optBeauty.checked) {
+      var beautyCss = "brightness(1.04) contrast(1.03) saturate(1.10)";
+      css = css === "none" ? beautyCss : css + " " + beautyCss;
+    }
     els.video.style.filter = css === "none" ? "" : css;
     if (els.optStickers && !els.optStickers.checked) {
       if (els.camStickers) els.camStickers.style.display = "none";
@@ -157,6 +162,7 @@
         var previewUrl = URL.createObjectURL(blob);
         APP.setPreview(previewUrl, blob);
         APP.downloadBlob(blob, "ky-niem-tot-nghiep.png");
+        if (els.cardFrame) els.cardFrame.hidden = false;
         if (els.cardPhoto) {
           els.cardPhoto.src = previewUrl;
           els.cardPhoto.hidden = false;

@@ -225,8 +225,6 @@
     if (!els.camOverlay) return;
     if (!els.video || !els.video.videoWidth) return;
     if (!els.optAR || !els.optAR.checked) return;
-    if (!els.optStickers || !els.optStickers.checked) return;
-    if (!APP.hasFreshFaceLandmarks || !APP.hasFreshFaceLandmarks(1400)) return;
 
     // Match overlay canvas to displayed video size (CSS pixels).
     var rect = els.video.getBoundingClientRect();
@@ -237,7 +235,22 @@
 
     var c = els.camOverlay.getContext("2d");
     c.clearRect(0, 0, cw, ch);
-    APP.drawFaceStickers(c, cw, ch, APP.getSelectedStickerPack());
+    // Nếu chưa có landmark (hoặc bị chặn CDN), vẫn hiện một mũ 🎓 nhẹ để user biết AR đang bật
+    var canTrack = APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400);
+    if (!els.optStickers || !els.optStickers.checked) return;
+    if (canTrack) {
+      APP.drawFaceStickers(c, cw, ch, APP.getSelectedStickerPack());
+    } else {
+      c.save();
+      c.globalAlpha = 0.55;
+      c.font = "900 " + Math.round(Math.min(cw, ch) * 0.16) + "px system-ui, Apple Color Emoji, Segoe UI Emoji";
+      c.textAlign = "center";
+      c.textBaseline = "middle";
+      c.shadowColor = "rgba(0,0,0,0.35)";
+      c.shadowBlur = 12;
+      c.fillText("🎓", cw * 0.5, ch * 0.18);
+      c.restore();
+    }
   };
 
   APP.initFaceMeshMaybe = function initFaceMeshMaybe() {
