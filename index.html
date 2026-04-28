@@ -255,6 +255,113 @@
       text-align: center;
     }
 
+    /* Thiệp phong cách cổ điển (scrapbook) dựa trên icon/texture */
+    .classic-card {
+      position: relative;
+      width: min(100%, 520px);
+      aspect-ratio: 9 / 16;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 3px solid rgba(255, 248, 231, 0.35);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      background: #2c1810;
+    }
+
+    .classic-card__bg {
+      position: absolute;
+      inset: 0;
+      background-image: url("assets/texture.png");
+      background-size: cover;
+      background-position: center;
+      filter: contrast(1.02) saturate(0.98);
+      transform: scale(1.03);
+    }
+
+    .classic-card__shade {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 120% 80% at 50% 30%, rgba(0,0,0,0.05), rgba(0,0,0,0.45));
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .classic-card__text-top,
+    .classic-card__text-bottom {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(92%, 430px);
+      text-align: center;
+      font-family: var(--font);
+      color: #fff8e7;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
+      letter-spacing: 0.01em;
+      pointer-events: none;
+    }
+
+    .classic-card__text-top {
+      top: 6.5%;
+      font-size: clamp(1.05rem, 3.2vw, 1.35rem);
+      font-weight: 700;
+    }
+
+    .classic-card__text-sub {
+      display: block;
+      margin-top: 0.25rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: clamp(0.78rem, 2.2vw, 0.92rem);
+      color: rgba(255, 248, 231, 0.9);
+    }
+
+    .classic-card__frame {
+      position: absolute;
+      left: 50%;
+      top: 35%;
+      transform: translate(-50%, -50%);
+      width: 46%;
+      aspect-ratio: 3 / 4;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 248, 231, 0.75);
+      background: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+    }
+
+    .classic-card__photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .classic-card__placeholder {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: clamp(0.8rem, 2.4vw, 0.95rem);
+      color: rgba(255, 248, 231, 0.9);
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .classic-card__text-bottom {
+      bottom: 7.5%;
+      font-size: clamp(0.98rem, 3vw, 1.2rem);
+      font-weight: 700;
+    }
+
+    .classic-card__thanks {
+      display: block;
+      margin-top: 0.25rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      font-size: clamp(0.75rem, 2.2vw, 0.9rem);
+      color: rgba(255, 248, 231, 0.9);
+    }
+
     .invite-card .ornament {
       font-size: 1.5rem;
       color: var(--gold-dark);
@@ -891,18 +998,22 @@
   <section id="screen-invite" class="screen" aria-labelledby="invite-heading">
     <h2 id="invite-heading" class="sr-only">Thiệp mời &amp; chụp ảnh</h2>
     <div class="invite-wrap">
-      <div class="invite-card" id="invite-card-main" aria-live="polite">
-        <div class="ornament">✦ ✦ ✦</div>
-        <h3>Trân trọng kính mời</h3>
-        <p class="guest" id="invite-guest">[Tên người thân]</p>
-        <p class="guest-role" id="invite-role"></p>
-        <p>Đến tham dự lễ tốt nghiệp</p>
-        <p><strong id="invite-student">[Tên sinh viên]</strong></p>
-        <p class="meal" id="invite-meal"></p>
-        <p class="sponsor" id="invite-sponsor"></p>
-        <div class="detail">
-          <p><strong>Thời gian:</strong> <span id="invite-time"></span></p>
-          <p><strong>Địa điểm:</strong> <span id="invite-place"></span></p>
+      <div class="classic-card" id="invite-card-main" aria-live="polite">
+        <div class="classic-card__bg" aria-hidden="true"></div>
+        <div class="classic-card__shade" aria-hidden="true"></div>
+        <div class="classic-card__text-top">
+          Mời dự lễ tốt nghiệp
+          <span class="classic-card__text-sub" id="card-sub">
+            Nguyễn Huy Hà · 10h · Đại học Bách Khoa Hà Nội
+          </span>
+        </div>
+        <div class="classic-card__frame" aria-label="Khung ảnh kỷ niệm">
+          <img class="classic-card__photo" id="card-photo" alt="Ảnh kỷ niệm" hidden>
+          <div class="classic-card__placeholder" id="card-placeholder">Chụp ảnh để in vào thiệp</div>
+        </div>
+        <div class="classic-card__text-bottom">
+          Trân trọng kính mời
+          <span class="classic-card__thanks" id="card-thanks">Cảm ơn vì sự có mặt của bạn.</span>
         </div>
       </div>
     </div>
@@ -945,6 +1056,7 @@
       </section>
     </div>
     <canvas id="snap-canvas"></canvas>
+    <canvas id="card-canvas"></canvas>
   </section>
 
   <script>
@@ -1069,13 +1181,10 @@
   var revealName = document.getElementById("reveal-name");
   var btnToInvite = document.getElementById("btn-to-invite");
 
-  var inviteGuest = document.getElementById("invite-guest");
-  var inviteRole = document.getElementById("invite-role");
-  var inviteStudent = document.getElementById("invite-student");
-  var inviteMeal = document.getElementById("invite-meal");
-  var inviteSponsor = document.getElementById("invite-sponsor");
-  var inviteTime = document.getElementById("invite-time");
-  var invitePlace = document.getElementById("invite-place");
+  var cardSub = document.getElementById("card-sub");
+  var cardPhoto = document.getElementById("card-photo");
+  var cardPlaceholder = document.getElementById("card-placeholder");
+  var cardThanks = document.getElementById("card-thanks");
 
   var camWrap = document.getElementById("camera-wrap");
   var video = document.getElementById("cam-video");
@@ -1083,6 +1192,7 @@
   var btnCapture = document.getElementById("btn-capture");
   var camError = document.getElementById("cam-error");
   var snapCanvas = document.getElementById("snap-canvas");
+  var cardCanvas = document.getElementById("card-canvas");
   var photoPreview = document.getElementById("photo-preview");
   var previewImg = document.getElementById("preview-img");
   var btnRetake = document.getElementById("btn-retake");
@@ -1092,6 +1202,12 @@
   var guestFullName = "";
   /** Dòng chức danh hiển thị trên thiệp + canvas (theo khách khớp hoặc mặc định) */
   var guestRoleLine = "";
+  var classicBgImg = new Image();
+  var classicBgReady = false;
+  classicBgImg.onload = function () {
+    classicBgReady = true;
+  };
+  classicBgImg.src = "assets/texture.png";
 
   /* ===== Điều hướng màn hình ===== */
   function showScreen(el) {
@@ -1137,16 +1253,16 @@
     }
   }
 
-  /* Đồng bộ thiệp lớn (camera chỉ có khung trang trí — không đồng bộ thiệp lên video) */
+  /* Đồng bộ text phụ trên thiệp phong cách cổ điển */
   function fillInviteCard(displayName, roleLine) {
     guestRoleLine = roleLine || "";
-    inviteGuest.textContent = displayName;
-    inviteRole.textContent = guestRoleLine;
-    inviteStudent.textContent = CONFIG.studentName;
-    inviteMeal.textContent = CONFIG.mealLine;
-    inviteSponsor.textContent = CONFIG.sponsorLine;
-    inviteTime.textContent = CONFIG.eventTime;
-    invitePlace.textContent = CONFIG.eventPlace;
+    if (cardSub) {
+      cardSub.textContent =
+        CONFIG.studentName + " · " + CONFIG.eventTime + " · " + CONFIG.eventPlace;
+    }
+    if (cardThanks) cardThanks.textContent = "Cảm ơn vì sự có mặt của bạn.";
+    if (cardPhoto) cardPhoto.hidden = true;
+    if (cardPlaceholder) cardPlaceholder.hidden = false;
   }
 
   /* ===== 1) Splash → Form ===== */
@@ -1323,51 +1439,89 @@
     }
   }
 
-  /** Khung vàng + mũ — không vignette toàn khung, không chấm sáng giữa mặt */
-  function drawGradFrameOnCanvas(ctx, w, h) {
-    var ins = Math.round(Math.min(w, h) * 0.022);
-    var r = Math.min(16, Math.round(Math.min(w, h) * 0.022));
+  function drawClassicCardToCanvas(out, ow, oh, photoSource) {
+    out.clearRect(0, 0, ow, oh);
+    out.fillStyle = "#2c1810";
+    out.fillRect(0, 0, ow, oh);
 
-    ctx.strokeStyle = "rgba(201, 162, 39, 0.88)";
-    ctx.lineWidth = Math.max(2.5, Math.min(w, h) * 0.007);
-    pathRoundRect(ctx, ins, ins, w - 2 * ins, h - 2 * ins, r);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(255, 250, 230, 0.45)";
-    ctx.lineWidth = Math.max(1.2, Math.min(w, h) * 0.0035);
-    pathRoundRect(ctx, ins + 4, ins + 4, w - 2 * ins - 8, h - 2 * ins - 8, Math.max(2, r - 3));
-    ctx.stroke();
-
-    /* Icon nhỏ quanh viền, không che phần giữa khuôn mặt */
-    var iconScale = Math.min(w, h) * 0.03;
-    drawMortarboardIcon(ctx, ins + w * 0.07, ins + h * 0.09, iconScale, false);
-    drawDiplomaIcon(ctx, w * 0.5, ins + h * 0.08, iconScale * 0.95);
-    drawFlowerIcon(ctx, w - ins - w * 0.07, ins + h * 0.09, iconScale * 1.02);
-
-    drawFlowerIcon(ctx, ins + w * 0.07, h - ins - h * 0.09, iconScale * 1.02);
-    drawDiplomaIcon(ctx, w * 0.5, h - ins - h * 0.08, iconScale * 0.95);
-    drawMortarboardIcon(ctx, w - ins - w * 0.07, h - ins - h * 0.09, iconScale, true);
-
-    var sparks = [
-      [0.14, 0.13],
-      [0.86, 0.13],
-      [0.2, 0.89],
-      [0.8, 0.89],
-      [0.05, 0.5],
-      [0.95, 0.5],
-    ];
-    var si;
-    for (si = 0; si < sparks.length; si++) {
-      var px = sparks[si][0] * w;
-      var py = sparks[si][1] * h;
-      ctx.fillStyle = "rgba(255, 248, 220, 0.45)";
-      ctx.beginPath();
-      ctx.arc(px, py, Math.max(2, Math.min(w, h) * 0.006), 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowColor = "rgba(255, 215, 0, 0.5)";
-      ctx.shadowBlur = 6;
-      ctx.fill();
-      ctx.shadowBlur = 0;
+    if (classicBgReady && classicBgImg && classicBgImg.complete) {
+      out.drawImage(classicBgImg, 0, 0, ow, oh);
+    } else {
+      var g = out.createLinearGradient(0, 0, 0, oh);
+      g.addColorStop(0, "#3b1f15");
+      g.addColorStop(1, "#1c0d08");
+      out.fillStyle = g;
+      out.fillRect(0, 0, ow, oh);
     }
+
+    /* Khung ảnh (theo tỷ lệ template texture.png) */
+    var fx = ow * 0.305;
+    var fy = oh * 0.265;
+    var fw = ow * 0.39;
+    var fh = oh * 0.33;
+
+    /* Drop shadow + border */
+    out.save();
+    out.shadowColor = "rgba(0,0,0,0.45)";
+    out.shadowBlur = 18;
+    out.shadowOffsetY = 8;
+    out.fillStyle = "rgba(255,255,255,0.1)";
+    pathRoundRect(out, fx, fy, fw, fh, 14);
+    out.fill();
+    out.restore();
+
+    out.save();
+    pathRoundRect(out, fx, fy, fw, fh, 14);
+    out.clip();
+    if (photoSource) {
+      /* cover crop */
+      var sw = photoSource.width || photoSource.videoWidth || ow;
+      var sh = photoSource.height || photoSource.videoHeight || oh;
+      var targetAR = fw / fh;
+      var srcAR = sw / sh;
+      var sx = 0, sy = 0, sww = sw, shh = sh;
+      if (srcAR > targetAR) {
+        sww = sh * targetAR;
+        sx = (sw - sww) / 2;
+      } else {
+        shh = sw / targetAR;
+        sy = (sh - shh) / 2;
+      }
+      out.drawImage(photoSource, sx, sy, sww, shh, fx, fy, fw, fh);
+    } else {
+      out.fillStyle = "rgba(0,0,0,0.08)";
+      out.fillRect(fx, fy, fw, fh);
+    }
+    out.restore();
+
+    out.strokeStyle = "rgba(255, 248, 231, 0.9)";
+    out.lineWidth = Math.max(3, Math.min(ow, oh) * 0.006);
+    pathRoundRect(out, fx, fy, fw, fh, 14);
+    out.stroke();
+
+    /* Text top */
+    out.save();
+    out.textAlign = "center";
+    out.fillStyle = "rgba(255, 248, 231, 0.97)";
+    out.shadowColor = "rgba(0,0,0,0.55)";
+    out.shadowBlur = 10;
+    out.font = "800 " + Math.max(30, Math.min(ow, oh) * 0.05) + "px Palatino Linotype, Georgia, serif";
+    out.fillText("MỜI DỰ LỄ TỐT NGHIỆP", ow / 2, oh * 0.115);
+    out.font = "700 " + Math.max(18, Math.min(ow, oh) * 0.032) + "px system-ui, sans-serif";
+    out.fillText(CONFIG.studentName + " · " + CONFIG.eventTime + " · " + CONFIG.eventPlace, ow / 2, oh * 0.155);
+    out.restore();
+
+    /* Text bottom */
+    out.save();
+    out.textAlign = "center";
+    out.fillStyle = "rgba(255, 248, 231, 0.97)";
+    out.shadowColor = "rgba(0,0,0,0.55)";
+    out.shadowBlur = 10;
+    out.font = "800 " + Math.max(26, Math.min(ow, oh) * 0.045) + "px Palatino Linotype, Georgia, serif";
+    out.fillText("TRÂN TRỌNG KÍNH MỜI", ow / 2, oh * 0.84);
+    out.font = "650 " + Math.max(18, Math.min(ow, oh) * 0.032) + "px system-ui, sans-serif";
+    out.fillText("Cảm ơn vì sự có mặt của bạn.", ow / 2, oh * 0.885);
+    out.restore();
   }
 
   /* ===== Camera + chụp (composite PNG) ===== */
@@ -1489,13 +1643,26 @@
     ctx.filter = "none";
     ctx.restore();
     applyPortraitEnhance(ctx, vw, vh);
-    drawGradFrameOnCanvas(ctx, vw, vh);
+    /* Render thiệp cổ điển ra canvas riêng (9:16) */
+    var outW = 1080;
+    var outH = 1920;
+    if (cardCanvas) {
+      cardCanvas.width = outW;
+      cardCanvas.height = outH;
+      var out = cardCanvas.getContext("2d");
+      drawClassicCardToCanvas(out, outW, outH, snapCanvas);
+    }
 
-    snapCanvas.toBlob(function (blob) {
+    (cardCanvas || snapCanvas).toBlob(function (blob) {
       if (!blob) return;
       var previewUrl = URL.createObjectURL(blob);
       setPreview(previewUrl, blob);
       downloadBlob(blob, "ky-niem-tot-nghiep.png");
+      if (cardPhoto) {
+        cardPhoto.src = previewUrl;
+        cardPhoto.hidden = false;
+      }
+      if (cardPlaceholder) cardPlaceholder.hidden = true;
     }, "image/png");
   });
 
