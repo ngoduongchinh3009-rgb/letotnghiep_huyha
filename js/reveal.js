@@ -44,8 +44,10 @@
       els.cardSub2.textContent =
         APP.CONFIG.studentName + " · " + APP.CONFIG.eventTime + " · " + APP.CONFIG.eventPlace;
     }
+    if (els.cardInviteGuest) {
+      els.cardInviteGuest.textContent = displayName || "Bạn và gia đình";
+    }
     if (els.cardThanks) els.cardThanks.textContent = "Cảm ơn vì sự có mặt của bạn.";
-    // Không hiện khung ảnh lơ lửng trước khi chụp
     if (els.cardFrame) els.cardFrame.hidden = true;
     if (els.cardEmpty) els.cardEmpty.hidden = false;
     if (els.cardPhoto) els.cardPhoto.hidden = true;

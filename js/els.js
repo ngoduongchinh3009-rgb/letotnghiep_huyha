@@ -25,6 +25,7 @@
     cardSub: document.getElementById("card-sub"),
     cardFrame: document.getElementById("card-frame"),
     cardEmpty: document.getElementById("card-empty"),
+    cardInviteGuest: document.getElementById("card-invite-guest"),
     cardPhoto: document.getElementById("card-photo"),
     cardPlaceholder: document.getElementById("card-placeholder"),
     cardThanks: document.getElementById("card-thanks"),
