@@ -1,0 +1,138 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: system-ui, sans-serif;
+  background:
+    radial-gradient(1200px 500px at 50% -200px, #60a5fa44 0%, transparent 70%),
+    linear-gradient(180deg, #0b1120 0%, #020617 100%);
+  color: #e6eefc;
+}
+
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: max(0.75rem, env(safe-area-inset-top)) 0.75rem max(1rem, env(safe-area-inset-bottom));
+}
+
+.bar {
+  text-align: center;
+  margin-bottom: 0.7rem;
+}
+
+.bar h1 {
+  margin: 0 0 0.25rem;
+  font-size: clamp(1.1rem, 4vw, 1.35rem);
+  font-weight: 700;
+}
+
+.score {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #a5b7d8;
+}
+
+.canvas-shell {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #3b82f655;
+  box-shadow:
+    0 16px 50px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  background: #020617;
+}
+
+#c {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+}
+
+.hint {
+  margin: 0.5rem 0 0;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #8ea6cd;
+  line-height: 1.4;
+}
+
+.touch {
+  display: none;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+@media (hover: none) {
+  .touch {
+    display: flex;
+  }
+
+  .hint {
+    font-size: 0.72rem;
+  }
+}
+
+.touch__btn {
+  min-width: 4.5rem;
+  min-height: 3rem;
+  font-size: 1.1rem;
+  border: 1px solid #4f6ea7;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #22304f, #172039);
+  color: #e6eefc;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.touch__btn:active {
+  transform: translateY(1px) scale(0.98);
+  background: linear-gradient(180deg, #2f426c, #1f2d4e);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 6, 23, 0.72);
+  padding: 1rem;
+}
+
+.card {
+  background: linear-gradient(180deg, #17213a, #101a32);
+  border: 1px solid #5379bd;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  max-width: 20rem;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.4);
+}
+
+.card h2 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+}
+
+.btn {
+  padding: 0.55rem 1.2rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #58d2ff, #2ea2f0);
+  color: #031329;
+}
+
+[hidden] {
+  display: none !important;
+}

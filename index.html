@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Xác thực người thân – Nhận thiệp mời</title>
+  <!-- Font: ưu tiên hệ thống để vẫn đẹp khi offline (không cần tải Google Fonts) -->
+  <style>
+    /* ========== Base / projector-friendly ========== */
+    *,
+    *::before,
+    *::after { box-sizing: border-box; }
+
+    :root {
+      --bg-deep: #2c1810;
+      --bg-warm: #4a2c1a;
+      --cream: #fff8e7;
+      --gold: #d4a574;
+      --gold-dark: #8b5a2b;
+      --accent: #c9a227;
+      --text: #2a1810;
+      --muted: #6b5344;
+      --shadow: rgba(44, 24, 16, 0.35);
+      /* Serif ấm cho lời mời / tiêu đề; sans rõ ràng cho form & chi tiết */
+      --font: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+      --font-ui: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: var(--font-ui);
+      background: radial-gradient(ellipse 120% 80% at 50% 0%, var(--bg-warm), var(--bg-deep));
+      color: var(--cream);
+      overflow-x: hidden;
+    }
+
+    /* Màn hình: chỉ hiện một khối tại một thời điểm */
+    .screen {
+      display: none;
+      min-height: 100dvh;
+      padding: clamp(1rem, 4vw, 2.5rem);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .screen.is-active {
+      display: flex;
+    }
+
+    /* ========== Splash ========== */
+    .splash-text {
+      font-family: var(--font);
+      font-size: clamp(1.75rem, 5vw, 3rem);
+      font-weight: 600;
+      line-height: 1.45;
+      max-width: 36ch;
+      opacity: 0;
+      animation: fadeIn 1.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== Form ========== */
+    .panel {
+      width: min(100%, 520px);
+      background: linear-gradient(165deg, #fff9ee 0%, #f5e6d3 100%);
+      color: var(--text);
+      border: 4px solid var(--gold-dark);
+      border-radius: 16px;
+      padding: clamp(1.5rem, 4vw, 2.25rem);
+      box-shadow: 0 20px 50px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .panel h2 {
+      font-family: var(--font);
+      font-size: clamp(1.35rem, 3.5vw, 1.85rem);
+      margin: 0 0 1.25rem;
+      color: var(--gold-dark);
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      font-size: clamp(1rem, 2.2vw, 1.15rem);
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      font-family: var(--font-ui);
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--gold);
+      border-radius: 10px;
+      margin-bottom: 0.65rem;
+      background: #fff;
+      color: var(--text);
+    }
+
+    /* Nhận diện tên → chức danh / lời thân thiết (cập nhật khi gõ) */
+    .guest-live {
+      min-height: 3.1em;
+      margin: 0 0 1rem;
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+      font-family: var(--font);
+      font-size: clamp(0.95rem, 2.2vw, 1.1rem);
+      line-height: 1.45;
+      color: var(--gold-dark);
+      background: rgba(212, 165, 116, 0.18);
+      border-radius: 10px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .guest-live.is-empty {
+      color: var(--muted);
+      font-style: italic;
+      font-family: var(--font-ui);
+      font-size: clamp(0.88rem, 2vw, 1rem);
+      border-left-color: rgba(139, 90, 43, 0.35);
+      background: rgba(107, 83, 68, 0.08);
+    }
+
+    .guest-live strong {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-style: normal;
+      color: var(--text);
+    }
+
+    input:focus,
+    select:focus {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+
+    button {
+      font-family: var(--font-ui);
+      font-size: clamp(1.05rem, 2.3vw, 1.2rem);
+      font-weight: 700;
+      padding: 0.85rem 1.6rem;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #e8c76b, #c9a227);
+      color: #2a1810;
+      box-shadow: 0 6px 20px rgba(201, 162, 39, 0.45);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 8px 28px rgba(201, 162, 39, 0.55);
+    }
+
+    .btn-ghost {
+      background: rgba(139, 90, 43, 0.15);
+      color: var(--gold-dark);
+      border: 2px solid var(--gold-dark);
+    }
+
+    /* ========== Loading ========== */
+    .loading-text {
+      font-family: var(--font);
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      max-width: 28ch;
+      line-height: 1.4;
+      margin-bottom: 2rem;
+    }
+
+    .spinner {
+      width: clamp(56px, 12vw, 80px);
+      height: clamp(56px, 12vw, 80px);
+      border: 5px solid rgba(255, 248, 231, 0.25);
+      border-top-color: var(--cream);
+      border-radius: 50%;
+      animation: spin 0.95s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ========== Reveal (cảm xúc) ========== */
+    .reveal-line {
+      font-family: var(--font);
+      font-size: clamp(1.5rem, 4.5vw, 2.5rem);
+      line-height: 1.35;
+      max-width: 22ch;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    .reveal-line.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-name {
+      font-family: var(--font);
+      font-size: clamp(2.5rem, 10vw, 5rem);
+      font-weight: 700;
+      color: #fff0c8;
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      margin-top: 1.5rem;
+      opacity: 0;
+      transform: scale(0.85);
+      transition: opacity 1s ease, transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .reveal-name.is-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .btn-continue {
+      margin-top: 2rem;
+    }
+
+    /* ========== Thiệp mời (HTML/CSS) ========== */
+    .invite-wrap {
+      width: min(100%, 480px);
+    }
+
+    .invite-card {
+      font-family: var(--font);
+      background: linear-gradient(145deg, #fffdf5 0%, #f8ead0 45%, #edd9b8 100%);
+      color: var(--text);
+      border: 6px double var(--gold-dark);
+      border-radius: 8px;
+      padding: clamp(1.5rem, 4vw, 2.25rem) clamp(1.25rem, 3vw, 2rem);
+      box-shadow: 0 16px 40px var(--shadow), inset 0 0 60px rgba(212, 165, 116, 0.15);
+      text-align: center;
+    }
+
+    .invite-card .ornament {
+      font-size: 1.5rem;
+      color: var(--gold-dark);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.35em;
+    }
+
+    .invite-card h3 {
+      font-size: clamp(1.1rem, 2.8vw, 1.35rem);
+      font-weight: 600;
+      margin: 0 0 0.75rem;
+      color: var(--gold-dark);
+    }
+
+    .invite-card .guest {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
+      color: #5c3d2e;
+      margin: 0.5rem 0 0.35rem;
+      line-height: 1.25;
+    }
+
+    .invite-card .guest-role {
+      font-family: var(--font-ui);
+      font-size: clamp(0.88rem, 2.1vw, 1.02rem);
+      font-weight: 600;
+      color: var(--muted);
+      margin: 0 0 1rem;
+      line-height: 1.45;
+    }
+
+    .invite-card p {
+      font-size: clamp(1rem, 2.4vw, 1.2rem);
+      margin: 0.4rem 0;
+      line-height: 1.5;
+    }
+
+    .invite-card .meal {
+      font-family: var(--font-ui);
+      font-size: clamp(0.92rem, 2.1vw, 1.05rem);
+      margin: 1rem 0 0.35rem;
+      padding: 0.75rem 0.65rem;
+      background: rgba(255, 255, 255, 0.55);
+      border-radius: 8px;
+      color: #4a3528;
+      line-height: 1.5;
+    }
+
+    .invite-card .sponsor {
+      font-family: var(--font-ui);
+      font-size: clamp(0.85rem, 2vw, 0.98rem);
+      font-weight: 600;
+      color: var(--gold-dark);
+      margin: 0 0 0.25rem;
+    }
+
+    .invite-card .detail {
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 2px solid var(--gold);
+      font-size: clamp(0.95rem, 2.2vw, 1.1rem);
+      color: var(--muted);
+    }
+
+    /* ========== Camera + overlay thiệp ========== */
+    .camera-block {
+      width: min(100%, 560px);
+      margin-top: 1.5rem;
+    }
+
+    .camera-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 4px solid var(--gold-dark);
+      background: #1a0f0a;
+      aspect-ratio: 4 / 3;
+      max-height: 55vh;
+    }
+
+    .camera-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: scaleX(-1); /* gương cho selfie */
+    }
+
+    /* Overlay thiệp nhỏ gọn trên camera (đọc được khi chiếu) */
+    .card-overlay {
+      position: absolute;
+      left: 50%;
+      bottom: 8%;
+      transform: translateX(-50%);
+      width: 88%;
+      max-width: 420px;
+      pointer-events: none;
+    }
+
+    .card-overlay .invite-card {
+      padding: 0.65rem 0.85rem;
+      border-width: 3px;
+      font-size: 0.85em;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-overlay .invite-card .guest {
+      font-size: clamp(0.95rem, 2.8vw, 1.15rem);
+    }
+
+    .card-overlay .invite-card h3,
+    .card-overlay .invite-card p,
+    .card-overlay .invite-card .detail {
+      font-size: clamp(0.72rem, 2vw, 0.88rem);
+    }
+
+    .card-overlay .invite-card .guest-role {
+      font-size: clamp(0.62rem, 1.8vw, 0.75rem);
+      margin-bottom: 0.25rem;
+    }
+
+    .card-overlay .invite-card .meal {
+      font-size: clamp(0.58rem, 1.6vw, 0.68rem);
+      margin-top: 0.35rem;
+      padding: 0.35rem 0.4rem;
+      line-height: 1.35;
+    }
+
+    .card-overlay .invite-card .sponsor {
+      font-size: clamp(0.55rem, 1.5vw, 0.65rem);
+      margin-bottom: 0.15rem;
+    }
+
+    .card-overlay .ornament { font-size: 1rem; margin-bottom: 0.25rem; }
+
+    .cam-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .btn-capture {
+      background: linear-gradient(180deg, #f0e6d8, #d4bc9a);
+      color: #2a1810;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    }
+
+    .cam-hint {
+      font-size: clamp(0.85rem, 2vw, 1rem);
+      color: rgba(255, 248, 231, 0.75);
+      margin-top: 0.75rem;
+      max-width: 42ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Cảnh báo khi không phải HTTPS (điện thoại thường không cho mở camera) */
+    .secure-banner {
+      max-width: min(100%, 520px);
+      margin: 0 auto 1rem;
+      padding: 0.85rem 1rem;
+      text-align: left;
+      font-size: clamp(0.82rem, 2.1vw, 0.95rem);
+      line-height: 1.45;
+      color: #2a1810;
+      background: linear-gradient(135deg, #ffe8a8, #ffd27a);
+      border: 2px solid #c9a227;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .secure-banner strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 1.05em;
+    }
+
+    /* Hướng dẫn mở bằng điện thoại + bật camera */
+    .access-help {
+      width: min(100%, 520px);
+      margin: 1rem auto 0;
+      text-align: left;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 248, 231, 0.35);
+      border-radius: 12px;
+      padding: 0.5rem 0.85rem;
+    }
+
+    .access-help summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+      color: var(--cream);
+      padding: 0.35rem 0;
+    }
+
+    .access-help .access-help__body {
+      font-size: clamp(0.82rem, 2vw, 0.95rem);
+      line-height: 1.55;
+      color: rgba(255, 248, 231, 0.92);
+      padding: 0.25rem 0 0.5rem;
+    }
+
+    .access-help code {
+      font-size: 0.9em;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.12rem 0.35rem;
+      border-radius: 6px;
+    }
+
+    .cam-error {
+      color: #ffb4a8;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    canvas { display: none; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== 1) Màn mở đầu ===== -->
+  <section id="screen-splash" class="screen is-active" aria-live="polite">
+    <p class="splash-text">Hôm nay… mình muốn mời một người đặc biệt.</p>
+  </section>
+
+  <!-- ===== 2) Form xác thực ===== -->
+  <section id="screen-form" class="screen" aria-labelledby="form-title">
+    <div class="panel">
+      <h2 id="form-title">Xác thực người thân</h2>
+      <form id="verify-form" novalidate>
+        <label for="guest-name">Họ tên người được mời</label>
+        <input type="text" id="guest-name" name="guestName" autocomplete="name" required placeholder="Ví dụ: BapDunChin, Nam, Bố…">
+
+        <p class="guest-live is-empty" id="guest-live" aria-live="polite">
+          Gõ tên để hiện chức danh / lời nhắn thân thiết (theo danh sách mời).
+        </p>
+
+        <label for="relation">Mối quan hệ</label>
+        <select id="relation" name="relation" required>
+          <option value="" disabled selected>— Chọn —</option>
+          <option value="Bố">Bố</option>
+          <option value="Mẹ">Mẹ</option>
+          <option value="Anh trai">Anh trai</option>
+          <option value="Người yêu (anh trai)">Người yêu (anh trai)</option>
+          <option value="Người yêu">Người yêu</option>
+          <option value="Người tốt nghiệp">Người tốt nghiệp</option>
+          <option value="Anh">Anh</option>
+          <option value="Chị">Chị</option>
+          <option value="Bạn">Bạn</option>
+        </select>
+
+        <div class="btn-row">
+          <button type="submit" class="btn-primary">Xác thực</button>
+          <button type="button" class="btn-ghost" id="btn-demo">Demo nhanh</button>
+        </div>
+      </form>
+
+      <details class="access-help">
+        <summary>Điện thoại truy cập &amp; mở camera (bấm để xem)</summary>
+        <div class="access-help__body">
+          <p>
+            <strong>Cho mọi điện thoại, mọi nơi (4G/Wi‑Fi khác nhau):</strong>
+            Có — bạn chỉ cần đưa trang lên một chỗ host tĩnh có <strong>HTTPS</strong> (miễn phí), ví dụ
+            <a href="https://pages.github.com/" target="_blank" rel="noopener noreferrer" style="color:#9ecfff">GitHub Pages</a>,
+            <a href="https://www.netlify.com/" target="_blank" rel="noopener noreferrer" style="color:#9ecfff">Netlify</a>,
+            <a href="https://pages.cloudflare.com/" target="_blank" rel="noopener noreferrer" style="color:#9ecfff">Cloudflare Pages</a>.
+            Bạn được một link <code>https://…</code> cố định: gửi link đó cho ai cũng mở được; camera trên điện thoại thường chạy vì đúng chuẩn bảo mật. Không cần cùng Wi‑Fi hay bật máy ở nhà.
+          </p>
+          <p><strong>1.</strong> Điện thoại và máy tính cùng một Wi‑Fi.</p>
+          <p><strong>2.</strong> Trên máy tính, mở terminal trong thư mục chứa file này và chạy:</p>
+          <p><code>python -m http.server 8080</code></p>
+          <p><strong>3.</strong> Tra IP máy tính (ví dụ <code>192.168.1.10</code>). Trên điện thoại mở trình duyệt, gõ:</p>
+          <p><code>http://192.168.1.10:8080/index.html</code> (đổi đúng IP của bạn).</p>
+          <p><strong>4. Rất quan trọng — camera:</strong> iPhone (Safari) và nhiều máy Android <strong>chỉ cho phép camera khi trang chạy bằng HTTPS</strong> (hoặc <code>localhost</code> trên chính máy đó). Địa chỉ <code>http://192.168…</code> thường <strong>không</strong> bật được camera.</p>
+          <p><strong>Cách chắc chắn:</strong> dùng tunnel miễn phí có HTTPS, ví dụ cài <a href="https://ngrok.com/" target="_blank" rel="noopener noreferrer" style="color:#9ecfff">ngrok</a>, chạy <code>ngrok http 8080</code>, rồi mở link <code>https://…</code> ngrok cấp — điện thoại vào link đó là camera được phép (trình duyệt sẽ hỏi quyền).</p>
+          <p><strong>5.</strong> Khi trình duyệt hỏi, chọn <strong>Cho phép</strong> quyền camera.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===== 3) Loading ===== -->
+  <section id="screen-loading" class="screen" aria-live="assertive" aria-busy="true">
+    <p class="loading-text">Đang xác thực người quan trọng nhất...</p>
+    <div class="spinner" role="presentation"></div>
+  </section>
+
+  <!-- ===== 4) Reveal cảm xúc + tên ===== -->
+  <section id="screen-reveal" class="screen" aria-live="polite">
+    <p class="reveal-line" id="reveal-1">Sau 4 năm...</p>
+    <p class="reveal-line" id="reveal-2">Có rất nhiều người quan trọng...</p>
+    <p class="reveal-line" id="reveal-3">Nhưng người mình muốn mời nhất là...</p>
+    <p class="reveal-name" id="reveal-name" aria-label="Tên người được mời"></p>
+    <button type="button" class="btn-primary btn-continue" id="btn-to-invite" hidden>
+      Xem thiệp mời
+    </button>
+  </section>
+
+  <!-- ===== 5) Thiệp + camera ===== -->
+  <section id="screen-invite" class="screen" aria-labelledby="invite-heading">
+    <h2 id="invite-heading" class="sr-only">Thiệp mời &amp; chụp ảnh</h2>
+    <div class="invite-wrap">
+      <div class="invite-card" id="invite-card-main" aria-live="polite">
+        <div class="ornament">✦ ✦ ✦</div>
+        <h3>Trân trọng kính mời</h3>
+        <p class="guest" id="invite-guest">[Tên người thân]</p>
+        <p class="guest-role" id="invite-role"></p>
+        <p>Đến tham dự lễ tốt nghiệp</p>
+        <p><strong id="invite-student">[Tên sinh viên]</strong></p>
+        <p class="meal" id="invite-meal"></p>
+        <p class="sponsor" id="invite-sponsor"></p>
+        <div class="detail">
+          <p><strong>Thời gian:</strong> <span id="invite-time"></span></p>
+          <p><strong>Địa điểm:</strong> <span id="invite-place"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="camera-block">
+      <p style="margin:0 0 0.5rem; font-size:clamp(1rem,2.5vw,1.15rem);">Chụp ảnh kỷ niệm cùng thiệp mời</p>
+      <div id="secure-banner" class="secure-banner" hidden></div>
+      <div class="camera-wrap" id="camera-wrap">
+        <video id="cam-video" playsinline webkit-playsinline autoplay muted></video>
+        <div class="card-overlay" id="card-overlay" aria-hidden="true">
+          <!-- Bản sao thiệp để overlay lên video (JS đồng bộ nội dung) -->
+          <div class="invite-card" id="invite-card-overlay">
+            <div class="ornament">✦ ✦ ✦</div>
+            <h3>Trân trọng kính mời</h3>
+            <p class="guest" id="overlay-guest">[Tên]</p>
+            <p class="guest-role" id="overlay-role"></p>
+            <p>Đến tham dự lễ tốt nghiệp</p>
+            <p><strong id="overlay-student">[SV]</strong></p>
+            <p class="meal" id="overlay-meal"></p>
+            <p class="sponsor" id="overlay-sponsor"></p>
+            <div class="detail">
+              <p><strong>Thời gian:</strong> <span id="overlay-time"></span></p>
+              <p><strong>Địa điểm:</strong> <span id="overlay-place"></span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cam-actions">
+        <button type="button" class="btn-capture" id="btn-start-cam">Mở camera</button>
+        <button type="button" class="btn-primary" id="btn-capture" disabled>Chụp ảnh kỷ niệm</button>
+      </div>
+      <p class="cam-hint">Ảnh tải về PNG. Camera trên điện thoại: cần trang <strong>HTTPS</strong> (hoặc localhost). Mở mục “Điện thoại truy cập &amp; mở camera” ở màn form để xem cách dùng ngrok.</p>
+      <p class="cam-error" id="cam-error" hidden></p>
+    </div>
+    <canvas id="snap-canvas"></canvas>
+  </section>
+
+  <script>
+(function () {
+  "use strict";
+
+  /* ========================================================================
+     CẤU HÌNH — Sửa các giá trị sau cho buổi trình bày của bạn
+     ======================================================================== */
+  var CONFIG = {
+    studentName: "Nguyễn Huy Hà",
+    eventTime: "10h",
+    eventPlace: "Đại học Bách Khoa Hà Nội",
+    mealLine:
+      "Sau buổi lễ, gia đình trân trọng kính mời dùng bữa cơm thân mật chung vui cùng gia đình.",
+    sponsorLine: "Nhà tài trợ chính: Bố & Mẹ.",
+    splashDelayMs: 2600,
+    loadingMs: 2800,
+    revealGapMs: 2200,
+    nameHoldMs: 2200
+  };
+
+  /**
+   * Danh sách khách mời: khớp theo tên gõ (không phân biệt hoa thường, bỏ dấu).
+   * display: tên hiển thị chuẩn trên thiệp | role: dòng thân thiết | relation: giá trị <select> tương ứng
+   */
+  var GUEST_DB = [
+    {
+      match: ["bapdunchin", "bap dun chin", "bapdun chin"],
+      display: "BapDunChin",
+      role: "Em người yêu xinhdep hiểu chuyện — người đồng hành đáng tin cậy.",
+      relation: "Người yêu",
+    },
+    {
+      match: ["nguyen huy ha", "nguyễn huy hà", "huy ha", "huy hà"],
+      display: "Nguyễn Huy Hà",
+      role: "Siuuuuu cấp deptroai — nhân vật chính của buổi lễ.",
+      relation: "Người tốt nghiệp",
+    },
+    {
+      match: ["bo", "bố", "cha"],
+      display: "Bố",
+      role: "Bố — nhà tài trợ chính & chỗ dựa vững chắc.",
+      relation: "Bố",
+    },
+    {
+      match: ["me", "mẹ", "ma"],
+      display: "Mẹ",
+      role: "Mẹ — nhà tài trợ chính & người mẹ hiền từ.",
+      relation: "Mẹ",
+    },
+    {
+      match: ["nam"],
+      display: "Anh trai",
+      role: "Anh trai — ba chấm... anh trai.",
+      relation: "Anh trai",
+    },
+    {
+      match: ["duong", "dương"],
+      display: "Thùy Dương",
+      role: "Người yêu của anh trai — thành viên \"gia đình mở rộng\".",
+      relation: "Người yêu (anh trai)",
+    },
+  ];
+
+  function foldAccents(s) {
+    if (!s) return "";
+    try {
+      return s
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+    } catch (e) {
+      return String(s).toLowerCase();
+    }
+  }
+
+  function normName(s) {
+    return foldAccents(String(s).trim()).replace(/\s+/g, " ");
+  }
+
+  /** Tìm khách theo chuỗi đang gõ (ưu tiên khớp chính xác với một trong các alias) */
+  function lookupGuest(raw) {
+    var q = normName(raw);
+    if (!q) return null;
+    var i;
+    var j;
+    for (i = 0; i < GUEST_DB.length; i++) {
+      var g = GUEST_DB[i];
+      for (j = 0; j < g.match.length; j++) {
+        var m = normName(g.match[j]).replace(/\s+/g, "");
+        var qq = q.replace(/\s+/g, "");
+        if (q === normName(g.match[j]) || qq === m) return g;
+      }
+    }
+    for (i = 0; i < GUEST_DB.length; i++) {
+      var g2 = GUEST_DB[i];
+      if (q.length >= 3 && foldAccents(g2.display).indexOf(q) !== -1) return g2;
+      for (j = 0; j < g2.match.length; j++) {
+        if (q.length >= 3 && normName(g2.match[j]).indexOf(q) !== -1) return g2;
+      }
+    }
+    return null;
+  }
+
+  /* ===== DOM ===== */
+  var splash = document.getElementById("screen-splash");
+  var formScreen = document.getElementById("screen-form");
+  var loadingScreen = document.getElementById("screen-loading");
+  var revealScreen = document.getElementById("screen-reveal");
+  var inviteScreen = document.getElementById("screen-invite");
+
+  var form = document.getElementById("verify-form");
+  var inputName = document.getElementById("guest-name");
+  var selectRelation = document.getElementById("relation");
+  var btnDemo = document.getElementById("btn-demo");
+  var guestLive = document.getElementById("guest-live");
+
+  var reveal1 = document.getElementById("reveal-1");
+  var reveal2 = document.getElementById("reveal-2");
+  var reveal3 = document.getElementById("reveal-3");
+  var revealName = document.getElementById("reveal-name");
+  var btnToInvite = document.getElementById("btn-to-invite");
+
+  var inviteGuest = document.getElementById("invite-guest");
+  var inviteRole = document.getElementById("invite-role");
+  var inviteStudent = document.getElementById("invite-student");
+  var inviteMeal = document.getElementById("invite-meal");
+  var inviteSponsor = document.getElementById("invite-sponsor");
+  var inviteTime = document.getElementById("invite-time");
+  var invitePlace = document.getElementById("invite-place");
+
+  var overlayGuest = document.getElementById("overlay-guest");
+  var overlayRole = document.getElementById("overlay-role");
+  var overlayStudent = document.getElementById("overlay-student");
+  var overlayMeal = document.getElementById("overlay-meal");
+  var overlaySponsor = document.getElementById("overlay-sponsor");
+  var overlayTime = document.getElementById("overlay-time");
+  var overlayPlace = document.getElementById("overlay-place");
+
+  var camWrap = document.getElementById("camera-wrap");
+  var video = document.getElementById("cam-video");
+  var btnStartCam = document.getElementById("btn-start-cam");
+  var btnCapture = document.getElementById("btn-capture");
+  var camError = document.getElementById("cam-error");
+  var snapCanvas = document.getElementById("snap-canvas");
+
+  var guestFullName = "";
+  /** Dòng chức danh hiển thị trên thiệp + canvas (theo khách khớp hoặc mặc định) */
+  var guestRoleLine = "";
+
+  /* ===== Điều hướng màn hình ===== */
+  function showScreen(el) {
+    var screens = document.querySelectorAll(".screen");
+    var i;
+    for (i = 0; i < screens.length; i++) screens[i].classList.remove("is-active");
+    el.classList.add("is-active");
+  }
+
+  function wait(ms) {
+    return new Promise(function (resolve) {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  function setGuestLiveFromInput() {
+    var raw = (inputName.value || "").trim();
+    if (!raw) {
+      guestLive.classList.add("is-empty");
+      guestLive.innerHTML =
+        "Gõ tên để hiện chức danh / lời nhắn thân thiết (theo danh sách mời).";
+      return;
+    }
+    var hit = lookupGuest(raw);
+    guestLive.classList.remove("is-empty");
+    if (hit) {
+      guestLive.innerHTML =
+        "<strong>" +
+        hit.display +
+        "</strong><br><span>" +
+        hit.role +
+        "</span>";
+      var opt;
+      for (opt = 0; opt < selectRelation.options.length; opt++) {
+        if (selectRelation.options[opt].value === hit.relation) {
+          selectRelation.selectedIndex = opt;
+          break;
+        }
+      }
+    } else {
+      guestLive.innerHTML =
+        "Chưa khớp danh sách mời — vẫn có thể chọn <strong>mối quan hệ</strong> và bấm Xác thực.";
+    }
+  }
+
+  /* Đồng bộ nội dung thiệp (bản lớn + overlay camera) */
+  function fillInviteCard(displayName, roleLine) {
+    guestRoleLine = roleLine || "";
+    inviteGuest.textContent = displayName;
+    inviteRole.textContent = guestRoleLine;
+    inviteStudent.textContent = CONFIG.studentName;
+    inviteMeal.textContent = CONFIG.mealLine;
+    inviteSponsor.textContent = CONFIG.sponsorLine;
+    inviteTime.textContent = CONFIG.eventTime;
+    invitePlace.textContent = CONFIG.eventPlace;
+    overlayGuest.textContent = displayName;
+    overlayRole.textContent = guestRoleLine;
+    overlayStudent.textContent = CONFIG.studentName;
+    overlayMeal.textContent = CONFIG.mealLine;
+    overlaySponsor.textContent = CONFIG.sponsorLine;
+    overlayTime.textContent = CONFIG.eventTime;
+    overlayPlace.textContent = CONFIG.eventPlace;
+  }
+
+  /* ===== 1) Splash → Form ===== */
+  function startSplash() {
+    wait(CONFIG.splashDelayMs).then(function () {
+      showScreen(formScreen);
+      inputName.focus();
+    });
+  }
+
+  /* ===== 3–4) Loading → Reveal tuần tự ===== */
+  function runRevealSequence(displayName) {
+    showScreen(loadingScreen);
+    return wait(CONFIG.loadingMs)
+      .then(function () {
+        showScreen(revealScreen);
+        reveal1.classList.remove("is-visible");
+        reveal2.classList.remove("is-visible");
+        reveal3.classList.remove("is-visible");
+        revealName.classList.remove("is-visible");
+        revealName.textContent = "";
+        btnToInvite.hidden = true;
+        return wait(400);
+      })
+      .then(function () {
+        reveal1.classList.add("is-visible");
+        return wait(CONFIG.revealGapMs);
+      })
+      .then(function () {
+        reveal2.classList.add("is-visible");
+        return wait(CONFIG.revealGapMs);
+      })
+      .then(function () {
+        reveal3.classList.add("is-visible");
+        return wait(CONFIG.revealGapMs);
+      })
+      .then(function () {
+        revealName.textContent = displayName;
+        /* reflow để animation chạy */
+        void revealName.offsetWidth;
+        revealName.classList.add("is-visible");
+        return wait(CONFIG.nameHoldMs);
+      })
+      .then(function () {
+        btnToInvite.hidden = false;
+      });
+  }
+
+  /* Bo góc hình chữ nhật (canvas mọi trình duyệt) */
+  function pathRoundRect(ctx, x, y, rw, rh, r) {
+    var rr = Math.min(r, rw / 2, rh / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.lineTo(x + rw - rr, y);
+    ctx.quadraticCurveTo(x + rw, y, x + rw, y + rr);
+    ctx.lineTo(x + rw, y + rh - rr);
+    ctx.quadraticCurveTo(x + rw, y + rh, x + rw - rr, y + rh);
+    ctx.lineTo(x + rr, y + rh);
+    ctx.quadraticCurveTo(x, y + rh, x, y + rh - rr);
+    ctx.lineTo(x, y + rr);
+    ctx.quadraticCurveTo(x, y, x + rr, y);
+    ctx.closePath();
+  }
+
+  /* Vẽ thiệp đơn giản lên canvas (offline, không cần thư viện) — tông vàng/trắng */
+  function drawInviteOnCanvas(ctx, w, h, name) {
+    var pad = Math.round(Math.min(w, h) * 0.05);
+    var cardW = w - pad * 2;
+    var cardH = Math.round(h * 0.5);
+    var x = pad;
+    var y = h - pad - cardH;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(42, 24, 16, 0.35)";
+    pathRoundRect(ctx, x + 4, y + 6, cardW, cardH, 10);
+    ctx.fill();
+    ctx.restore();
+
+    var grd = ctx.createLinearGradient(x, y, x, y + cardH);
+    grd.addColorStop(0, "#fffdf5");
+    grd.addColorStop(1, "#edd9b8");
+    ctx.fillStyle = grd;
+    ctx.strokeStyle = "#8b5a2b";
+    ctx.lineWidth = 5;
+    pathRoundRect(ctx, x, y, cardW, cardH, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.textAlign = "center";
+    var cx = x + cardW / 2;
+    var cy = y + cardH * 0.09;
+    var lh;
+
+    ctx.fillStyle = "#8b5a2b";
+    ctx.font = "600 " + Math.max(13, cardH * 0.065) + "px Palatino Linotype, Georgia, serif";
+    ctx.fillText("Trân trọng kính mời", cx, cy);
+    cy += cardH * 0.095;
+
+    ctx.fillStyle = "#5c3d2e";
+    ctx.font = "700 " + Math.max(16, cardH * 0.11) + "px Palatino Linotype, Georgia, serif";
+    ctx.fillText(name, cx, cy);
+    cy += cardH * 0.1;
+
+    ctx.fillStyle = "#6b5344";
+    ctx.font = "600 " + Math.max(10, cardH * 0.048) + "px Segoe UI, sans-serif";
+    lh = Math.max(11, cardH * 0.05);
+    if (guestRoleLine) cy = wrapFillCenter(ctx, guestRoleLine, cx, cy, cardW * 0.9, lh) + lh * 0.2;
+
+    ctx.fillStyle = "#4a3528";
+    ctx.font = "500 " + Math.max(11, cardH * 0.055) + "px Palatino Linotype, Georgia, serif";
+    ctx.fillText("Đến tham dự lễ tốt nghiệp", cx, cy);
+    cy += cardH * 0.075;
+
+    ctx.font = "700 " + Math.max(12, cardH * 0.058) + "px Palatino Linotype, Georgia, serif";
+    ctx.fillText(CONFIG.studentName, cx, cy);
+    cy += cardH * 0.085;
+
+    ctx.fillStyle = "#5c4a3a";
+    ctx.font = "500 " + Math.max(9, cardH * 0.042) + "px Segoe UI, sans-serif";
+    lh = Math.max(10, cardH * 0.045);
+    cy = wrapFillCenter(ctx, CONFIG.mealLine, cx, cy, cardW * 0.9, lh) + lh * 0.25;
+
+    ctx.fillStyle = "#8b5a2b";
+    ctx.font = "600 " + Math.max(9, cardH * 0.04) + "px Segoe UI, sans-serif";
+    cy = wrapFillCenter(ctx, CONFIG.sponsorLine, cx, cy, cardW * 0.9, lh) + lh * 0.35;
+
+    ctx.strokeStyle = "#d4a574";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x + cardW * 0.08, cy);
+    ctx.lineTo(x + cardW * 0.92, cy);
+    ctx.stroke();
+    cy += cardH * 0.055;
+
+    ctx.fillStyle = "#6b5344";
+    var sub = Math.max(9, cardH * 0.038);
+    ctx.font = "500 " + sub + "px Segoe UI, sans-serif";
+    cy = wrapFillCenter(ctx, "Thời gian: " + CONFIG.eventTime, cx, cy, cardW * 0.88, sub * 1.12);
+    wrapFillCenter(ctx, "Địa điểm: " + CONFIG.eventPlace, cx, cy, cardW * 0.88, sub * 1.12);
+  }
+
+  /* Xuống dòng ngắn cho canvas nếu chuỗi dài */
+  /** Vẽ text xuống dòng theo từ; trả về y sau dòng cuối */
+  function wrapFillCenter(ctx, text, cx, startY, maxWidth, lineHeight) {
+    var words = String(text).split(/\s+/);
+    var line = "";
+    var y = startY;
+    var n;
+    for (n = 0; n < words.length; n++) {
+      var test = line ? line + " " + words[n] : words[n];
+      if (ctx.measureText(test).width > maxWidth && line) {
+        ctx.fillText(line, cx, y);
+        y += lineHeight;
+        line = words[n];
+      } else {
+        line = test;
+      }
+    }
+    if (line) ctx.fillText(line, cx, y);
+    return y;
+  }
+
+  /* ===== Camera + chụp (composite PNG) ===== */
+  var stream = null;
+
+  function setCamError(msg) {
+    camError.textContent = msg;
+    camError.hidden = !msg;
+  }
+
+  function stopCamera() {
+    if (stream) {
+      var tracks = stream.getTracks();
+      var t;
+      for (t = 0; t < tracks.length; t++) tracks[t].stop();
+      stream = null;
+    }
+    video.srcObject = null;
+  }
+
+  function refreshSecureBanner() {
+    var el = document.getElementById("secure-banner");
+    if (!el) return;
+    if (window.isSecureContext) {
+      el.hidden = true;
+      el.textContent = "";
+      return;
+    }
+    el.hidden = false;
+    el.innerHTML =
+      "<strong>Camera trên điện thoại:</strong> Trang này không chạy trong ngữ cảnh bảo mật (HTTPS / localhost). Safari và hầu hết trình duyệt mobile <em>sẽ chặn</em> camera. Hãy phục vụ trang qua <strong>HTTPS</strong> — cách nhanh nhất: <code>ngrok http 8080</code> rồi mở link <code>https://…</code> trên điện thoại (xem chi tiết ở mục hướng dẫn dưới form).";
+  }
+
+  btnStartCam.addEventListener("click", function () {
+    setCamError("");
+    refreshSecureBanner();
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setCamError(
+        "Trình duyệt không hỗ trợ camera. Không mở file bằng file:// — hãy dùng máy chủ cục bộ hoặc HTTPS."
+      );
+      return;
+    }
+    if (!window.isSecureContext) {
+      setCamError(
+        "Cần HTTPS (hoặc localhost) để bật camera — nhất là trên điện thoại. Dùng ngrok / đặt lên GitHub Pages để có link https://."
+      );
+      return;
+    }
+    navigator.mediaDevices
+      .getUserMedia({
+        video: {
+          facingMode: { ideal: "user" },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+        audio: false,
+      })
+      .then(function (s) {
+        stream = s;
+        video.srcObject = stream;
+        return video.play();
+      })
+      .then(function () {
+        btnCapture.disabled = false;
+        btnStartCam.textContent = "Camera đã bật";
+        btnStartCam.disabled = true;
+      })
+      .catch(function (err) {
+        var msg = err && err.message ? err.message : "lỗi không xác định";
+        setCamError(
+          "Không mở được camera: " +
+            msg +
+            " — Nếu đang dùng điện thoại: thử HTTPS (ngrok), bật quyền camera trong Cài đặt trình duyệt, và mở bằng Safari/Chrome (không dùng WebView trong app lạ)."
+        );
+      });
+  });
+
+  btnCapture.addEventListener("click", function () {
+    if (!video.videoWidth) {
+      setCamError("Chưa có hình từ camera.");
+      return;
+    }
+    var vw = video.videoWidth;
+    var vh = video.videoHeight;
+    snapCanvas.width = vw;
+    snapCanvas.height = vh;
+    var ctx = snapCanvas.getContext("2d");
+    ctx.save();
+    ctx.translate(vw, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, vw, vh);
+    ctx.restore();
+    drawInviteOnCanvas(ctx, vw, vh, guestFullName);
+
+    snapCanvas.toBlob(function (blob) {
+      if (!blob) return;
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "ky-niem-tot-nghiep.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () {
+        URL.revokeObjectURL(url);
+      }, 2500);
+    }, "image/png");
+  });
+
+  /* Khi rời màn thiệp thì tắt camera tiết kiệm pin (nếu có nút quay lại sau này) */
+  window.addEventListener("beforeunload", stopCamera);
+
+  function buildRoleFromSelect() {
+    var r = selectRelation.value;
+    if (r) return "Mời đến với tư cách: " + r + ".";
+    return "Khách mời thân quý.";
+  }
+
+  /* ===== Form submit ===== */
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = (inputName.value || "").trim();
+    if (!name) {
+      inputName.focus();
+      return;
+    }
+    if (!selectRelation.value) {
+      selectRelation.focus();
+      return;
+    }
+    var hit = lookupGuest(name);
+    var displayName = hit ? hit.display : name;
+    var roleLine = hit ? hit.role : buildRoleFromSelect();
+    guestFullName = displayName;
+    fillInviteCard(displayName, roleLine);
+    runRevealSequence(displayName);
+  });
+
+  inputName.addEventListener("input", setGuestLiveFromInput);
+  inputName.addEventListener("paste", function () {
+    setTimeout(setGuestLiveFromInput, 0);
+  });
+
+  btnDemo.addEventListener("click", function () {
+    inputName.value = "BapDunChin";
+    setGuestLiveFromInput();
+  });
+
+  btnToInvite.addEventListener("click", function () {
+    showScreen(inviteScreen);
+    window.scrollTo(0, 0);
+  });
+
+  /* Điền sẵn phần tĩnh trên thiệp (SV, giờ, địa điểm, bữa cơm — trước khi xác thực) */
+  inviteStudent.textContent = CONFIG.studentName;
+  inviteMeal.textContent = CONFIG.mealLine;
+  inviteSponsor.textContent = CONFIG.sponsorLine;
+  inviteTime.textContent = CONFIG.eventTime;
+  invitePlace.textContent = CONFIG.eventPlace;
+  inviteRole.textContent = "";
+  overlayStudent.textContent = CONFIG.studentName;
+  overlayMeal.textContent = CONFIG.mealLine;
+  overlaySponsor.textContent = CONFIG.sponsorLine;
+  overlayTime.textContent = CONFIG.eventTime;
+  overlayPlace.textContent = CONFIG.eventPlace;
+  overlayRole.textContent = "";
+
+  /* ===== Khởi động ===== */
+  refreshSecureBanner();
+  startSplash();
+})();
+  </script>
+</body>
+</html>
