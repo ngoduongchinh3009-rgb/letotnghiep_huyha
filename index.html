@@ -1315,18 +1315,19 @@
         <p class="hintline">
           Mỗi người gửi một lời chúc + ảnh kỷ niệm. HuyHa sẽ xem được tất cả trong “Wall” phía dưới.
         </p>
-        <details class="access-help" style="margin:0 0 0.8rem; width:100%; max-width:none;">
-          <summary>Thiết lập Firebase (admin) + mã mời (bấm để xem)</summary>
+      <details class="access-help" style="margin:0 0 0.8rem; width:100%; max-width:none;">
+          <summary>Thiết lập (admin): Firebase + Cloudinary + mã mời</summary>
           <div class="access-help__body">
             <p><strong>1)</strong> Tạo Firebase Project → bật <strong>Firestore</strong> + <strong>Storage</strong>.</p>
             <p><strong>2)</strong> Tạo Web App, copy <code>firebaseConfig</code> rồi dán vào biến <code>FIREBASE_CONFIG</code> trong file <code>index.html</code>.</p>
             <p><strong>3)</strong> Chọn <strong>mã mời</strong> (passcode), rồi tạo <strong>SHA-256 hex</strong> và dán vào <code>PASSCODE_HASH</code>.</p>
             <p>Gợi ý nhanh (Console):</p>
             <p><code>(async()=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('MA_MOI'));console.log([...new Uint8Array(b)].map(x=&gt;x.toString(16).padStart(2,'0')).join(''))})()</code></p>
-            <p><strong>4)</strong> Firestore rules mẫu (chặn spam cơ bản):</p>
+        <p><strong>4)</strong> Tạo Cloudinary account → tạo <strong>Upload preset</strong> dạng <strong>Unsigned</strong>, rồi điền <code>CLOUDINARY.cloudName</code> + <code>CLOUDINARY.uploadPreset</code> trong <code>index.html</code>.</p>
+        <p><strong>Giới hạn ảnh:</strong> vì UI Cloudinary có thể không hiện mục giới hạn trong preset, web sẽ tự giới hạn và <strong>tự nén ảnh xuống ~2MB</strong> trước khi upload để an toàn và nhanh trên mobile.</p>
+            <p><strong>5)</strong> Firestore rules mẫu (chặn spam cơ bản):</p>
             <p><code>match /wishes/{id} { allow read: if true; allow create: if request.resource.data.passcodeHash == \"&lt;PASSCODE_HASH&gt;\"; allow update, delete: if false; }</code></p>
-            <p><strong>5)</strong> Storage rules mẫu:</p>
-            <p><code>match /wishes/{id}/{file} { allow read: if true; allow write: if request.resource.metadata.passcodeHash == \"&lt;PASSCODE_HASH&gt;\" \n  && request.resource.size &lt; 6 * 1024 * 1024; }</code></p>
+            <p><strong>Lưu ý:</strong> Dự án này dùng Cloudinary để lưu ảnh, nên không cần Firebase Storage/billing.</p>
             <p><strong>Lưu ý:</strong> Đây là chống spam cơ bản (ai xem được source vẫn thấy hash). Muốn chặt hơn cần Auth hoặc backend.</p>
           </div>
         </details>
@@ -1428,6 +1429,16 @@
      Mục tiêu: chặn spam cơ bản (không phải bảo mật tuyệt đối). */
   /* Passcode hiện tại: HUYHA2026 */
   var PASSCODE_HASH = "5d65ffbe05f00f1dc334b92a08df37165a902102033e1009dc8849f3acba9846";
+
+  /* ========================================================================
+     Cloudinary (upload ảnh) — dùng unsigned upload để không cần billing Firebase Storage.
+     Bạn cần tạo 1 Upload preset (Unsigned) trong Cloudinary console.
+     ======================================================================== */
+  var CLOUDINARY = {
+    cloudName: "dfgpbojdl",
+    uploadPreset: "letotnghiep_huyha",
+    folder: "letotnghiep_huyha",
+  };
 
   /**
    * Danh sách khách mời: khớp theo tên gõ (không phân biệt hoa thường, bỏ dấu).
@@ -1898,7 +1909,7 @@
   var lastPhotoUrl = "";
   var firebaseApp = null;
   var db = null;
-  var storage = null;
+  var storage = null; // legacy: không dùng nữa (chuyển sang Cloudinary)
   var wallUnsub = null;
   var lastWishAt = 0;
   var lastWishPhotoBlob = null;
@@ -2002,7 +2013,6 @@
     try {
       firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
       db = firebase.firestore();
-      storage = firebase.storage();
       setStatus(wishStatus, "muted", "Sẵn sàng. Hãy viết lời chúc và gửi.");
       return true;
     } catch (e) {
@@ -2140,19 +2150,94 @@
     });
   }
 
-  async function uploadWishPhoto(blob, wishId, passcodeHash) {
-    if (!storage) throw new Error("Storage chưa sẵn sàng");
-    var ext = "png";
-    var filename = "photo-" + Date.now() + "." + ext;
-    var ref = storage.ref().child("wishes/" + wishId + "/" + filename);
-    var meta = {
-      contentType: "image/png",
-      customMetadata: {
-        passcodeHash: passcodeHash,
-      },
-    };
-    await ref.put(blob, meta);
-    return await ref.getDownloadURL();
+  function hasCloudinaryConfig() {
+    return CLOUDINARY && CLOUDINARY.cloudName && CLOUDINARY.uploadPreset;
+  }
+
+  async function uploadWishPhotoToCloudinary(fileOrBlob) {
+    if (!hasCloudinaryConfig()) {
+      throw new Error("Chưa cấu hình Cloudinary (cloudName/uploadPreset).");
+    }
+    var endpoint =
+      "https://api.cloudinary.com/v1_1/" + CLOUDINARY.cloudName + "/image/upload";
+    var fd = new FormData();
+    fd.append("file", fileOrBlob);
+    fd.append("upload_preset", CLOUDINARY.uploadPreset);
+    if (CLOUDINARY.folder) fd.append("folder", CLOUDINARY.folder);
+    fd.append("tags", "letotnghiep_huyha");
+
+    var res = await fetch(endpoint, {
+      method: "POST",
+      body: fd,
+    });
+    if (!res.ok) {
+      var txt = await res.text().catch(function () { return ""; });
+      throw new Error("Cloudinary upload lỗi: " + res.status + " " + txt);
+    }
+    var json = await res.json();
+    return json.secure_url || json.url;
+  }
+
+  function isImageFile(f) {
+    return !!(f && f.type && f.type.indexOf("image/") === 0);
+  }
+
+  async function compressImageIfNeeded(fileOrBlob, maxBytes) {
+    // Nếu đã nhỏ thì trả về nguyên bản
+    if (fileOrBlob && fileOrBlob.size && fileOrBlob.size <= maxBytes) return fileOrBlob;
+
+    // Chỉ nén được nếu là ảnh (File/Blob) và trình duyệt hỗ trợ canvas
+    try {
+      var blob = fileOrBlob;
+      var url = URL.createObjectURL(blob);
+      var img = new Image();
+      img.decoding = "async";
+      img.src = url;
+      await new Promise(function (resolve, reject) {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      URL.revokeObjectURL(url);
+
+      var maxW = 1080;
+      var scale = Math.min(1, maxW / img.naturalWidth);
+      var w = Math.max(1, Math.round(img.naturalWidth * scale));
+      var h = Math.max(1, Math.round(img.naturalHeight * scale));
+      var c = document.createElement("canvas");
+      c.width = w;
+      c.height = h;
+      var cx = c.getContext("2d");
+      cx.drawImage(img, 0, 0, w, h);
+
+      // Thử xuất JPEG với chất lượng giảm dần
+      var q = 0.82;
+      var outBlob = await new Promise(function (resolve) {
+        c.toBlob(
+          function (b) {
+            resolve(b);
+          },
+          "image/jpeg",
+          q
+        );
+      });
+      while (outBlob && outBlob.size > maxBytes && q > 0.55) {
+        q -= 0.08;
+        outBlob = await new Promise(function (resolve) {
+          c.toBlob(
+            function (b) {
+              resolve(b);
+            },
+            "image/jpeg",
+            q
+          );
+        });
+      }
+      if (!outBlob) throw new Error("Không nén được ảnh.");
+      return outBlob;
+    } catch (e) {
+      // Nếu nén thất bại thì trả nguyên bản để báo lỗi size ở bước kiểm tra
+      return fileOrBlob;
+    }
   }
 
   function createWishDoc(data) {
@@ -2165,6 +2250,14 @@
     if (!initFirebaseMaybe()) return;
     if (!PASSCODE_HASH) {
       setStatus(wishStatus, "bad", "Chưa đặt PASSCODE_HASH trong code.");
+      return;
+    }
+    if (!hasCloudinaryConfig()) {
+      setStatus(
+        wishStatus,
+        "bad",
+        "Chưa cấu hình Cloudinary. Điền CLOUDINARY.cloudName + CLOUDINARY.uploadPreset trong index.html."
+      );
       return;
     }
     var msg = (wishMessage && wishMessage.value ? wishMessage.value : "").trim();
@@ -2201,8 +2294,18 @@
       setStatus(wishStatus, "bad", "Bạn chưa chọn ảnh (hoặc chưa chụp ảnh).");
       return;
     }
-    if (blob.size > 6 * 1024 * 1024) {
-      setStatus(wishStatus, "bad", "Ảnh quá lớn (>6MB). Hãy chọn ảnh nhỏ hơn.");
+    var MAX_BYTES = 2 * 1024 * 1024; // 2MB để an toàn free tier + nhanh trên mobile
+    if (blob.size && blob.size > MAX_BYTES * 3) {
+      setStatus(wishStatus, "bad", "Ảnh quá lớn. Hãy chọn ảnh nhỏ hơn (khuyến nghị <= 6MB).");
+      return;
+    }
+    if (blob instanceof File && !isImageFile(blob)) {
+      setStatus(wishStatus, "bad", "File không phải ảnh. Hãy chọn PNG/JPG/WebP.");
+      return;
+    }
+    blob = await compressImageIfNeeded(blob, MAX_BYTES);
+    if (blob.size && blob.size > MAX_BYTES) {
+      setStatus(wishStatus, "bad", "Ảnh vẫn hơi lớn sau khi nén. Hãy chọn ảnh khác.");
       return;
     }
 
@@ -2218,7 +2321,7 @@
         passcodeHash: PASSCODE_HASH,
         clientAt: nowIso(),
       });
-      var url = await uploadWishPhoto(blob, docRef.id, PASSCODE_HASH);
+      var url = await uploadWishPhotoToCloudinary(blob);
       await docRef.update({ photoUrl: url });
       lastWishAt = Date.now();
       setStatus(wishStatus, "ok", "Đã gửi! Cảm ơn bạn.");
