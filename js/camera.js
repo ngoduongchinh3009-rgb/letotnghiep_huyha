@@ -122,9 +122,9 @@
 
     if (!els.optBeauty || els.optBeauty.checked) {
       APP.applyPortraitEnhance(ctx, vw, vh);
-      // MediaPipe AR makeup (lip/blush) – nếu bật AR và có landmarks
+      // MediaPipe AR makeup (lip/blush) – để rất nhẹ cho tự nhiên
       if (els.optAR && els.optAR.checked && APP.applyFaceMakeup) {
-        APP.applyFaceMakeup(ctx, vw, vh, 1);
+        APP.applyFaceMakeup(ctx, vw, vh, 0.7);
       }
     }
 

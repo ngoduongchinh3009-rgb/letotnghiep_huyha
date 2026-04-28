@@ -35,14 +35,13 @@
 
     // Son nhẹ theo hình môi
     ctx.save();
-    ctx.globalCompositeOperation = "soft-light";
-    ctx.globalAlpha = 0.28 * alpha;
+    // `color` cho tông son tự nhiên hơn `soft-light` (đỡ bệt/loang trên da)
+    ctx.globalCompositeOperation = "color";
+    ctx.globalAlpha = 0.12 * alpha;
     ctx.fillStyle = "rgba(220, 65, 98, 1)";
+    // Vẽ 1 path gồm outer + inner, rồi fill evenodd để "đục lỗ" phần trong môi.
     ctx.beginPath();
     pathFromIndices(ctx, pts, OUTER_LIP, w, h);
-    // khoét phần trong môi cho tự nhiên
-    ctx.moveTo(0, 0);
-    ctx.beginPath();
     pathFromIndices(ctx, pts, INNER_LIP, w, h);
     ctx.fill("evenodd");
     ctx.restore();
@@ -54,9 +53,9 @@
 
     ctx.save();
     ctx.globalCompositeOperation = "soft-light";
-    ctx.globalAlpha = 0.22 * alpha;
+    ctx.globalAlpha = 0.12 * alpha;
     var gl = ctx.createRadialGradient(l.x, l.y, 1, l.x, l.y, rad);
-    gl.addColorStop(0, "rgba(245, 120, 140, 0.75)");
+    gl.addColorStop(0, "rgba(245, 120, 140, 0.55)");
     gl.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = gl;
     ctx.beginPath();
@@ -64,7 +63,7 @@
     ctx.fill();
 
     var gr = ctx.createRadialGradient(r.x, r.y, 1, r.x, r.y, rad);
-    gr.addColorStop(0, "rgba(245, 120, 140, 0.75)");
+    gr.addColorStop(0, "rgba(245, 120, 140, 0.55)");
     gr.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = gr;
     ctx.beginPath();
