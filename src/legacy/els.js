@@ -55,7 +55,6 @@ import textureUrl from "../../assets/texture.png?url";
 
       form: $(root, "verify-form"),
       inputName: $(root, "guest-name"),
-      btnDemo: $(root, "btn-demo"),
       guestLive: $(root, "guest-live"),
 
       reveal1: $(root, "reveal-1"),

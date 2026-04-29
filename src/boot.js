@@ -88,13 +88,6 @@ export function boot() {
       setTimeout(APP.setGuestLiveFromInput, 0);
     });
 
-    if (els.btnDemo) {
-      els.btnDemo.addEventListener("click", function () {
-        els.inputName.value = "BapDunChin";
-        APP.setGuestLiveFromInput();
-      });
-    }
-
     if (els.btnToInvite) {
       els.btnToInvite.addEventListener("click", function () {
         APP.showScreen(els.inviteScreen);

@@ -20,7 +20,6 @@
 
         <div class="btn-row">
           <button type="submit" class="btn-primary">Xác thực</button>
-          <button id="btn-demo" type="button" class="btn-ghost">Demo nhanh</button>
         </div>
       </form>
     </div>
