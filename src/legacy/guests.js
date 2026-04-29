@@ -10,6 +10,8 @@
    * Không dùng khớp “chuỗi con” (substring) trong display/alias: kẻo một người tên Chinh
    * lại khớp nhầm vào alias “… chinh” của người khác. Chỉ: khớp đủ alias, hoặc tiền tố
    * của alias; nếu nhiều alias cùng tiền tố thì ưu alias ngắn nhất (ví dụ “duong” → Thùy Dương).
+   *
+   * quickPickLabel: dòng trong dropdown “Chọn nhanh” để phân biệt hai người trùng tên / dễ nhận.
    */
   APP.GUEST_DB = [
     {
@@ -26,38 +28,49 @@
       display: "BapDunChin",
       role: "Em người yêu xinhdep hiểu chuyện — người đồng hành đáng tin cậy.",
       relation: "Người yêu",
-      /* 4 số cuối SĐT thật; bỏ trường này hoặc để rỗng = không khóa SĐT cho khách này */
-      phoneLast4: "",
+      quickPickLabel: "Gái nhà tui — cũng tên Chinh ý, có đúng là em không đó",
+    },
+    {
+      match: ["chinh ban", "chinhban", "ban chinh", "chinh ban than"],
+      display: "Chinh (bạn thân)",
+      role: "Bạn thân — cảm ơn đã tới chung vui cùng mình.",
+      relation: "Khách mời",
+      quickPickLabel: "Cũng tên Chinh nhưng là bạn thân / bạn lớp (không phải gấu nhà tui)",
     },
     {
       match: ["nguyen huy ha", "nguyễn huy hà", "huy ha", "huy hà"],
       display: "Nguyễn Huy Hà",
       role: "Siuuuuu cấp deptroai — nhân vật chính của buổi lễ.",
       relation: "Người tốt nghiệp",
+      quickPickLabel: "Huy Hà — nhân vật chính lễ tốt nghiệp",
     },
     {
       match: ["bo", "bố", "cha"],
       display: "Bố",
       role: "Bố — nhà tài trợ chính & chỗ dựa vững chắc.",
       relation: "Bố",
+      quickPickLabel: "Bố — nhà tài trợ & chỗ dựa",
     },
     {
       match: ["me", "mẹ", "ma"],
       display: "Mẹ",
       role: "Mẹ — nhà tài trợ chính & người mẹ hiền từ.",
       relation: "Mẹ",
+      quickPickLabel: "Mẹ — nhà tài trợ & hiền từ",
     },
     {
       match: ["nam"],
       display: "Anh trai",
       role: "Anh trai — ba chấm... anh trai.",
       relation: "Anh trai",
+      quickPickLabel: "Anh trai (Nam)",
     },
     {
       match: ["duong", "dương"],
       display: "Thùy Dương",
       role: 'Người yêu của anh trai — thành viên "gia đình mở rộng".',
       relation: "Người yêu (anh trai)",
+      quickPickLabel: "Thùy Dương — người yêu của anh trai",
     },
   ];
 
@@ -77,21 +90,19 @@
     return APP.foldAccents(String(s).trim()).replace(/\s+/g, " ");
   };
 
-  /** Chỉ giữ chữ số; chuẩn hoá +84… → 0… để so khớp 4 số cuối. */
-  APP.normPhoneDigits = function normPhoneDigits(s) {
-    var d = String(s || "").replace(/\D/g, "");
-    if (d.length >= 11 && d.slice(0, 2) === "84") d = "0" + d.slice(2);
-    return d;
-  };
-
-  /** Khách có phoneLast4 (đúng 4 chữ số) thì phải nhập SĐT khớp 4 số cuối mới coi là đúng người. */
-  APP.guestPhoneUnlocked = function guestPhoneUnlocked(hit, phoneRaw) {
-    if (!hit) return true;
-    var tail = String(hit.phoneLast4 != null ? hit.phoneLast4 : "").replace(/\D/g, "");
-    if (tail.length < 4) return true;
-    var got = APP.normPhoneDigits(phoneRaw);
-    if (got.length < 4) return false;
-    return got.slice(-4) === tail.slice(-4);
+  /**
+   * Khách đang nhập: nếu vừa chọn từ dropdown và ô tên vẫn khớp display của mục đó → giữ đúng người;
+   * không thì lookup theo tên.
+   */
+  APP.resolveGuestHit = function resolveGuestHit(raw) {
+    var q = APP.normName(raw);
+    if (!q) return null;
+    if (APP.state.quickPickGuestIndex != null) {
+      var gPin = APP.GUEST_DB[APP.state.quickPickGuestIndex];
+      if (gPin && q === APP.normName(gPin.display)) return gPin;
+      APP.state.quickPickGuestIndex = null;
+    }
+    return APP.lookupGuest(raw);
   };
 
   /** Tìm khách: khớp đủ alias trước; sau đó tiền tố alias (không substring giữa chuỗi). */

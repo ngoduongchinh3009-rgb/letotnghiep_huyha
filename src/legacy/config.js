@@ -30,11 +30,7 @@
     guestLiveEmptyHint:
       "Nhập tên để tạo thiệp nha — mình luôn mong sự có mặt của bạn.",
     guestLiveStrangerLine: "{name} ơi, nhớ đến tham dự lễ nhé",
-    /* Xác nhận SĐT (4 số cuối) trước khi hiện lời riêng — chỉ áp dụng mục có phoneLast4 trong guests.js */
-    guestPhonePlaceholder: "Số di động hoặc 4 số cuối (tin nhắn mình gửi)",
-    guestPhoneGateHint:
-      "Tên đã khớp lời mời riêng — nhập đúng 4 số cuối SĐT mình đã nhắn để xem lòng thân thiết. (Tránh người khác nhìn thấy nhầm.)",
-    guestPhoneWrongHint: "4 số cuối chưa đúng — kiểm tra lại tin nhắn/Zalo mình gửi nha.",
+    guestQuickPickPlaceholder: "— Chọn nhanh (gợi ý riêng) —",
     splashDelayMs: 2600,
     loadingMs: 2800,
     revealGapMs: 2200,

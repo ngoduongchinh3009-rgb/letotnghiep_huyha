@@ -32,6 +32,8 @@ import textureUrl from "../../assets/texture.png?url";
         cheekX: null,
         cheekY: null,
       },
+      quickPickGuestIndex: null,
+      applyingQuickPick: false,
     };
     APP.state.classicBgImg = new Image();
     APP.state.classicBgImg.onload = function () {
@@ -55,7 +57,7 @@ import textureUrl from "../../assets/texture.png?url";
 
       form: $(root, "verify-form"),
       inputName: $(root, "guest-name"),
-      inputPhone: $(root, "guest-phone-gate"),
+      selectQuickPick: $(root, "guest-quick-pick"),
       guestLive: $(root, "guest-live"),
 
       reveal1: $(root, "reveal-1"),

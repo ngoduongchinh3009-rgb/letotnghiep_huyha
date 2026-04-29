@@ -74,13 +74,7 @@ export function boot() {
         els.inputName.focus();
         return;
       }
-      var hit = APP.lookupGuest(name);
-      var phoneRaw = els.inputPhone ? String(els.inputPhone.value || "") : "";
-      if (hit && !APP.guestPhoneUnlocked(hit, phoneRaw)) {
-        if (els.inputPhone) els.inputPhone.focus();
-        APP.setGuestLiveFromInput();
-        return;
-      }
+      var hit = APP.resolveGuestHit(name);
       var displayName = hit ? hit.display : name;
       var roleLine = hit ? hit.role : APP.CONFIG.defaultGuestRole || "Khách mời thân mến.";
       APP.state.guestFullName = displayName;
@@ -89,16 +83,20 @@ export function boot() {
       APP.runRevealSequence(displayName);
     });
 
-    els.inputName.addEventListener("input", APP.setGuestLiveFromInput);
-    els.inputName.addEventListener("paste", function () {
-      setTimeout(APP.setGuestLiveFromInput, 0);
+    els.inputName.addEventListener("input", function () {
+      if (APP.state.applyingQuickPick) return;
+      APP.state.quickPickGuestIndex = null;
+      if (els.selectQuickPick) els.selectQuickPick.value = "";
+      APP.setGuestLiveFromInput();
     });
-    if (els.inputPhone) {
-      els.inputPhone.addEventListener("input", APP.setGuestLiveFromInput);
-      els.inputPhone.addEventListener("paste", function () {
-        setTimeout(APP.setGuestLiveFromInput, 0);
-      });
-    }
+    els.inputName.addEventListener("paste", function () {
+      setTimeout(function () {
+        if (APP.state.applyingQuickPick) return;
+        APP.state.quickPickGuestIndex = null;
+        if (els.selectQuickPick) els.selectQuickPick.value = "";
+        APP.setGuestLiveFromInput();
+      }, 0);
+    });
 
     if (els.btnToInvite) {
       els.btnToInvite.addEventListener("click", function () {
@@ -119,8 +117,38 @@ export function boot() {
   bindWishFlow();
 
   APP.fillInviteCard("", "");
-  if (els.inputPhone && APP.CONFIG.guestPhonePlaceholder) {
-    els.inputPhone.placeholder = APP.CONFIG.guestPhonePlaceholder;
+  if (els.selectQuickPick && APP.GUEST_DB) {
+    els.selectQuickPick.innerHTML = "";
+    var opt0 = document.createElement("option");
+    opt0.value = "";
+    opt0.textContent = APP.CONFIG.guestQuickPickPlaceholder || "— Chọn nhanh —";
+    els.selectQuickPick.appendChild(opt0);
+    var gi;
+    for (gi = 0; gi < APP.GUEST_DB.length; gi++) {
+      var g = APP.GUEST_DB[gi];
+      var lab =
+        g.quickPickLabel ||
+        g.display + " — " + (g.role.length > 52 ? g.role.slice(0, 49) + "…" : g.role);
+      var o = document.createElement("option");
+      o.value = String(gi);
+      o.textContent = lab;
+      els.selectQuickPick.appendChild(o);
+    }
+    els.selectQuickPick.addEventListener("change", function () {
+      var v = els.selectQuickPick.value;
+      if (v === "") {
+        APP.state.quickPickGuestIndex = null;
+        APP.setGuestLiveFromInput();
+        return;
+      }
+      var ix = parseInt(v, 10);
+      if (isNaN(ix) || !APP.GUEST_DB[ix]) return;
+      APP.state.applyingQuickPick = true;
+      APP.state.quickPickGuestIndex = ix;
+      els.inputName.value = APP.GUEST_DB[ix].display;
+      APP.state.applyingQuickPick = false;
+      APP.setGuestLiveFromInput();
+    });
   }
   APP.setGuestLiveFromInput();
   APP.refreshSecureBanner();

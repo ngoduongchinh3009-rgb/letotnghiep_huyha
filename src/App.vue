@@ -16,18 +16,8 @@
           placeholder="Giúp mình nhập tên bạn nha"
         />
 
-        <label for="guest-phone-gate" class="verify-phone-label">
-          Số điện thoại
-          <span class="verify-phone-note">(bắt buộc nếu mình có khóa 4 số cuối cho bạn trong danh sách mời)</span>
-        </label>
-        <input
-          id="guest-phone-gate"
-          type="tel"
-          name="guestPhone"
-          inputmode="tel"
-          autocomplete="tel"
-          maxlength="20"
-        />
+        <label for="guest-quick-pick" class="guest-quick-pick-label">Chọn nhanh</label>
+        <select id="guest-quick-pick" class="guest-quick-pick" aria-label="Chọn nhanh nếu mình có gợi ý riêng"></select>
 
         <p id="guest-live" class="guest-live is-empty" aria-live="polite"></p>
 
