@@ -27,10 +27,19 @@
         "Nhập tên để tạo thiệp nha — mình luôn mong sự có mặt của bạn.";
       return;
     }
-    var hit = APP.resolveGuestHit(raw);
+    var res = APP.resolveGuestLookupResult(raw);
+
+    if (res.type === "ambiguous") {
+      APP.els.guestLive.classList.add("is-empty");
+      APP.els.guestLive.textContent =
+        APP.CONFIG.guestAmbiguousLiveHint ||
+        "Gõ đủ họ tên hoặc chọn nhanh, rồi bấm Xác thực để xác nhận đúng người.";
+      return;
+    }
 
     APP.els.guestLive.classList.remove("is-empty");
-    if (hit) {
+    if (res.type === "exact" && res.matches[0]) {
+      var hit = res.matches[0];
       APP.els.guestLive.innerHTML =
         "<strong>" +
         escapeHtml(hit.display) +

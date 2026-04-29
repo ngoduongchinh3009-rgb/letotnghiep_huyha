@@ -31,6 +31,12 @@
       "Nhập tên để tạo thiệp nha — mình luôn mong sự có mặt của bạn.",
     guestLiveStrangerLine: "{name} ơi, nhớ đến tham dự lễ nhé",
     guestQuickPickPlaceholder: "— Chọn nhanh (gợi ý riêng) —",
+    guestAmbiguousLiveHint:
+      "Tên có thể trùng với người nhà — gõ đủ họ tên hoặc chọn nhanh, rồi bấm Xác thực để xác nhận đúng người.",
+    guestImportantFallbackRole: "Khách mời quan trọng",
+    guestConfirmTitle: "Có phải bạn đang tìm người này không?",
+    guestConfirmSub: "Chọn đúng người để xem lời mời riêng.",
+    guestConfirmDecline: "Không phải → Khách mời quan trọng",
     splashDelayMs: 2600,
     loadingMs: 2800,
     revealGapMs: 2200,

@@ -60,6 +60,13 @@ import textureUrl from "../../assets/texture.png?url";
       selectQuickPick: $(root, "guest-quick-pick"),
       guestLive: $(root, "guest-live"),
 
+      guestConfirmModal: $(root, "guest-confirm-modal"),
+      guestConfirmBackdrop: $(root, "guest-confirm-backdrop"),
+      guestConfirmTitle: $(root, "guest-confirm-title"),
+      guestConfirmSub: $(root, "guest-confirm-sub"),
+      guestConfirmActions: $(root, "guest-confirm-actions"),
+      guestConfirmDecline: $(root, "guest-confirm-decline"),
+
       reveal1: $(root, "reveal-1"),
       reveal2: $(root, "reveal-2"),
       reveal3: $(root, "reveal-3"),

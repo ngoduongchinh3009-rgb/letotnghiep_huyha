@@ -10,3 +10,4 @@ import "./wall.js";
 import "./camera.js";
 import "./mediapipe-face.js";
 import "./els.js";
+import "./guest-confirm.js";

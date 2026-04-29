@@ -25,6 +25,23 @@
           <button type="submit" class="btn-primary">Xác thực</button>
         </div>
       </form>
+
+      <div
+        id="guest-confirm-modal"
+        class="guest-confirm-modal"
+        hidden
+        aria-modal="true"
+        role="dialog"
+        aria-labelledby="guest-confirm-title"
+      >
+        <div id="guest-confirm-backdrop" class="guest-confirm-backdrop" tabindex="-1"></div>
+        <div class="guest-confirm-dialog">
+          <h3 id="guest-confirm-title" class="guest-confirm-title"></h3>
+          <p id="guest-confirm-sub" class="guest-confirm-sub"></p>
+          <div id="guest-confirm-actions" class="guest-confirm-actions"></div>
+          <button type="button" id="guest-confirm-decline" class="btn-secondary guest-confirm-decline"></button>
+        </div>
+      </div>
     </div>
   </section>
 

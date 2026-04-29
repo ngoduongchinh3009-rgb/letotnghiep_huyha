@@ -11,7 +11,15 @@ export function boot() {
       });
     }
     window.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") APP.closeModal();
+      if (e.key !== "Escape") return;
+      if (els.guestConfirmModal && !els.guestConfirmModal.hidden) {
+        var d = APP._guestConfirmOnDecline;
+        APP.closeGuestConfirmModal();
+        if (d) d();
+        e.preventDefault();
+        return;
+      }
+      APP.closeModal();
     });
   }
 
@@ -67,20 +75,51 @@ export function boot() {
   }
 
   function bindVerifyFlow() {
-    els.form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var name = (els.inputName.value || "").trim();
-      if (!name) {
-        els.inputName.focus();
-        return;
+    function proceedReveal(hit, displayName, typedRaw) {
+      var roleLine;
+      if (hit) {
+        roleLine = hit.role;
+      } else {
+        roleLine =
+          APP.CONFIG.guestImportantFallbackRole ||
+          APP.CONFIG.defaultGuestRole ||
+          "Khách mời quan trọng";
+        if (roleLine.indexOf("{name}") !== -1) {
+          roleLine = roleLine.replace(/\{name\}/g, displayName || typedRaw || "");
+        }
       }
-      var hit = APP.resolveGuestHit(name);
-      var displayName = hit ? hit.display : name;
-      var roleLine = hit ? hit.role : APP.CONFIG.defaultGuestRole || "Khách mời thân mến.";
       APP.state.guestFullName = displayName;
       APP.fillInviteCard(displayName, roleLine);
       APP.setRevealLinesForGuest(hit, displayName);
       APP.runRevealSequence(displayName);
+    }
+
+    els.form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var typed = (els.inputName.value || "").trim();
+      if (!typed) {
+        els.inputName.focus();
+        return;
+      }
+      var res = APP.resolveGuestLookupResult(typed);
+      if (res.type === "exact" && res.matches[0]) {
+        var g0 = res.matches[0];
+        proceedReveal(g0, g0.display, typed);
+        return;
+      }
+      if (res.type === "ambiguous" && res.matches.length) {
+        APP.openGuestConfirmModal(
+          res.matches,
+          function (chosen) {
+            proceedReveal(chosen, chosen.display, typed);
+          },
+          function () {
+            proceedReveal(null, typed, typed);
+          }
+        );
+        return;
+      }
+      proceedReveal(null, typed, typed);
     });
 
     els.inputName.addEventListener("input", function () {
@@ -115,6 +154,7 @@ export function boot() {
   bindCameraUi();
   bindVerifyFlow();
   bindWishFlow();
+  if (typeof APP.bindGuestConfirmDom === "function") APP.bindGuestConfirmDom();
 
   APP.fillInviteCard("", "");
   if (els.selectQuickPick && APP.GUEST_DB) {
@@ -145,7 +185,9 @@ export function boot() {
       if (isNaN(ix) || !APP.GUEST_DB[ix]) return;
       APP.state.applyingQuickPick = true;
       APP.state.quickPickGuestIndex = ix;
-      els.inputName.value = APP.GUEST_DB[ix].display;
+      var gPick = APP.GUEST_DB[ix];
+      els.inputName.value =
+        gPick.fullNames && gPick.fullNames.length ? gPick.fullNames[0] : gPick.display;
       APP.state.applyingQuickPick = false;
       APP.setGuestLiveFromInput();
     });
