@@ -2,7 +2,6 @@
   "use strict";
 
   var APP = window.APP;
-  var els = APP.els;
 
   function escapeHtml(s) {
     return String(s)
@@ -18,18 +17,18 @@
   };
 
   APP.setGuestLiveFromInput = function setGuestLiveFromInput() {
-    var raw = (els.inputName.value || "").trim();
+    var raw = (APP.els.inputName.value || "").trim();
     if (!raw) {
-      els.guestLive.classList.add("is-empty");
-      els.guestLive.textContent =
+      APP.els.guestLive.classList.add("is-empty");
+      APP.els.guestLive.textContent =
         APP.CONFIG.guestLiveEmptyHint ||
         "Nhập tên để tạo thiệp nha — mình luôn mong sự có mặt của bạn.";
       return;
     }
     var hit = APP.lookupGuest(raw);
-    els.guestLive.classList.remove("is-empty");
+    APP.els.guestLive.classList.remove("is-empty");
     if (hit) {
-      els.guestLive.innerHTML =
+      APP.els.guestLive.innerHTML =
         "<strong>" +
         escapeHtml(hit.display) +
         "</strong><br><span>" +
@@ -41,7 +40,7 @@
         "{name} — mình luôn mong bạn tới tham dự";
       var t = String(tpl);
       if (t.indexOf("{name}") === -1) {
-        els.guestLive.innerHTML =
+        APP.els.guestLive.innerHTML =
           "<strong>" +
           escapeHtml(raw) +
           "</strong><br><span>" +
@@ -49,7 +48,7 @@
           "</span>";
       } else {
         var parts = t.split("{name}");
-        els.guestLive.innerHTML =
+        APP.els.guestLive.innerHTML =
           escapeHtml(parts[0]) +
           "<strong>" +
           escapeHtml(raw) +
@@ -61,94 +60,94 @@
 
   APP.fillInviteCard = function fillInviteCard(displayName, roleLine) {
     APP.state.guestRoleLine = roleLine || "";
-    if (els.cardSub) {
-      els.cardSub.textContent = APP.buildInviteEventDetailText();
+    if (APP.els.cardSub) {
+      APP.els.cardSub.textContent = APP.buildInviteEventDetailText();
     }
-    if (els.cardSub2) {
-      els.cardSub2.textContent = APP.buildInviteEventDetailText();
+    if (APP.els.cardSub2) {
+      APP.els.cardSub2.textContent = APP.buildInviteEventDetailText();
     }
-    if (els.cardInviteGuest) {
-      els.cardInviteGuest.textContent = displayName || "Bạn và gia đình";
+    if (APP.els.cardInviteGuest) {
+      APP.els.cardInviteGuest.textContent = displayName || "Bạn và gia đình";
     }
-    if (els.cardInviteMessage) {
-      els.cardInviteMessage.textContent =
+    if (APP.els.cardInviteMessage) {
+      APP.els.cardInviteMessage.textContent =
         "Đến tham dự lễ tốt nghiệp của " + APP.CONFIG.studentName;
     }
-    if (els.cardThanks) {
+    if (APP.els.cardThanks) {
       var anonThanks = APP.CONFIG.thanksAnonymous || "Cảm ơn vì sự có mặt của bạn.";
       var namedTpl =
         APP.CONFIG.thanksNamed ||
         "{name} ơi, cảm ơn vì đã là một phần rất đẹp trong ngày này của mình.";
-      els.cardThanks.textContent = displayName
+      APP.els.cardThanks.textContent = displayName
         ? namedTpl.replace(/\{name\}/g, displayName)
         : anonThanks;
     }
-    if (els.cardFlavor) {
-      els.cardFlavor.textContent = APP.CONFIG.inviteFlavor || "";
-      els.cardFlavor.hidden = !APP.CONFIG.inviteFlavor;
+    if (APP.els.cardFlavor) {
+      APP.els.cardFlavor.textContent = APP.CONFIG.inviteFlavor || "";
+      APP.els.cardFlavor.hidden = !APP.CONFIG.inviteFlavor;
     }
-    if (els.cardFlavorAside) {
-      els.cardFlavorAside.textContent = APP.CONFIG.inviteFlavorAside || "";
-      els.cardFlavorAside.hidden = !APP.CONFIG.inviteFlavorAside;
+    if (APP.els.cardFlavorAside) {
+      APP.els.cardFlavorAside.textContent = APP.CONFIG.inviteFlavorAside || "";
+      APP.els.cardFlavorAside.hidden = !APP.CONFIG.inviteFlavorAside;
     }
-    if (els.cardPS) {
-      els.cardPS.textContent = APP.CONFIG.invitePS || "";
-      els.cardPS.hidden = !APP.CONFIG.invitePS;
+    if (APP.els.cardPS) {
+      APP.els.cardPS.textContent = APP.CONFIG.invitePS || "";
+      APP.els.cardPS.hidden = !APP.CONFIG.invitePS;
     }
-    if (els.cardMeal) {
-      els.cardMeal.textContent = APP.CONFIG.mealLine || "";
-      els.cardMeal.hidden = !APP.CONFIG.mealLine;
+    if (APP.els.cardMeal) {
+      APP.els.cardMeal.textContent = APP.CONFIG.mealLine || "";
+      APP.els.cardMeal.hidden = !APP.CONFIG.mealLine;
     }
-    if (els.cardSponsor) {
-      els.cardSponsor.textContent = APP.CONFIG.sponsorLine || "";
-      els.cardSponsor.hidden = !APP.CONFIG.sponsorLine;
+    if (APP.els.cardSponsor) {
+      APP.els.cardSponsor.textContent = APP.CONFIG.sponsorLine || "";
+      APP.els.cardSponsor.hidden = !APP.CONFIG.sponsorLine;
     }
-    if (els.cardFrame) els.cardFrame.hidden = true;
-    if (els.cardEmpty) els.cardEmpty.hidden = false;
-    if (els.cardPhoto) els.cardPhoto.hidden = true;
-    if (els.cardPlaceholder) els.cardPlaceholder.hidden = false;
+    if (APP.els.cardFrame) APP.els.cardFrame.hidden = true;
+    if (APP.els.cardEmpty) APP.els.cardEmpty.hidden = false;
+    if (APP.els.cardPhoto) APP.els.cardPhoto.hidden = true;
+    if (APP.els.cardPlaceholder) APP.els.cardPlaceholder.hidden = false;
   };
 
   APP.startSplash = function startSplash() {
     APP.wait(APP.CONFIG.splashDelayMs).then(function () {
-      APP.showScreen(els.formScreen);
-      els.inputName.focus();
+      APP.showScreen(APP.els.formScreen);
+      APP.els.inputName.focus();
     });
   };
 
   APP.runRevealSequence = function runRevealSequence(displayName) {
-    APP.showScreen(els.loadingScreen);
+    APP.showScreen(APP.els.loadingScreen);
     return APP.wait(APP.CONFIG.loadingMs)
       .then(function () {
-        APP.showScreen(els.revealScreen);
-        els.reveal1.classList.remove("is-visible");
-        els.reveal2.classList.remove("is-visible");
-        if (els.reveal3) els.reveal3.classList.remove("is-visible");
-        els.revealName.classList.remove("is-visible");
-        els.revealName.textContent = "";
-        if (els.btnToInvite) els.btnToInvite.hidden = true;
+        APP.showScreen(APP.els.revealScreen);
+        APP.els.reveal1.classList.remove("is-visible");
+        APP.els.reveal2.classList.remove("is-visible");
+        if (APP.els.reveal3) APP.els.reveal3.classList.remove("is-visible");
+        APP.els.revealName.classList.remove("is-visible");
+        APP.els.revealName.textContent = "";
+        if (APP.els.btnToInvite) APP.els.btnToInvite.hidden = true;
         return APP.wait(400);
       })
       .then(function () {
-        els.reveal1.classList.add("is-visible");
+        APP.els.reveal1.classList.add("is-visible");
         return APP.wait(APP.CONFIG.revealGapMs);
       })
       .then(function () {
-        els.reveal2.classList.add("is-visible");
+        APP.els.reveal2.classList.add("is-visible");
         return APP.wait(APP.CONFIG.revealGapMs);
       })
       .then(function () {
-        if (els.reveal3) els.reveal3.classList.add("is-visible");
+        if (APP.els.reveal3) APP.els.reveal3.classList.add("is-visible");
         return APP.wait(APP.CONFIG.revealGapMs);
       })
       .then(function () {
-        els.revealName.textContent = displayName;
-        void els.revealName.offsetWidth;
-        els.revealName.classList.add("is-visible");
+        APP.els.revealName.textContent = displayName;
+        void APP.els.revealName.offsetWidth;
+        APP.els.revealName.classList.add("is-visible");
         return APP.wait(APP.CONFIG.nameHoldMs);
       })
       .then(function () {
-        if (els.btnToInvite) els.btnToInvite.hidden = false;
+        if (APP.els.btnToInvite) APP.els.btnToInvite.hidden = false;
       });
   };
 
@@ -173,10 +172,10 @@
       }
     }
 
-    if (els.reveal1) els.reveal1.textContent = l1;
-    if (els.reveal2) els.reveal2.textContent = l2;
-    if (els.reveal3) els.reveal3.textContent = l3;
-    if (els.revealName) els.revealName.setAttribute("aria-label", "Tên người được mời: " + displayName);
+    if (APP.els.reveal1) APP.els.reveal1.textContent = l1;
+    if (APP.els.reveal2) APP.els.reveal2.textContent = l2;
+    if (APP.els.reveal3) APP.els.reveal3.textContent = l3;
+    if (APP.els.revealName) APP.els.revealName.setAttribute("aria-label", "Tên người được mời: " + displayName);
   };
 })();
 export {};

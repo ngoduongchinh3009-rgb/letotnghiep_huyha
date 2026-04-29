@@ -2,7 +2,6 @@
   "use strict";
 
   var APP = window.APP;
-  var els = APP.els;
 
   APP.pathRoundRect = function pathRoundRect(ctx, x, y, rw, rh, r) {
     var rr = Math.min(r, rw / 2, rh / 2);
@@ -83,7 +82,7 @@
       soft.height = h;
       var sx = soft.getContext("2d");
       sx.filter = "blur(0.9px)";
-      sx.drawImage(els.snapCanvas, 0, 0, w, h);
+      sx.drawImage(APP.els.snapCanvas, 0, 0, w, h);
       ctx.save();
       ctx.globalAlpha = 0.14;
       ctx.globalCompositeOperation = "normal";

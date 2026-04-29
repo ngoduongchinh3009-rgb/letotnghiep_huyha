@@ -2,7 +2,6 @@
   "use strict";
 
   var APP = window.APP;
-  var els = APP.els;
 
   APP.isMediaPipeReady = function isMediaPipeReady() {
     return typeof window.FaceMesh !== "undefined";
@@ -171,16 +170,16 @@
   };
 
   APP.renderLiveFaceOverlay = function renderLiveFaceOverlay() {
-    if (!els.camOverlay) return;
-    if (!els.video || !els.video.videoWidth) return;
+    if (!APP.els.camOverlay) return;
+    if (!APP.els.video || !APP.els.video.videoWidth) return;
 
-    var rect = els.video.getBoundingClientRect();
+    var rect = APP.els.video.getBoundingClientRect();
     var cw = Math.max(1, Math.round(rect.width));
     var ch = Math.max(1, Math.round(rect.height));
-    if (els.camOverlay.width !== cw) els.camOverlay.width = cw;
-    if (els.camOverlay.height !== ch) els.camOverlay.height = ch;
+    if (APP.els.camOverlay.width !== cw) APP.els.camOverlay.width = cw;
+    if (APP.els.camOverlay.height !== ch) APP.els.camOverlay.height = ch;
 
-    var c = els.camOverlay.getContext("2d");
+    var c = APP.els.camOverlay.getContext("2d");
     c.clearRect(0, 0, cw, ch);
     var canTrack = APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400);
     if (canTrack) {
@@ -234,12 +233,12 @@
     APP.state.faceMeshRunning = true;
     (function tick() {
       if (!APP.state.faceMeshRunning) return;
-      if (!els.video || !els.video.videoWidth) {
+      if (!APP.els.video || !APP.els.video.videoWidth) {
         requestAnimationFrame(tick);
         return;
       }
       APP.state.faceMesh
-        .send({ image: els.video })
+        .send({ image: APP.els.video })
         .then(function () {
           if (APP.renderLiveFaceOverlay) APP.renderLiveFaceOverlay();
           requestAnimationFrame(tick);

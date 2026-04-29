@@ -2,7 +2,6 @@
   "use strict";
 
   var APP = window.APP;
-  var els = APP.els;
 
   APP.hasFirebaseConfig = function hasFirebaseConfig() {
     return (
@@ -17,16 +16,16 @@
   APP.initFirebaseMaybe = function initFirebaseMaybe() {
     if (!APP.hasFirebaseConfig()) {
       APP.setStatus(
-        els.wishStatus,
+        APP.els.wishStatus,
         "bad",
         "Chưa cấu hình Firebase. Điền FIREBASE_CONFIG để bật gửi lời chúc."
       );
-      APP.setStatus(els.wallHint, "muted", "Chưa cấu hình Firebase nên chưa tải được Wall.");
+      APP.setStatus(APP.els.wallHint, "muted", "Chưa cấu hình Firebase nên chưa tải được Wall.");
       return false;
     }
     if (typeof firebase === "undefined") {
       APP.setStatus(
-        els.wishStatus,
+        APP.els.wishStatus,
         "bad",
         "Không tải được Firebase SDK (cần internet/HTTPS). Thử reload trang."
       );
@@ -35,11 +34,11 @@
     try {
       APP.state.firebaseApp = firebase.initializeApp(APP.FIREBASE_CONFIG);
       APP.state.db = firebase.firestore();
-      APP.setStatus(els.wishStatus, "muted", "Sẵn sàng. Hãy viết lời chúc và gửi.");
+      APP.setStatus(APP.els.wishStatus, "muted", "Sẵn sàng. Hãy viết lời chúc và gửi.");
       return true;
     } catch (e) {
       APP.setStatus(
-        els.wishStatus,
+        APP.els.wishStatus,
         "bad",
         "Lỗi khởi tạo Firebase: " + (e && e.message ? e.message : String(e))
       );
@@ -48,16 +47,16 @@
   };
 
   APP.renderWall = function renderWall(items) {
-    if (!els.wallEl) return;
-    var q = (els.wallSearch && els.wallSearch.value ? els.wallSearch.value : "")
+    if (!APP.els.wallEl) return;
+    var q = (APP.els.wallSearch && APP.els.wallSearch.value ? APP.els.wallSearch.value : "")
       .trim()
       .toLowerCase();
-    els.wallEl.innerHTML = "";
+    APP.els.wallEl.innerHTML = "";
     if (!items.length) {
-      APP.setStatus(els.wallHint, "muted", "Chưa có lời chúc nào.");
+      APP.setStatus(APP.els.wallHint, "muted", "Chưa có lời chúc nào.");
       return;
     }
-    APP.setStatus(els.wallHint, "muted", "Tổng: " + items.length + " lời chúc.");
+    APP.setStatus(APP.els.wallHint, "muted", "Tổng: " + items.length + " lời chúc.");
     var i;
     for (i = 0; i < items.length; i++) {
       var w = items[i];
@@ -104,14 +103,14 @@
 
       card.appendChild(thumb);
       card.appendChild(body);
-      els.wallEl.appendChild(card);
+      APP.els.wallEl.appendChild(card);
     }
   };
 
   APP.attachWallListener = function attachWallListener() {
     if (!APP.state.db) return;
     if (APP.state.wallUnsub) APP.state.wallUnsub();
-    APP.setStatus(els.wallHint, "muted", "Đang tải Wall...");
+    APP.setStatus(APP.els.wallHint, "muted", "Đang tải Wall...");
     APP.state.wallUnsub = APP.state.db
       .collection("wishes")
       .orderBy("createdAt", "desc")
@@ -125,11 +124,11 @@
             items.push(d);
           });
           APP.renderWall(items);
-          els.wallEl.__items = items;
+          APP.els.wallEl.__items = items;
         },
         function (err) {
           APP.setStatus(
-            els.wallHint,
+            APP.els.wallHint,
             "bad",
             "Không tải được Wall: " + (err && err.message ? err.message : String(err))
           );
@@ -230,52 +229,52 @@
     if (!APP.initFirebaseMaybe()) return;
     if (!APP.hasCloudinaryConfig()) {
       APP.setStatus(
-        els.wishStatus,
+        APP.els.wishStatus,
         "bad",
         "Chưa cấu hình Cloudinary. Điền CLOUDINARY.cloudName + CLOUDINARY.uploadPreset."
       );
       return;
     }
-    var msg = (els.wishMessage && els.wishMessage.value ? els.wishMessage.value : "").trim();
+    var msg = (APP.els.wishMessage && APP.els.wishMessage.value ? APP.els.wishMessage.value : "").trim();
     if (!msg) {
-      APP.setStatus(els.wishStatus, "bad", "Bạn chưa nhập lời chúc.");
-      if (els.wishMessage) els.wishMessage.focus();
+      APP.setStatus(APP.els.wishStatus, "bad", "Bạn chưa nhập lời chúc.");
+      if (APP.els.wishMessage) APP.els.wishMessage.focus();
       return;
     }
 
     var now = Date.now();
     if (now - APP.state.lastWishAt < 45000) {
-      APP.setStatus(els.wishStatus, "bad", "Bạn gửi hơi nhanh. Đợi ~45 giây rồi thử lại nhé.");
+      APP.setStatus(APP.els.wishStatus, "bad", "Bạn gửi hơi nhanh. Đợi ~45 giây rồi thử lại nhé.");
       return;
     }
 
-    var fromName = (els.wishFrom && els.wishFrom.value ? els.wishFrom.value : "").trim();
+    var fromName = (APP.els.wishFrom && APP.els.wishFrom.value ? APP.els.wishFrom.value : "").trim();
     var blob = null;
-    if (els.wishUseLast && els.wishUseLast.checked) blob = APP.state.lastPhotoBlob;
-    if (!blob && els.wishPhoto && els.wishPhoto.files && els.wishPhoto.files[0]) {
-      blob = els.wishPhoto.files[0];
+    if (APP.els.wishUseLast && APP.els.wishUseLast.checked) blob = APP.state.lastPhotoBlob;
+    if (!blob && APP.els.wishPhoto && APP.els.wishPhoto.files && APP.els.wishPhoto.files[0]) {
+      blob = APP.els.wishPhoto.files[0];
     }
     if (!blob) {
-      APP.setStatus(els.wishStatus, "bad", "Bạn chưa chọn ảnh (hoặc chưa chụp ảnh).");
+      APP.setStatus(APP.els.wishStatus, "bad", "Bạn chưa chọn ảnh (hoặc chưa chụp ảnh).");
       return;
     }
     var MAX_BYTES = 1024 * 1024; // 1MB để giảm chi phí/băng thông
     if (blob.size && blob.size > MAX_BYTES * 3) {
-      APP.setStatus(els.wishStatus, "bad", "Ảnh quá lớn. Hãy chọn ảnh nhỏ hơn (khuyến nghị <= 6MB).");
+      APP.setStatus(APP.els.wishStatus, "bad", "Ảnh quá lớn. Hãy chọn ảnh nhỏ hơn (khuyến nghị <= 6MB).");
       return;
     }
     if (blob instanceof File && !APP.isImageFile(blob)) {
-      APP.setStatus(els.wishStatus, "bad", "File không phải ảnh. Hãy chọn PNG/JPG/WebP.");
+      APP.setStatus(APP.els.wishStatus, "bad", "File không phải ảnh. Hãy chọn PNG/JPG/WebP.");
       return;
     }
     blob = await APP.compressImageIfNeeded(blob, MAX_BYTES);
     if (blob.size && blob.size > MAX_BYTES) {
-      APP.setStatus(els.wishStatus, "bad", "Ảnh vẫn hơi lớn sau khi nén. Hãy chọn ảnh khác.");
+      APP.setStatus(APP.els.wishStatus, "bad", "Ảnh vẫn hơi lớn sau khi nén. Hãy chọn ảnh khác.");
       return;
     }
 
-    els.wishSubmit.disabled = true;
-    APP.setStatus(els.wishStatus, "muted", "Đang gửi... (upload ảnh)");
+    APP.els.wishSubmit.disabled = true;
+    APP.setStatus(APP.els.wishStatus, "muted", "Đang gửi... (upload ảnh)");
     try {
       var docRef = await APP.createWishDoc({
         fromName: fromName || "",
@@ -287,7 +286,7 @@
       var url = await APP.uploadWishPhotoToCloudinary(blob);
       await docRef.update({ photoUrl: url });
       APP.state.lastWishAt = Date.now();
-      APP.setStatus(els.wishStatus, "ok", "Đã gửi! Cảm ơn bạn.");
+      APP.setStatus(APP.els.wishStatus, "ok", "Đã gửi! Cảm ơn bạn.");
 
       if (APP.state.lastWishPreviewUrl) URL.revokeObjectURL(APP.state.lastWishPreviewUrl);
       try {
@@ -298,12 +297,12 @@
       APP.attachWallListener();
     } catch (err) {
       APP.setStatus(
-        els.wishStatus,
+        APP.els.wishStatus,
         "bad",
         "Gửi thất bại: " + (err && err.message ? err.message : String(err))
       );
     } finally {
-      els.wishSubmit.disabled = false;
+      APP.els.wishSubmit.disabled = false;
     }
   };
 })();

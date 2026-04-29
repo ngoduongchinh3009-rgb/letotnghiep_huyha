@@ -2,7 +2,6 @@
   "use strict";
 
   var APP = window.APP;
-  var els = APP.els;
 
   APP.downloadBlob = function downloadBlob(blob, filename) {
     if (!blob) return;
@@ -58,18 +57,18 @@
   };
 
   APP.openModal = function openModal(url, title) {
-    if (!els.photoModal || !els.modalImg) return;
-    els.modalImg.src = url;
-    if (els.modalTitle) els.modalTitle.textContent = title || "Ảnh kỷ niệm";
-    els.photoModal.classList.add("is-open");
-    els.photoModal.setAttribute("aria-hidden", "false");
+    if (!APP.els.photoModal || !APP.els.modalImg) return;
+    APP.els.modalImg.src = url;
+    if (APP.els.modalTitle) APP.els.modalTitle.textContent = title || "Ảnh kỷ niệm";
+    APP.els.photoModal.classList.add("is-open");
+    APP.els.photoModal.setAttribute("aria-hidden", "false");
   };
 
   APP.closeModal = function closeModal() {
-    if (!els.photoModal) return;
-    els.photoModal.classList.remove("is-open");
-    els.photoModal.setAttribute("aria-hidden", "true");
-    if (els.modalImg) els.modalImg.src = "";
+    if (!APP.els.photoModal) return;
+    APP.els.photoModal.classList.remove("is-open");
+    APP.els.photoModal.setAttribute("aria-hidden", "true");
+    if (APP.els.modalImg) APP.els.modalImg.src = "";
   };
 })();
 export {};

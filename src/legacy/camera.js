@@ -2,20 +2,19 @@
   "use strict";
 
   var APP = window.APP;
-  var els = APP.els;
 
   APP.setPreview = function setPreview(url, blob) {
-    if (!els.photoPreview || !els.previewImg) return;
+    if (!APP.els.photoPreview || !APP.els.previewImg) return;
     if (APP.state.lastPhotoUrl) URL.revokeObjectURL(APP.state.lastPhotoUrl);
     APP.state.lastPhotoBlob = blob || null;
     APP.state.lastPhotoUrl = url || "";
-    els.previewImg.src = APP.state.lastPhotoUrl;
-    els.photoPreview.hidden = !APP.state.lastPhotoUrl;
+    APP.els.previewImg.src = APP.state.lastPhotoUrl;
+    APP.els.photoPreview.hidden = !APP.state.lastPhotoUrl;
   };
 
   APP.setCamError = function setCamError(msg) {
-    els.camError.textContent = msg;
-    els.camError.hidden = !msg;
+    APP.els.camError.textContent = msg;
+    APP.els.camError.hidden = !msg;
   };
 
   APP.stopCamera = function stopCamera() {
@@ -26,7 +25,7 @@
       for (t = 0; t < tracks.length; t++) tracks[t].stop();
       APP.state.stream = null;
     }
-    els.video.srcObject = null;
+    APP.els.video.srcObject = null;
   };
 
   APP.refreshSecureBanner = function refreshSecureBanner() {
@@ -43,9 +42,9 @@
   };
 
   APP.refreshCameraPreviewEffects = function refreshCameraPreviewEffects() {
-    if (!els.video) return;
-    els.video.style.filter = "brightness(1.04) contrast(1.03) saturate(1.10)";
-    if (els.camOverlay) els.camOverlay.style.display = "";
+    if (!APP.els.video) return;
+    APP.els.video.style.filter = "brightness(1.04) contrast(1.03) saturate(1.10)";
+    if (APP.els.camOverlay) APP.els.camOverlay.style.display = "";
   };
 
   APP.startCamera = function startCamera() {
@@ -74,13 +73,13 @@
       })
       .then(function (s) {
         APP.state.stream = s;
-        els.video.srcObject = APP.state.stream;
-        return els.video.play();
+        APP.els.video.srcObject = APP.state.stream;
+        return APP.els.video.play();
       })
       .then(function () {
-        els.btnCapture.disabled = false;
-        els.btnStartCam.textContent = "Camera đã bật";
-        els.btnStartCam.disabled = true;
+        APP.els.btnCapture.disabled = false;
+        APP.els.btnStartCam.textContent = "Camera đã bật";
+        APP.els.btnStartCam.disabled = true;
         APP.refreshCameraPreviewEffects();
         if (APP.startFaceMeshLoop) APP.startFaceMeshLoop();
       })
@@ -95,20 +94,20 @@
   };
 
   APP.capturePhoto = function capturePhoto() {
-    if (!els.video.videoWidth) {
+    if (!APP.els.video.videoWidth) {
       APP.setCamError("Chưa có hình từ camera.");
       return;
     }
-    var vw = els.video.videoWidth;
-    var vh = els.video.videoHeight;
-    els.snapCanvas.width = vw;
-    els.snapCanvas.height = vh;
-    var ctx = els.snapCanvas.getContext("2d");
+    var vw = APP.els.video.videoWidth;
+    var vh = APP.els.video.videoHeight;
+    APP.els.snapCanvas.width = vw;
+    APP.els.snapCanvas.height = vh;
+    var ctx = APP.els.snapCanvas.getContext("2d");
     ctx.save();
     ctx.translate(vw, 0);
     ctx.scale(-1, 1);
     ctx.filter = "brightness(1.05) contrast(0.98) saturate(1.08)";
-    ctx.drawImage(els.video, 0, 0, vw, vh);
+    ctx.drawImage(APP.els.video, 0, 0, vw, vh);
     ctx.filter = "none";
     ctx.restore();
 
@@ -122,34 +121,34 @@
 
     var outW = 1080;
     var outH = 1920;
-    if (els.cardCanvas) {
-      els.cardCanvas.width = outW;
-      els.cardCanvas.height = outH;
-      var out = els.cardCanvas.getContext("2d");
-      APP.drawClassicCardToCanvas(out, outW, outH, els.snapCanvas);
+    if (APP.els.cardCanvas) {
+      APP.els.cardCanvas.width = outW;
+      APP.els.cardCanvas.height = outH;
+      var out = APP.els.cardCanvas.getContext("2d");
+      APP.drawClassicCardToCanvas(out, outW, outH, APP.els.snapCanvas);
     }
 
-    (els.cardCanvas || els.snapCanvas).toBlob(
+    (APP.els.cardCanvas || APP.els.snapCanvas).toBlob(
       function (blob) {
         if (!blob) return;
         var previewUrl = URL.createObjectURL(blob);
         APP.setPreview(previewUrl, blob);
         APP.downloadBlob(blob, "ky-niem-tot-nghiep.png");
-        if (els.inviteWrapPhoto) els.inviteWrapPhoto.hidden = false;
-        if (els.cardSub2) {
-          els.cardSub2.textContent = APP.buildInviteEventDetailText();
+        if (APP.els.inviteWrapPhoto) APP.els.inviteWrapPhoto.hidden = false;
+        if (APP.els.cardSub2) {
+          APP.els.cardSub2.textContent = APP.buildInviteEventDetailText();
         }
-        if (els.cardPhoto2) els.cardPhoto2.src = previewUrl;
-        if (els.inviteWrapPhoto) els.inviteWrapPhoto.scrollIntoView({ behavior: "smooth", block: "start" });
-        if (els.wishUseLast) els.wishUseLast.checked = true;
+        if (APP.els.cardPhoto2) APP.els.cardPhoto2.src = previewUrl;
+        if (APP.els.inviteWrapPhoto) APP.els.inviteWrapPhoto.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (APP.els.wishUseLast) APP.els.wishUseLast.checked = true;
       },
       "image/png"
     );
   };
 
   APP.retake = function retake() {
-    if (els.photoPreview) els.photoPreview.hidden = true;
-    if (els.previewImg) els.previewImg.src = "";
+    if (APP.els.photoPreview) APP.els.photoPreview.hidden = true;
+    if (APP.els.previewImg) APP.els.previewImg.src = "";
     if (APP.state.lastPhotoUrl) {
       URL.revokeObjectURL(APP.state.lastPhotoUrl);
       APP.state.lastPhotoUrl = "";
