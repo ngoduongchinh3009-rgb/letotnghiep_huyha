@@ -6,6 +6,10 @@
   /**
    * Danh sách khách mời: khớp theo tên gõ (không phân biệt hoa thường, bỏ dấu).
    * display: tên hiển thị chuẩn trên thiệp | role: dòng thân thiết | relation: nhánh câu reveal (logic)
+   *
+   * Không dùng khớp “chuỗi con” (substring) trong display/alias: kẻo một người tên Chinh
+   * lại khớp nhầm vào alias “… chinh” của người khác. Chỉ: khớp đủ alias, hoặc tiền tố
+   * của alias; nếu nhiều alias cùng tiền tố thì ưu alias ngắn nhất (ví dụ “duong” → Thùy Dương).
    */
   APP.GUEST_DB = [
     {
@@ -71,7 +75,7 @@
     return APP.foldAccents(String(s).trim()).replace(/\s+/g, " ");
   };
 
-  /** Tìm khách theo chuỗi đang gõ (ưu tiên khớp chính xác với một trong các alias) */
+  /** Tìm khách: khớp đủ alias trước; sau đó tiền tố alias (không substring giữa chuỗi). */
   APP.lookupGuest = function lookupGuest(raw) {
     var q = APP.normName(raw);
     if (!q) return null;
@@ -85,14 +89,25 @@
         if (q === APP.normName(g.match[j]) || qq === m) return g;
       }
     }
+    if (q.length < 2) return null;
+    var qQ = q.replace(/\s+/g, "");
+    var best = null;
+    var bestLen = Infinity;
     for (i = 0; i < APP.GUEST_DB.length; i++) {
       var g2 = APP.GUEST_DB[i];
-      if (q.length >= 3 && APP.foldAccents(g2.display).indexOf(q) !== -1) return g2;
       for (j = 0; j < g2.match.length; j++) {
-        if (q.length >= 3 && APP.normName(g2.match[j]).indexOf(q) !== -1) return g2;
+        var alias = APP.normName(g2.match[j]);
+        var aQ = alias.replace(/\s+/g, "");
+        var hit = alias.startsWith(q) || (qQ.length >= 2 && aQ.startsWith(qQ));
+        if (!hit) continue;
+        var len = alias.length;
+        if (len < bestLen) {
+          bestLen = len;
+          best = g2;
+        }
       }
     }
-    return null;
+    return best;
   };
 })();
 export {};
