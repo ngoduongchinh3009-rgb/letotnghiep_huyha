@@ -4,12 +4,26 @@
   var APP = window.APP;
   var els = APP.els;
 
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  APP.buildInviteEventDetailText = function buildInviteEventDetailText() {
+    var c = APP.CONFIG;
+    return ["Thời gian: " + c.eventTime, "Địa điểm: " + c.eventPlace].join("\n");
+  };
+
   APP.setGuestLiveFromInput = function setGuestLiveFromInput() {
     var raw = (els.inputName.value || "").trim();
     if (!raw) {
       els.guestLive.classList.add("is-empty");
-      els.guestLive.innerHTML =
-        "Gõ tên để hiện chức danh / lời nhắn thân thiết (theo danh sách mời).";
+      els.guestLive.textContent =
+        APP.CONFIG.guestLiveEmptyHint ||
+        "Nhập tên để tạo thiệp nha — mình luôn mong sự có mặt của bạn.";
       return;
     }
     var hit = APP.lookupGuest(raw);
@@ -17,32 +31,41 @@
     if (hit) {
       els.guestLive.innerHTML =
         "<strong>" +
-        hit.display +
+        escapeHtml(hit.display) +
         "</strong><br><span>" +
-        hit.role +
+        escapeHtml(hit.role) +
         "</span>";
-      var opt;
-      for (opt = 0; opt < els.selectRelation.options.length; opt++) {
-        if (els.selectRelation.options[opt].value === hit.relation) {
-          els.selectRelation.selectedIndex = opt;
-          break;
-        }
-      }
     } else {
-      els.guestLive.innerHTML =
-        "Chưa khớp danh sách mời — vẫn có thể chọn <strong>mối quan hệ</strong> và bấm Xác thực.";
+      var tpl =
+        APP.CONFIG.guestLiveStrangerLine ||
+        "{name} — mình luôn mong bạn tới tham dự";
+      var t = String(tpl);
+      if (t.indexOf("{name}") === -1) {
+        els.guestLive.innerHTML =
+          "<strong>" +
+          escapeHtml(raw) +
+          "</strong><br><span>" +
+          escapeHtml(t) +
+          "</span>";
+      } else {
+        var parts = t.split("{name}");
+        els.guestLive.innerHTML =
+          escapeHtml(parts[0]) +
+          "<strong>" +
+          escapeHtml(raw) +
+          "</strong>" +
+          escapeHtml(parts.slice(1).join("{name}"));
+      }
     }
   };
 
   APP.fillInviteCard = function fillInviteCard(displayName, roleLine) {
     APP.state.guestRoleLine = roleLine || "";
     if (els.cardSub) {
-      els.cardSub.textContent =
-        APP.CONFIG.studentName + " · " + APP.CONFIG.eventTime + " · " + APP.CONFIG.eventPlace;
+      els.cardSub.textContent = APP.buildInviteEventDetailText();
     }
     if (els.cardSub2) {
-      els.cardSub2.textContent =
-        APP.CONFIG.studentName + " · " + APP.CONFIG.eventTime + " · " + APP.CONFIG.eventPlace;
+      els.cardSub2.textContent = APP.buildInviteEventDetailText();
     }
     if (els.cardInviteGuest) {
       els.cardInviteGuest.textContent = displayName || "Bạn và gia đình";
@@ -51,7 +74,35 @@
       els.cardInviteMessage.textContent =
         "Đến tham dự lễ tốt nghiệp của " + APP.CONFIG.studentName;
     }
-    if (els.cardThanks) els.cardThanks.textContent = "Cảm ơn vì sự có mặt của bạn.";
+    if (els.cardThanks) {
+      var anonThanks = APP.CONFIG.thanksAnonymous || "Cảm ơn vì sự có mặt của bạn.";
+      var namedTpl =
+        APP.CONFIG.thanksNamed ||
+        "{name} ơi, cảm ơn vì đã là một phần rất đẹp trong ngày này của mình.";
+      els.cardThanks.textContent = displayName
+        ? namedTpl.replace(/\{name\}/g, displayName)
+        : anonThanks;
+    }
+    if (els.cardFlavor) {
+      els.cardFlavor.textContent = APP.CONFIG.inviteFlavor || "";
+      els.cardFlavor.hidden = !APP.CONFIG.inviteFlavor;
+    }
+    if (els.cardFlavorAside) {
+      els.cardFlavorAside.textContent = APP.CONFIG.inviteFlavorAside || "";
+      els.cardFlavorAside.hidden = !APP.CONFIG.inviteFlavorAside;
+    }
+    if (els.cardPS) {
+      els.cardPS.textContent = APP.CONFIG.invitePS || "";
+      els.cardPS.hidden = !APP.CONFIG.invitePS;
+    }
+    if (els.cardMeal) {
+      els.cardMeal.textContent = APP.CONFIG.mealLine || "";
+      els.cardMeal.hidden = !APP.CONFIG.mealLine;
+    }
+    if (els.cardSponsor) {
+      els.cardSponsor.textContent = APP.CONFIG.sponsorLine || "";
+      els.cardSponsor.hidden = !APP.CONFIG.sponsorLine;
+    }
     if (els.cardFrame) els.cardFrame.hidden = true;
     if (els.cardEmpty) els.cardEmpty.hidden = false;
     if (els.cardPhoto) els.cardPhoto.hidden = true;
@@ -72,10 +123,10 @@
         APP.showScreen(els.revealScreen);
         els.reveal1.classList.remove("is-visible");
         els.reveal2.classList.remove("is-visible");
-        els.reveal3.classList.remove("is-visible");
+        if (els.reveal3) els.reveal3.classList.remove("is-visible");
         els.revealName.classList.remove("is-visible");
         els.revealName.textContent = "";
-        els.btnToInvite.hidden = true;
+        if (els.btnToInvite) els.btnToInvite.hidden = true;
         return APP.wait(400);
       })
       .then(function () {
@@ -87,7 +138,7 @@
         return APP.wait(APP.CONFIG.revealGapMs);
       })
       .then(function () {
-        els.reveal3.classList.add("is-visible");
+        if (els.reveal3) els.reveal3.classList.add("is-visible");
         return APP.wait(APP.CONFIG.revealGapMs);
       })
       .then(function () {
@@ -97,7 +148,7 @@
         return APP.wait(APP.CONFIG.nameHoldMs);
       })
       .then(function () {
-        els.btnToInvite.hidden = false;
+        if (els.btnToInvite) els.btnToInvite.hidden = false;
       });
   };
 
@@ -128,3 +179,4 @@
     if (els.revealName) els.revealName.setAttribute("aria-label", "Tên người được mời: " + displayName);
   };
 })();
+export {};

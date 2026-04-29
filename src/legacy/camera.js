@@ -137,8 +137,7 @@
         APP.downloadBlob(blob, "ky-niem-tot-nghiep.png");
         if (els.inviteWrapPhoto) els.inviteWrapPhoto.hidden = false;
         if (els.cardSub2) {
-          els.cardSub2.textContent =
-            APP.CONFIG.studentName + " · " + APP.CONFIG.eventTime + " · " + APP.CONFIG.eventPlace;
+          els.cardSub2.textContent = APP.buildInviteEventDetailText();
         }
         if (els.cardPhoto2) els.cardPhoto2.src = previewUrl;
         if (els.inviteWrapPhoto) els.inviteWrapPhoto.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -177,3 +176,4 @@
     navigator.share({ title: "Ảnh kỷ niệm tốt nghiệp", text: "Ảnh kỷ niệm tốt nghiệp", files: [file] }).catch(function () {});
   };
 })();
+export {};

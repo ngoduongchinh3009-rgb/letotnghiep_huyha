@@ -72,3 +72,4 @@
     if (els.modalImg) els.modalImg.src = "";
   };
 })();
+export {};

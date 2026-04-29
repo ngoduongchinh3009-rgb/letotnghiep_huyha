@@ -3,3 +3,4 @@
   "use strict";
   window.APP = window.APP || {};
 })();
+export {};

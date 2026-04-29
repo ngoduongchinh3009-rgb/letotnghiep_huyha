@@ -5,7 +5,7 @@
 
   /**
    * Danh sách khách mời: khớp theo tên gõ (không phân biệt hoa thường, bỏ dấu).
-   * display: tên hiển thị chuẩn trên thiệp | role: dòng thân thiết | relation: giá trị <select> tương ứng
+   * display: tên hiển thị chuẩn trên thiệp | role: dòng thân thiết | relation: nhánh câu reveal (logic)
    */
   APP.GUEST_DB = [
     {
@@ -95,3 +95,4 @@
     return null;
   };
 })();
+export {};

@@ -6,3 +6,7 @@ Desktop.ini
 # Editor
 .vscode/
 .idea/
+
+# Node / Vite
+node_modules/
+dist/

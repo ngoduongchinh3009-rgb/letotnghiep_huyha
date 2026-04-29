@@ -1,15 +1,7 @@
-// Entry point (wires UI). Các phần logic nằm trong `js/*.js`.
-(function () {
-  "use strict";
-
+/** Hành vi wiring UI (trước đây là script.js). Cần window.APP.els đã bind sau khi Vue mount. */
+export function boot() {
   var APP = window.APP;
   var els = APP.els;
-
-  function buildRoleFromSelect() {
-    var r = els.selectRelation.value;
-    if (r) return "Mời đến với tư cách: " + r + ".";
-    return "Khách mời thân quý.";
-  }
 
   function bindModal() {
     if (els.modalClose) els.modalClose.addEventListener("click", APP.closeModal);
@@ -82,13 +74,9 @@
         els.inputName.focus();
         return;
       }
-      if (!els.selectRelation.value) {
-        els.selectRelation.focus();
-        return;
-      }
       var hit = APP.lookupGuest(name);
       var displayName = hit ? hit.display : name;
-      var roleLine = hit ? hit.role : buildRoleFromSelect();
+      var roleLine = hit ? hit.role : APP.CONFIG.defaultGuestRole || "Khách mời thân mến.";
       APP.state.guestFullName = displayName;
       APP.fillInviteCard(displayName, roleLine);
       APP.setRevealLinesForGuest(hit, displayName);
@@ -100,44 +88,45 @@
       setTimeout(APP.setGuestLiveFromInput, 0);
     });
 
-    els.btnDemo.addEventListener("click", function () {
-      els.inputName.value = "BapDunChin";
-      APP.setGuestLiveFromInput();
-    });
+    if (els.btnDemo) {
+      els.btnDemo.addEventListener("click", function () {
+        els.inputName.value = "BapDunChin";
+        APP.setGuestLiveFromInput();
+      });
+    }
 
-    els.btnToInvite.addEventListener("click", function () {
-      APP.showScreen(els.inviteScreen);
-      window.scrollTo(0, 0);
-    });
+    if (els.btnToInvite) {
+      els.btnToInvite.addEventListener("click", function () {
+        APP.showScreen(els.inviteScreen);
+        window.scrollTo(0, 0);
+      });
+    }
   }
 
   function bindWishFlow() {
     if (els.wishForm) els.wishForm.addEventListener("submit", APP.handleWishSubmit);
   }
 
-  function boot() {
-    bindModal();
-    bindWallUi();
-    bindCameraUi();
-    bindVerifyFlow();
-    bindWishFlow();
+  bindModal();
+  bindWallUi();
+  bindCameraUi();
+  bindVerifyFlow();
+  bindWishFlow();
 
-    APP.fillInviteCard("", "");
-    APP.refreshSecureBanner();
-    APP.initFirebaseMaybe();
-    if (APP.hasFirebaseConfig()) APP.attachWallListener();
+  APP.fillInviteCard("", "");
+  APP.setGuestLiveFromInput();
+  APP.refreshSecureBanner();
+  APP.initFirebaseMaybe();
+  if (APP.hasFirebaseConfig()) APP.attachWallListener();
 
-    var view = APP.getQuery("view");
-    if (view === "wall") {
-      APP.showScreen(els.inviteScreen);
-      if (els.wishPanel) els.wishPanel.hidden = true;
-      if (els.camWrap && els.camWrap.parentElement) els.camWrap.parentElement.hidden = true;
-      if (els.photoPreview) els.photoPreview.hidden = true;
-      if (els.wallPanel) els.wallPanel.scrollIntoView({ behavior: "instant", block: "start" });
-    } else {
-      APP.startSplash();
-    }
+  var view = APP.getQuery("view");
+  if (view === "wall") {
+    APP.showScreen(els.inviteScreen);
+    if (els.wishPanel) els.wishPanel.hidden = true;
+    if (els.camWrap && els.camWrap.parentElement) els.camWrap.parentElement.hidden = true;
+    if (els.photoPreview) els.photoPreview.hidden = true;
+    if (els.wallPanel) els.wallPanel.scrollIntoView({ behavior: "instant", block: "start" });
+  } else {
+    APP.startSplash();
   }
-
-  boot();
-})();
+}
