@@ -55,6 +55,7 @@ import textureUrl from "../../assets/texture.png?url";
 
       form: $(root, "verify-form"),
       inputName: $(root, "guest-name"),
+      inputPhone: $(root, "guest-phone-gate"),
       guestLive: $(root, "guest-live"),
 
       reveal1: $(root, "reveal-1"),

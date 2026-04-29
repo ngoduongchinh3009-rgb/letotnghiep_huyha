@@ -26,6 +26,8 @@
       display: "BapDunChin",
       role: "Em người yêu xinhdep hiểu chuyện — người đồng hành đáng tin cậy.",
       relation: "Người yêu",
+      /* 4 số cuối SĐT thật; bỏ trường này hoặc để rỗng = không khóa SĐT cho khách này */
+      phoneLast4: "",
     },
     {
       match: ["nguyen huy ha", "nguyễn huy hà", "huy ha", "huy hà"],
@@ -73,6 +75,23 @@
 
   APP.normName = function normName(s) {
     return APP.foldAccents(String(s).trim()).replace(/\s+/g, " ");
+  };
+
+  /** Chỉ giữ chữ số; chuẩn hoá +84… → 0… để so khớp 4 số cuối. */
+  APP.normPhoneDigits = function normPhoneDigits(s) {
+    var d = String(s || "").replace(/\D/g, "");
+    if (d.length >= 11 && d.slice(0, 2) === "84") d = "0" + d.slice(2);
+    return d;
+  };
+
+  /** Khách có phoneLast4 (đúng 4 chữ số) thì phải nhập SĐT khớp 4 số cuối mới coi là đúng người. */
+  APP.guestPhoneUnlocked = function guestPhoneUnlocked(hit, phoneRaw) {
+    if (!hit) return true;
+    var tail = String(hit.phoneLast4 != null ? hit.phoneLast4 : "").replace(/\D/g, "");
+    if (tail.length < 4) return true;
+    var got = APP.normPhoneDigits(phoneRaw);
+    if (got.length < 4) return false;
+    return got.slice(-4) === tail.slice(-4);
   };
 
   /** Tìm khách: khớp đủ alias trước; sau đó tiền tố alias (không substring giữa chuỗi). */

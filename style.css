@@ -137,6 +137,28 @@ select {
   font-weight: 400;
 }
 
+.verify-phone-label {
+  margin: 0.35rem 0 0.25rem;
+  font-size: clamp(0.92rem, 2vw, 1.05rem);
+}
+
+.verify-phone-note {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: clamp(0.78rem, 1.75vw, 0.88rem);
+  font-weight: 500;
+  color: rgba(247, 242, 232, 0.72);
+}
+
+#screen-form .verify-phone-label {
+  color: var(--muted);
+}
+
+#screen-form .verify-phone-note {
+  color: var(--muted);
+  opacity: 0.92;
+}
+
 /* Nhận diện tên → chức danh / lời thân thiết (cập nhật khi gõ) */
 .guest-live {
   min-height: 3.1em;

@@ -26,6 +26,25 @@
       return;
     }
     var hit = APP.lookupGuest(raw);
+    var phoneRaw = APP.els.inputPhone ? String(APP.els.inputPhone.value || "") : "";
+    var needsPhone =
+      hit &&
+      String(hit.phoneLast4 != null ? hit.phoneLast4 : "")
+        .replace(/\D/g, "")
+        .length >= 4;
+    var phoneOk = APP.guestPhoneUnlocked(hit, phoneRaw);
+
+    if (hit && needsPhone && !phoneOk) {
+      APP.els.guestLive.classList.add("is-empty");
+      var gotDigits = APP.normPhoneDigits(phoneRaw);
+      APP.els.guestLive.textContent =
+        gotDigits.length >= 4
+          ? APP.CONFIG.guestPhoneWrongHint || "4 số cuối chưa đúng."
+          : APP.CONFIG.guestPhoneGateHint ||
+            "Nhập đúng 4 số cuối SĐT mình đã nhắn để xem lời riêng.";
+      return;
+    }
+
     APP.els.guestLive.classList.remove("is-empty");
     if (hit) {
       APP.els.guestLive.innerHTML =
