@@ -5,11 +5,13 @@
 
   /**
    * fullNames: chỉ khớp CHÍNH XÁC (đã norm) mới auto — không bao giờ auto từ tên ngắn.
-   * match: biệt danh / từ tắt → chỉ gây ambiguous (cần popup hoặc chọn nhanh điền đủ họ tên).
+   * match: biệt danh / từ tắt → chỉ gây ambiguous (cần popup; gõ đủ họ tên để khớp exact).
    * display: tên trên thiệp | legalLine: dòng [Vai — Họ tên] trong popup.
+   * requiresSubmitConfirm: sau khi gửi form, luôn mở popup xác nhận (5 VIP — tránh nhận nhầm).
    */
   APP.GUEST_DB = [
     {
+      requiresSubmitConfirm: true,
       match: [
         "bapdunchin",
         "bap dun chin",
@@ -17,61 +19,57 @@
         "ngoduongchinh",
         "ngo duong chinh",
         "ngo duong chin",
-        "duongchinh",
-        "duong chinh",
         "chinh",
       ],
       display: "BapDunChin",
-      legalLine: "Người yêu — Ngô Dương Chinh",
+      legalLine: "Người yêu xinh đẹp",
       fullNames: ["Ngô Dương Chinh", "Ngo Duong Chinh"],
       role: "Em người yêu xinhdep hiểu chuyện — người đồng hành đáng tin cậy.",
       relation: "Người yêu",
-      quickPickLabel: "Người yêu — Ngô Dương Chinh (gấu nhà tui)",
     },
     {
+      requiresSubmitConfirm: true,
       match: ["bo", "bố", "cha", "ba", "dung"],
       display: "Bố",
-      legalLine: "Bố — Nguyễn Huy Dũng",
+      legalLine: "Bố",
       fullNames: ["Nguyễn Huy Dũng", "Nguyen Huy Dung"],
       role: "Bố — nhà tài trợ chính & chỗ dựa vững chắc.",
       relation: "Bố",
-      quickPickLabel: "Bố — Nguyễn Huy Dũng",
     },
     {
+      requiresSubmitConfirm: true,
       match: ["me", "mẹ", "ma", "tinh"],
       display: "Mẹ",
-      legalLine: "Mẹ — Nghiêm Thị Tỉnh",
+      legalLine: "Mẹ",
       fullNames: ["Nghiêm Thị Tỉnh", "Nghiem Thi Tinh"],
       role: "Mẹ — nhà tài trợ chính & người mẹ hiền từ.",
       relation: "Mẹ",
-      quickPickLabel: "Mẹ — Nghiêm Thị Tỉnh",
     },
     {
-      match: ["nam", "hoang"],
+      requiresSubmitConfirm: true,
+      match: ["nam", "hoang", "nguyen huy hoang", "hoang", "nguyenhuyhoang", "nghuyhoang"],
       display: "Anh trai",
-      legalLine: "Anh trai — Nguyễn Huy Hoàng (Nam)",
+      legalLine: "Anh trai",
       fullNames: ["Nguyễn Huy Hoàng", "Nguyen Huy Hoang"],
       role: "Anh trai — ba chấm... anh trai.",
       relation: "Anh trai",
-      quickPickLabel: "Anh trai — Nguyễn Huy Hoàng (Nam)",
     },
     {
-      match: ["duong", "dương", "thuy duong"],
+      requiresSubmitConfirm: true,
+      match: ["duong", "dương", "thuy duong", "nguyen thuy duong", "thuyduong"],
       display: "Thùy Dương",
-      legalLine: "Thùy Dương — Nguyễn Thùy Dương",
+      legalLine: "Nguyễn Thùy Dương",
       fullNames: ["Nguyễn Thùy Dương", "Nguyen Thuy Duong"],
       role: 'Người yêu của anh trai — thành viên "gia đình mở rộng".',
       relation: "Người yêu (anh trai)",
-      quickPickLabel: "Thùy Dương — Nguyễn Thùy Dương",
     },
     {
-      match: ["nguyen huy ha", "nguyễn huy hà", "huy ha", "huy hà", "huyha"],
+      match: ["nguyen huy ha", "nguyễn huy hà", "huy ha", "huy hà", "huyha","nguyenhuyha", "hya"],
       display: "Nguyễn Huy Hà",
       legalLine: "Nhân vật chính — Nguyễn Huy Hà",
       fullNames: ["Nguyễn Huy Hà", "Nguyen Huy Ha"],
       role: "Siuuuuu cấp deptroai — nhân vật chính của buổi lễ.",
       relation: "Người tốt nghiệp",
-      quickPickLabel: "Huy Hà — nhân vật chính lễ tốt nghiệp",
     },
   ];
 
@@ -109,6 +107,74 @@
 
   APP.GUEST_DB.forEach(buildGuestScratch);
 
+  var FORCE_CONFIRM_FULL_NAMES = [
+    "nguyen huy dung",
+    "nghiem thi tinh",
+    "nguyen huy hoang",
+    "nguyen thuy duong",
+    "ngo duong chinh",
+  ];
+
+  /** 5 VIP: sau submit luôn hỏi lại qua popup (không vào thiệp thẳng). */
+  APP.guestRequiresSubmitConfirm = function guestRequiresSubmitConfirm(g) {
+    if (!g) return false;
+    if (g.requiresSubmitConfirm) return true;
+    var i;
+    for (i = 0; i < (g.fullNames || []).length; i++) {
+      var n = APP.normName(g.fullNames[i]);
+      if (FORCE_CONFIRM_FULL_NAMES.indexOf(n) !== -1) return true;
+    }
+    return false;
+  };
+
+  APP.buildGuestConfirmSub = function buildGuestConfirmSub(raw, matches) {
+    var q = APP.normName(raw || "");
+    var qQ = q.replace(/\s+/g, "");
+    var textForGuest = function (g) {
+      if (!g) return "";
+      if (g.relation === "Người yêu") return "Gái nhà tôi cũng tên Chinh, phải khongggg???";
+      if (g.relation === "Anh trai") return "Anh trai hay khách mời đó?";
+      if (g.relation === "Bố") return "Bố hay khách mời khác trùng tên vậy ta?";
+      if (g.relation === "Mẹ") return "Mẹ hay khách mời khác trùng tên vậy ta?";
+      if (g.relation === "Người yêu (anh trai)") {
+        return 'Dương này là <span class="guest-confirm-soft-italic">"Gia đình mở rộng"</span> hay khách mời khác vậy?';
+      }
+      return "";
+    };
+    var has = function (arr) {
+      var i;
+      for (i = 0; i < arr.length; i++) {
+        var t = APP.normName(arr[i]);
+        var tQ = t.replace(/\s+/g, "");
+        if (q === t || qQ === tQ || q.indexOf(t) !== -1 || qQ.indexOf(tQ) !== -1) return true;
+      }
+      return false;
+    };
+
+    if (matches && matches.length === 1) {
+      var byGuest = textForGuest(matches[0]);
+      if (byGuest) return byGuest;
+    }
+
+    if (has(["chinh", "ngo duong chinh", "duong chinh"])) {
+      return "Gái nhà tôi cũng tên Chinh, phải khongggg???";
+    }
+    if (has(["nam", "hoang", "nguyen huy hoang"])) {
+      return "Anh trai hay khách mời đó?";
+    }
+    if (has(["bo", "bố", "cha", "ba", "dung", "nguyen huy dung"])) {
+      return "Bố hay khách mời khác trùng tên vậy ta?";
+    }
+    if (has(["me", "mẹ", "ma", "tinh", "nghiem thi tinh"])) {
+      return "Mẹ hay khách mời khác trùng tên vậy ta?";
+    }
+    if (has(["duong", "dương", "thuy duong", "nguyen thuy duong"])) {
+      return 'Dương này là <span class="guest-confirm-soft-italic">"Gia đình mở rộng"</span> hay khách mời khác vậy?';
+    }
+
+    return APP.CONFIG.guestConfirmSub || "Chọn đúng người để xem lời mời riêng.";
+  };
+
   function isExactForGuest(q, qQ, g) {
     var i;
     for (i = 0; i < g._exactNorms.length; i++) {
@@ -127,7 +193,6 @@
     for (i = 0; i < g._exactNorms.length; i++) {
       F = g._exactNorms[i];
       if (q.length >= 2 && F !== q && F.startsWith(q)) return true;
-      if (q.length >= 2 && F !== q && F.indexOf(q) !== -1) return true;
     }
     var A;
     for (i = 0; i < g._aliasNorms.length; i++) {
@@ -180,22 +245,6 @@
   };
 
   APP.resolveGuestLookupResult = function resolveGuestLookupResult(raw) {
-    var q = APP.normName(raw);
-    if (!q) return { type: "none", matches: [] };
-
-    if (APP.state.quickPickGuestIndex != null) {
-      var gPin = APP.GUEST_DB[APP.state.quickPickGuestIndex];
-      if (gPin) {
-        var qQ = q.replace(/\s+/g, "");
-        var pinOk =
-          isExactForGuest(q, qQ, gPin) ||
-          q === APP.normName(gPin.display) ||
-          qQ === APP.normName(gPin.display).replace(/\s+/g, "");
-        if (pinOk) return { type: "exact", matches: [gPin] };
-      }
-      APP.state.quickPickGuestIndex = null;
-    }
-
     return APP.lookupGuestResult(raw);
   };
 

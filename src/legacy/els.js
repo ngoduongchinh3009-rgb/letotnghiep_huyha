@@ -32,8 +32,6 @@ import textureUrl from "../../assets/texture.png?url";
         cheekX: null,
         cheekY: null,
       },
-      quickPickGuestIndex: null,
-      applyingQuickPick: false,
     };
     APP.state.classicBgImg = new Image();
     APP.state.classicBgImg.onload = function () {
@@ -52,12 +50,12 @@ import textureUrl from "../../assets/texture.png?url";
       splash: $(root, "screen-splash"),
       formScreen: $(root, "screen-form"),
       loadingScreen: $(root, "screen-loading"),
+      loadingText: $(root, "screen-loading") ? $(root, "screen-loading").querySelector(".loading-text") : null,
       revealScreen: $(root, "screen-reveal"),
       inviteScreen: $(root, "screen-invite"),
 
       form: $(root, "verify-form"),
       inputName: $(root, "guest-name"),
-      selectQuickPick: $(root, "guest-quick-pick"),
       guestLive: $(root, "guest-live"),
 
       guestConfirmModal: $(root, "guest-confirm-modal"),
@@ -77,6 +75,7 @@ import textureUrl from "../../assets/texture.png?url";
       cardFrame: $(root, "card-frame"),
       cardEmpty: $(root, "card-empty"),
       cardInviteGuest: $(root, "card-invite-guest"),
+      cardRole: $(root, "card-role"),
       cardInviteMessage: $(root, "card-invite-message"),
       cardFlavorAside: $(root, "card-flavor-aside"),
       cardMeal: $(root, "card-meal"),

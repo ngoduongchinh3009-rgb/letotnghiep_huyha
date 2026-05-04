@@ -13,9 +13,7 @@ export function boot() {
     window.addEventListener("keydown", function (e) {
       if (e.key !== "Escape") return;
       if (els.guestConfirmModal && !els.guestConfirmModal.hidden) {
-        var d = APP._guestConfirmOnDecline;
         APP.closeGuestConfirmModal();
-        if (d) d();
         e.preventDefault();
         return;
       }
@@ -88,10 +86,29 @@ export function boot() {
           roleLine = roleLine.replace(/\{name\}/g, displayName || typedRaw || "");
         }
       }
+      if (els.loadingText) els.loadingText.textContent = "Đang tạo thiệp nha...";
       APP.state.guestFullName = displayName;
       APP.fillInviteCard(displayName, roleLine);
       APP.setRevealLinesForGuest(hit, displayName);
       APP.runRevealSequence(displayName);
+    }
+
+    function proceedRevealFromChoice(chosen, typed) {
+      if (
+        chosen &&
+        APP.guestRequiresSubmitConfirm(chosen) &&
+        typeof APP.openGuestPreCreateModal === "function"
+      ) {
+        APP.openGuestPreCreateModal(
+          chosen,
+          function () {
+            proceedReveal(chosen, chosen.display, typed);
+          },
+          function () {}
+        );
+        return;
+      }
+      proceedReveal(chosen, chosen ? chosen.display : typed, typed);
     }
 
     els.form.addEventListener("submit", function (e) {
@@ -102,8 +119,31 @@ export function boot() {
         return;
       }
       var res = APP.resolveGuestLookupResult(typed);
-      if (res.type === "exact" && res.matches[0]) {
+      if (
+        res.matches &&
+        res.matches.length === 1 &&
+        res.matches[0] &&
+        res.matches[0].relation === "Người tốt nghiệp" &&
+        typeof APP.openGuestInfoModal === "function"
+      ) {
+        APP.openGuestInfoModal(res.matches[0]);
+        return;
+      }
+      if (res.type === "exact" && res.matches.length === 1 && res.matches[0]) {
         var g0 = res.matches[0];
+        if (APP.guestRequiresSubmitConfirm(g0)) {
+          APP.openGuestConfirmModal(
+            res.matches,
+            function (chosen) {
+              proceedRevealFromChoice(chosen, typed);
+            },
+            function () {
+              proceedReveal(null, typed, typed);
+            },
+            typed
+          );
+          return;
+        }
         proceedReveal(g0, g0.display, typed);
         return;
       }
@@ -111,11 +151,12 @@ export function boot() {
         APP.openGuestConfirmModal(
           res.matches,
           function (chosen) {
-            proceedReveal(chosen, chosen.display, typed);
+            proceedRevealFromChoice(chosen, typed);
           },
           function () {
             proceedReveal(null, typed, typed);
-          }
+          },
+          typed
         );
         return;
       }
@@ -123,16 +164,10 @@ export function boot() {
     });
 
     els.inputName.addEventListener("input", function () {
-      if (APP.state.applyingQuickPick) return;
-      APP.state.quickPickGuestIndex = null;
-      if (els.selectQuickPick) els.selectQuickPick.value = "";
       APP.setGuestLiveFromInput();
     });
     els.inputName.addEventListener("paste", function () {
       setTimeout(function () {
-        if (APP.state.applyingQuickPick) return;
-        APP.state.quickPickGuestIndex = null;
-        if (els.selectQuickPick) els.selectQuickPick.value = "";
         APP.setGuestLiveFromInput();
       }, 0);
     });
@@ -157,41 +192,6 @@ export function boot() {
   if (typeof APP.bindGuestConfirmDom === "function") APP.bindGuestConfirmDom();
 
   APP.fillInviteCard("", "");
-  if (els.selectQuickPick && APP.GUEST_DB) {
-    els.selectQuickPick.innerHTML = "";
-    var opt0 = document.createElement("option");
-    opt0.value = "";
-    opt0.textContent = APP.CONFIG.guestQuickPickPlaceholder || "— Chọn nhanh —";
-    els.selectQuickPick.appendChild(opt0);
-    var gi;
-    for (gi = 0; gi < APP.GUEST_DB.length; gi++) {
-      var g = APP.GUEST_DB[gi];
-      var lab =
-        g.quickPickLabel ||
-        g.display + " — " + (g.role.length > 52 ? g.role.slice(0, 49) + "…" : g.role);
-      var o = document.createElement("option");
-      o.value = String(gi);
-      o.textContent = lab;
-      els.selectQuickPick.appendChild(o);
-    }
-    els.selectQuickPick.addEventListener("change", function () {
-      var v = els.selectQuickPick.value;
-      if (v === "") {
-        APP.state.quickPickGuestIndex = null;
-        APP.setGuestLiveFromInput();
-        return;
-      }
-      var ix = parseInt(v, 10);
-      if (isNaN(ix) || !APP.GUEST_DB[ix]) return;
-      APP.state.applyingQuickPick = true;
-      APP.state.quickPickGuestIndex = ix;
-      var gPick = APP.GUEST_DB[ix];
-      els.inputName.value =
-        gPick.fullNames && gPick.fullNames.length ? gPick.fullNames[0] : gPick.display;
-      APP.state.applyingQuickPick = false;
-      APP.setGuestLiveFromInput();
-    });
-  }
   APP.setGuestLiveFromInput();
   APP.refreshSecureBanner();
   APP.initFirebaseMaybe();

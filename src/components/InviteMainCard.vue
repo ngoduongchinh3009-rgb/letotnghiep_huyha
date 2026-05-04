@@ -11,6 +11,7 @@
               id="card-flavor-aside"
             ></span>
             <span class="classic-card__paper-guest" id="card-invite-guest"></span>
+            <span class="classic-card__paper-role" id="card-role"></span>
             <span class="classic-card__paper-msg" id="card-invite-message"></span>
             <span class="classic-card__paper-sub" id="card-sub"></span>
             <span class="classic-card__paper-meal" id="card-meal"></span>

@@ -16,9 +16,6 @@
           placeholder="Giúp mình nhập tên bạn nha"
         />
 
-        <label for="guest-quick-pick" class="guest-quick-pick-label">Chọn nhanh</label>
-        <select id="guest-quick-pick" class="guest-quick-pick" aria-label="Chọn nhanh nếu mình có gợi ý riêng"></select>
-
         <p id="guest-live" class="guest-live is-empty" aria-live="polite"></p>
 
         <div class="btn-row">

@@ -19,8 +19,6 @@
   APP.setGuestLiveFromInput = function setGuestLiveFromInput() {
     var raw = (APP.els.inputName.value || "").trim();
     if (!raw) {
-      APP.state.quickPickGuestIndex = null;
-      if (APP.els.selectQuickPick) APP.els.selectQuickPick.value = "";
       APP.els.guestLive.classList.add("is-empty");
       APP.els.guestLive.textContent =
         APP.CONFIG.guestLiveEmptyHint ||
@@ -31,9 +29,7 @@
 
     if (res.type === "ambiguous") {
       APP.els.guestLive.classList.add("is-empty");
-      APP.els.guestLive.textContent =
-        APP.CONFIG.guestAmbiguousLiveHint ||
-        "Gõ đủ họ tên hoặc chọn nhanh, rồi bấm Xác thực để xác nhận đúng người.";
+      APP.els.guestLive.textContent = APP.CONFIG.guestAmbiguousLiveHint || "";
       return;
     }
 
@@ -80,6 +76,10 @@
     }
     if (APP.els.cardInviteGuest) {
       APP.els.cardInviteGuest.textContent = displayName || "Bạn và gia đình";
+    }
+    if (APP.els.cardRole) {
+      APP.els.cardRole.textContent = roleLine || "";
+      APP.els.cardRole.hidden = !roleLine;
     }
     if (APP.els.cardInviteMessage) {
       APP.els.cardInviteMessage.textContent =
