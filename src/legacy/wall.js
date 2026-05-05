@@ -61,16 +61,20 @@
       return;
     }
     if (APP.els.wallHint) APP.setStatus(APP.els.wallHint, "muted", "Tổng: " + list.length + " lời chúc.");
+    var unifiedName = APP.getGuestNameFromInvite();
     var i;
     for (i = 0; i < list.length; i++) {
       var w = list[i];
       if (q) {
-        var s = ((w.fromName || "") + " " + (w.message || "")).toLowerCase();
+        var searchName = unifiedName || w.fromName || w.name || w.guestName || w.displayName || "";
+        var s = (searchName + " " + (w.message || "")).toLowerCase();
         if (s.indexOf(q) === -1) continue;
       }
       var card = document.createElement("div");
-      card.className = "wish-card";
+      card.className = "wish-card wish-card--polaroid";
 
+      var frame = document.createElement("div");
+      frame.className = "wish-card__frame";
       var thumb = document.createElement("div");
       thumb.className = "wish-card__thumb";
       var img = document.createElement("img");
@@ -86,24 +90,24 @@
         })(w.photoUrl || w.imageUrl)
       );
 
-      var body = document.createElement("div");
-      body.className = "wish-card__body";
+      var msg = document.createElement("div");
+      msg.className = "wish-card__note";
+      msg.textContent = (w.message || "").trim() || DEFAULT_WISH_MESSAGE;
+      frame.appendChild(thumb);
+      frame.appendChild(msg);
+
+      var footer = document.createElement("div");
+      footer.className = "wish-card__footer";
       var from = document.createElement("div");
       from.className = "wish-card__from";
-      from.textContent = w.fromName ? w.fromName : "Khách mời";
-      var msg = document.createElement("div");
-      msg.className = "wish-card__msg";
-      msg.textContent = w.message || "";
+      from.textContent = unifiedName || w.fromName || w.name || w.guestName || w.displayName || "Khách mời";
       var meta = document.createElement("div");
       meta.className = "wish-card__meta";
       meta.textContent = APP.formatCreatedAt(w.createdAt);
-
-      body.appendChild(from);
-      body.appendChild(msg);
-      body.appendChild(meta);
-
-      card.appendChild(thumb);
-      card.appendChild(body);
+      footer.appendChild(from);
+      footer.appendChild(meta);
+      card.appendChild(frame);
+      card.appendChild(footer);
       APP.els.wallEl.appendChild(card);
     }
   };
@@ -235,7 +239,8 @@
     var before = String(url).slice(0, idx + marker.length);
     var after = String(url).slice(idx + marker.length);
     if (!after) return String(url);
-    return before + "c_fill,w_720,h_720,f_auto,q_auto:good,dpr_auto/" + after;
+    // Keep the full uploaded image and pad with black if needed (no crop).
+    return before + "c_pad,w_1280,h_720,b_black,f_auto,q_auto:good,dpr_auto/" + after;
   };
 
   APP.showWishThanksPopup = function showWishThanksPopup() {
@@ -248,7 +253,15 @@
 
   APP.getGuestNameFromInvite = function getGuestNameFromInvite() {
     var n = APP.state && APP.state.guestFullName ? String(APP.state.guestFullName).trim() : "";
-    return n || "Khách mời";
+    if (!n && APP.els && APP.els.inputName && APP.els.inputName.value) {
+      n = String(APP.els.inputName.value).trim();
+    }
+    if (!n) {
+      try {
+        n = String(sessionStorage.getItem("inviteGuestName") || "").trim();
+      } catch (e) {}
+    }
+    return n;
   };
 
   APP.openWallAfterSubmit = function openWallAfterSubmit() {
@@ -326,6 +339,10 @@
         : "";
     if (!message) message = DEFAULT_WISH_MESSAGE;
     var fromName = APP.getGuestNameFromInvite();
+    if (!fromName) {
+      APP.setStatus(APP.els.polaroidStatus, "bad", "Thiếu tên từ thiệp. Vui lòng quay lại nhập tên.");
+      return;
+    }
 
     if (APP.els.polaroidSubmit) {
       APP.els.polaroidSubmit.disabled = true;
@@ -346,6 +363,9 @@
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         clientAt: APP.nowIso(),
         fromName: fromName,
+        name: fromName,
+        guestName: fromName,
+        displayName: fromName,
       });
 
       if (APP.els.polaroidMessage) APP.els.polaroidMessage.value = "";
@@ -388,6 +408,10 @@
     }
 
     var fromName = APP.getGuestNameFromInvite();
+    if (!fromName) {
+      APP.setStatus(APP.els.wishStatus, "bad", "Thiếu tên từ thiệp. Vui lòng quay lại nhập tên.");
+      return;
+    }
     var blob = null;
     if (APP.els.wishUseLast && APP.els.wishUseLast.checked) blob = APP.state.lastPhotoBlob;
     if (!blob && APP.els.wishPhoto && APP.els.wishPhoto.files && APP.els.wishPhoto.files[0]) {
@@ -417,6 +441,9 @@
     try {
       var docRef = await APP.createWishDoc({
         fromName: fromName || "",
+        name: fromName || "",
+        guestName: fromName || "",
+        displayName: fromName || "",
         message: msg,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         photoUrl: "",

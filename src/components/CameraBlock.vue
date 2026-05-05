@@ -45,14 +45,14 @@
         <span class="sticker-camera" aria-hidden="true"></span>
         <span class="sticker-disco" aria-hidden="true"></span>
       </div>
-      <button type="button" class="btn-primary polaroid-panel__submit" id="polaroid-submit">
-        Gửi lời chúc
-      </button>
       <div class="polaroid-panel__actions">
         <button type="button" class="btn-secondary" id="btn-retake">Chụp lại</button>
         <input id="polaroid-upload-input" type="file" accept="image/*" hidden />
         <button type="button" class="btn-primary" id="btn-polaroid-upload">Tải ảnh lên</button>
       </div>
+      <button type="button" class="btn-primary polaroid-panel__submit" id="polaroid-submit">
+        Gửi lời chúc
+      </button>
       <p class="status muted polaroid-panel__status" id="polaroid-status"></p>
     </section>
   </div>

@@ -114,6 +114,9 @@ export function boot() {
       }
       refreshLoadingUi(displayName || typedRaw || "");
       APP.state.guestFullName = displayName;
+      try {
+        sessionStorage.setItem("inviteGuestName", String(displayName || typedRaw || "").trim());
+      } catch (e) {}
       APP.fillInviteCard(displayName, roleLine);
       APP.setRevealLinesForGuest(hit, displayName);
       APP.runRevealSequence(displayName);
