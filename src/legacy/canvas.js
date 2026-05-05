@@ -93,6 +93,31 @@
     }
   };
 
+  APP.applyGlobalSoftBeauty = function applyGlobalSoftBeauty(ctx, w, h, strength) {
+    var s = Math.max(0, Math.min(1, typeof strength === "number" ? strength : 0.42));
+    if (s <= 0) return;
+    try {
+      var c = document.createElement("canvas");
+      c.width = w;
+      c.height = h;
+      var cx = c.getContext("2d");
+      cx.filter = "blur(" + (1.15 + s * 1.55).toFixed(2) + "px)";
+      cx.drawImage(ctx.canvas, 0, 0, w, h);
+      cx.filter = "none";
+      ctx.save();
+      ctx.globalAlpha = 0.12 + s * 0.24;
+      ctx.drawImage(c, 0, 0, w, h);
+      ctx.restore();
+      ctx.save();
+      ctx.globalCompositeOperation = "soft-light";
+      ctx.fillStyle = "rgba(255, 235, 224, " + (0.06 + s * 0.07).toFixed(3) + ")";
+      ctx.fillRect(0, 0, w, h);
+      ctx.restore();
+    } catch (e) {
+      // ignore
+    }
+  };
+
   
 
   APP.drawGraduationMemorialToCanvas = function drawGraduationMemorialToCanvas(out, ow, oh, photoSource) {

@@ -5,12 +5,10 @@
   var DEFAULT_BEAUTY_MODE = "soft";
 
   APP.setPreview = function setPreview(url, blob) {
-    if (!APP.els.photoPreview || !APP.els.previewImg) return;
     if (APP.state.lastPhotoUrl) URL.revokeObjectURL(APP.state.lastPhotoUrl);
     APP.state.lastPhotoBlob = blob || null;
     APP.state.lastPhotoUrl = url || "";
-    APP.els.previewImg.src = APP.state.lastPhotoUrl;
-    APP.els.photoPreview.hidden = !APP.state.lastPhotoUrl;
+    if (APP.els.polaroidImage) APP.els.polaroidImage.src = APP.state.lastPhotoUrl;
     if (APP.preparePolaroidFromCapture) APP.preparePolaroidFromCapture();
   };
 
@@ -150,8 +148,15 @@
     ctx.restore();
 
     if (beautyMode !== "off") {
-      if (APP.applySkinSmoothing) APP.applySkinSmoothing(ctx, cw, ch, 0.76);
-      if (APP.applyUnderEyeBrighten) APP.applyUnderEyeBrighten(ctx, cw, ch, 0.56);
+      var hasLandmarks =
+        APP.state &&
+        APP.state.faceLandmarks &&
+        APP.state.faceLandmarks.length &&
+        APP.hasFreshFaceLandmarks &&
+        APP.hasFreshFaceLandmarks(1800);
+      if (APP.applySkinSmoothing) APP.applySkinSmoothing(ctx, cw, ch, hasLandmarks ? 0.86 : 0.46);
+      if (APP.applyUnderEyeBrighten) APP.applyUnderEyeBrighten(ctx, cw, ch, hasLandmarks ? 0.66 : 0.32);
+      if (!hasLandmarks && APP.applyGlobalSoftBeauty) APP.applyGlobalSoftBeauty(ctx, cw, ch, 0.52);
       APP.applyPortraitEnhance(ctx, cw, ch);
       if (APP.applyLipstickFilter) APP.applyLipstickFilter(ctx, cw, ch, APP.getLipOpacity());
     }
@@ -177,8 +182,7 @@
         APP.setPreview(previewUrl, blob);
         APP.stopCamera();
         APP.setCaptureUiVisible(false);
-        APP.downloadBlob(blob, "ky-niem-tot-nghiep.png");
-        if (APP.els.photoPreview) APP.els.photoPreview.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        if (APP.els.polaroidPanel) APP.els.polaroidPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
         if (APP.els.wishUseLast) APP.els.wishUseLast.checked = true;
       },
       "image/png"
@@ -188,8 +192,7 @@
   APP.retake = function retake() {
     APP.stopCamera();
     APP.setCaptureUiVisible(true);
-    if (APP.els.photoPreview) APP.els.photoPreview.hidden = true;
-    if (APP.els.previewImg) APP.els.previewImg.src = "";
+    if (APP.els.polaroidImage) APP.els.polaroidImage.src = "";
     if (APP.state.lastPhotoUrl) {
       URL.revokeObjectURL(APP.state.lastPhotoUrl);
       APP.state.lastPhotoUrl = "";

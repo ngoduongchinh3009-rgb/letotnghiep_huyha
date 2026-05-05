@@ -27,17 +27,6 @@
 
     <p class="cam-error" id="cam-error" hidden></p>
 
-    <section class="photo-preview photo-preview--grad" id="photo-preview" hidden>
-      <div class="photo-preview__grad-inner">
-        <img id="preview-img" alt="Ảnh kỷ niệm vừa chụp" />
-      </div>
-      <div class="preview-actions">
-        <button type="button" class="btn-secondary" id="btn-retake">Chụp lại</button>
-        <button type="button" class="btn-primary" id="btn-download-again">Tải lại PNG</button>
-        <button type="button" class="btn-secondary" id="btn-share-photo">Chia sẻ</button>
-      </div>
-    </section>
-
     <section class="polaroid-panel" id="polaroid-panel" hidden aria-labelledby="polaroid-title">
       <h3 class="polaroid-panel__title" id="polaroid-title">Chụp ảnh &amp; Gửi lời chúc</h3>
       <div class="polaroid-card">
@@ -54,6 +43,10 @@
       <button type="button" class="btn-primary polaroid-panel__submit" id="polaroid-submit">
         Gửi lời chúc
       </button>
+      <div class="polaroid-panel__actions">
+        <button type="button" class="btn-secondary" id="btn-retake">Chụp lại</button>
+        <button type="button" class="btn-primary" id="btn-download-again">Tải ảnh PNG</button>
+      </div>
       <p class="status muted polaroid-panel__status" id="polaroid-status"></p>
     </section>
   </div>

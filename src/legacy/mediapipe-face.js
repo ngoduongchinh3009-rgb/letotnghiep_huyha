@@ -307,8 +307,15 @@
       c.scale(-1, 1);
       c.drawImage(APP.els.video, 0, 0, cw, ch);
       c.restore();
-      APP.applySkinSmoothing(c, cw, ch, 0.72);
-      APP.applyUnderEyeBrighten(c, cw, ch, 0.5);
+      var hasLandmarks =
+        APP.state &&
+        APP.state.faceLandmarks &&
+        APP.state.faceLandmarks.length &&
+        APP.hasFreshFaceLandmarks &&
+        APP.hasFreshFaceLandmarks(1800);
+      APP.applySkinSmoothing(c, cw, ch, hasLandmarks ? 0.8 : 0.44);
+      APP.applyUnderEyeBrighten(c, cw, ch, hasLandmarks ? 0.56 : 0.28);
+      if (!hasLandmarks && APP.applyGlobalSoftBeauty) APP.applyGlobalSoftBeauty(c, cw, ch, 0.5);
       APP.applyLipstickFilter(c, cw, ch, APP.getLipOpacity());
     }
     var canTrack = APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400);
