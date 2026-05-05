@@ -7,12 +7,8 @@
 }
 
 #screen-invite.screen {
-  background-color: #7a7774;
-  background-image:
-    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.09), transparent 40%),
-    radial-gradient(circle at 78% 74%, rgba(0, 0, 0, 0.09), transparent 38%),
-    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.035) 0 2px, rgba(0, 0, 0, 0.02) 2px 4px),
-    linear-gradient(180deg, #8b8884 0%, #74706d 100%);
+  background-color: #140a0c;
+  background-image: linear-gradient(165deg, #2a1518 0%, #160a0d 55%, #0d0608 100%);
 }
 
 /* ========== Camera — nền banner + panel kính ========== */
@@ -279,21 +275,34 @@
 
 .polaroid-wrapper {
   position: relative;
-  width: min(100%, 340px);
-  aspect-ratio: 576 / 1024;
+  width: min(100%, 350px);
   margin: 0 auto;
-  isolation: isolate;
+  padding: 0.75rem 0.25rem;
+}
+
+.polaroid-frame {
+  position: relative;
+  background:
+    radial-gradient(circle at 24% 12%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 48%),
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.015) 0 1px, rgba(255, 255, 255, 0.02) 1px 2px),
+    #f5f4ef;
+  padding: 16px 16px 92px;
+  border-radius: 7px;
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.54) inset,
+    0 1px 0 rgba(0, 0, 0, 0.12) inset,
+    0 24px 34px rgba(0, 0, 0, 0.36),
+    0 8px 14px rgba(0, 0, 0, 0.15);
+  transform: rotate(-1.1deg);
 }
 
 .polaroid-photo {
-  position: absolute;
-  left: 22%;
-  top: 24%;
-  width: 56%;
-  height: 31.8%;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   background: #000;
   overflow: hidden;
-  z-index: 1;
+  border: 1px solid rgba(0, 0, 0, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .polaroid-card__photo {
@@ -304,23 +313,12 @@
   background: #000;
 }
 
-.polaroid-frame-image {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  z-index: 2;
-  pointer-events: none;
-  mix-blend-mode: screen;
-}
-
 .polaroid-note-input {
   position: absolute;
-  left: 24%;
-  width: 52%;
-  bottom: 20.2%;
-  border: 0;
+  left: 10%;
+  width: 80%;
+  bottom: 24px;
+  border: none;
   outline: none;
   resize: none;
   background: transparent;
@@ -332,7 +330,7 @@
   min-height: 2.4rem;
   outline: none;
   padding: 0;
-  z-index: 3;
+  z-index: 2;
 }
 
 .polaroid-note-input::placeholder {
@@ -340,12 +338,14 @@
 }
 
 .polaroid-panel__submit {
-  margin-top: 0.78rem;
-  min-height: 2.75rem;
-  min-width: min(100%, 270px);
+  margin-top: 0.9rem;
+  min-height: 2.85rem;
+  width: min(100%, 320px);
   border-radius: 999px;
   font-family: var(--camera-sans);
   font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.34);
 }
 
@@ -354,18 +354,21 @@
 }
 
 .polaroid-panel__actions {
-  display: flex;
-  gap: 0.55rem;
-  margin-top: 0.65rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.62rem;
+  margin-top: 0.72rem;
 }
 
 .polaroid-panel__actions .btn-primary,
 .polaroid-panel__actions .btn-secondary {
-  flex: 1;
-  min-height: 2.55rem;
+  min-height: 2.78rem;
   border-radius: 999px;
   font-family: var(--camera-sans);
   font-weight: 600;
+  font-size: 0.94rem;
+  padding-inline: 0.85rem;
+  white-space: nowrap;
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -416,17 +419,49 @@
   }
 
   .polaroid-panel__actions {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+
+  .polaroid-panel__submit,
+  .polaroid-panel__actions .btn-primary,
+  .polaroid-panel__actions .btn-secondary {
+    width: 100%;
+    min-height: 2.76rem;
+    font-size: 0.96rem;
+    border-radius: 14px;
   }
 
   .polaroid-wrapper {
-    width: min(100%, 330px);
+    width: min(100%, 320px);
+    padding: 0.45rem 0.1rem 0.25rem;
+  }
+
+  .polaroid-frame {
+    transform: none;
+    padding: 13px 13px 78px;
   }
 
   .polaroid-note-input {
-    left: 22%;
-    width: 56%;
-    bottom: 20%;
-    font-size: clamp(1.3rem, 6vw, 1.7rem);
+    left: 10%;
+    width: 80%;
+    bottom: 19px;
+    font-size: clamp(1.22rem, 5.6vw, 1.56rem);
+    line-height: 1.15;
+  }
+}
+
+@media (max-width: 380px) {
+  .polaroid-wrapper {
+    width: min(100%, 298px);
+  }
+
+  .polaroid-frame {
+    padding: 11px 11px 68px;
+  }
+
+  .polaroid-note-input {
+    bottom: 16px;
+    font-size: clamp(1.08rem, 6vw, 1.34rem);
   }
 }
