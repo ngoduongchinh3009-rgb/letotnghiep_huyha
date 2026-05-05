@@ -110,9 +110,9 @@
   };
 
   APP.getLipOpacity = function getLipOpacity() {
-    if (!APP.els || !APP.els.camLipOpacity) return 0.45;
+    if (!APP.els || !APP.els.camLipOpacity) return 0.68;
     var raw = Number(APP.els.camLipOpacity.value);
-    if (!isFinite(raw)) return 0.45;
+    if (!isFinite(raw)) return 0.68;
     return Math.max(0, Math.min(1, raw / 100));
   };
 
@@ -126,11 +126,55 @@
     ctx.save();
     ctx.globalCompositeOperation = "multiply";
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = "rgba(220, 20, 60, 0.4)";
+    ctx.fillStyle = "rgba(235, 18, 78, 0.66)";
     ctx.beginPath();
     pathFromIndices(ctx, pts, OUTER_LIP, w, h);
     pathFromIndices(ctx, pts, INNER_LIP, w, h);
     ctx.fill("evenodd");
+    ctx.globalCompositeOperation = "soft-light";
+    ctx.globalAlpha = Math.min(1, alpha * 0.55);
+    ctx.fillStyle = "rgba(255, 126, 156, 0.44)";
+    ctx.beginPath();
+    pathFromIndices(ctx, pts, OUTER_LIP, w, h);
+    pathFromIndices(ctx, pts, INNER_LIP, w, h);
+    ctx.fill("evenodd");
+    ctx.restore();
+  };
+
+  APP.applyUnderEyeBrighten = function applyUnderEyeBrighten(ctx, w, h, strength) {
+    var pts = APP.state.faceLandmarks;
+    if (!pts || !pts.length) return;
+    var s = Math.max(0, Math.min(1, typeof strength === "number" ? strength : 0.45));
+    if (s <= 0) return;
+    function p(i) {
+      return lmXY(pts[i], w, h);
+    }
+    var leftOuter = p(33);
+    var leftInner = p(133);
+    var rightOuter = p(263);
+    var rightInner = p(362);
+    var leftCenter = { x: (leftOuter.x + leftInner.x) * 0.5, y: (leftOuter.y + leftInner.y) * 0.5 };
+    var rightCenter = { x: (rightOuter.x + rightInner.x) * 0.5, y: (rightOuter.y + rightInner.y) * 0.5 };
+    var eyeSpan = Math.max(8, dist(leftOuter, leftInner));
+    var eyeSpanR = Math.max(8, dist(rightOuter, rightInner));
+
+    function drawSpot(c, span) {
+      var gy = span * 0.48;
+      var gx = span * 1.18;
+      var grad = ctx.createRadialGradient(c.x, c.y + gy * 0.45, 1, c.x, c.y + gy * 0.45, gx);
+      grad.addColorStop(0, "rgba(255, 244, 228, " + (0.25 + s * 0.24).toFixed(3) + ")");
+      grad.addColorStop(0.55, "rgba(255, 236, 216, " + (0.11 + s * 0.1).toFixed(3) + ")");
+      grad.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(c.x, c.y + gy, gx, gy, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.save();
+    ctx.globalCompositeOperation = "screen";
+    drawSpot(leftCenter, eyeSpan);
+    drawSpot(rightCenter, eyeSpanR);
     ctx.restore();
   };
 
@@ -263,8 +307,9 @@
       c.scale(-1, 1);
       c.drawImage(APP.els.video, 0, 0, cw, ch);
       c.restore();
-      APP.applySkinSmoothing(c, cw, ch, 0.52);
-      APP.applyLipstickFilter(c, cw, ch, APP.getLipOpacity() * 0.9);
+      APP.applySkinSmoothing(c, cw, ch, 0.72);
+      APP.applyUnderEyeBrighten(c, cw, ch, 0.5);
+      APP.applyLipstickFilter(c, cw, ch, APP.getLipOpacity());
     }
     var canTrack = APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400);
     if (canTrack) {

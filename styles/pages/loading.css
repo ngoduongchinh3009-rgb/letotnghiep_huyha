@@ -1,21 +1,176 @@
 /* loading.css — tách từ style.css, chỉnh theo màn tương ứng */
 
 /* ========== Loading ========== */
+.loading-premium {
+  width: min(92vw, 460px);
+  margin: 0 auto;
+  text-align: center;
+  padding: 1rem 1rem 0.35rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 232, 170, 0.2);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    rgba(20, 8, 12, 0.45);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
 .loading-text {
   font-family: var(--font);
-  font-size: clamp(1.4rem, 4vw, 2.2rem);
-  max-width: 28ch;
+  font-size: clamp(1.05rem, 2.8vw, 1.4rem);
+  max-width: 100%;
   line-height: 1.4;
-  margin-bottom: 2rem;
+  margin: 0.75rem 0 0.18rem;
+  letter-spacing: 0.01em;
+  animation: loadingBlink 1.2s ease-in-out infinite;
 }
 
-.spinner {
-  width: clamp(56px, 12vw, 80px);
-  height: clamp(56px, 12vw, 80px);
-  border: 5px solid rgba(255, 248, 231, 0.25);
-  border-top-color: var(--cream);
-  border-radius: 50%;
-  animation: spin 0.95s linear infinite;
+.loading-subtext {
+  margin: 0;
+  font-size: clamp(0.86rem, 2.1vw, 0.98rem);
+  color: rgba(255, 243, 210, 0.82);
+  line-height: 1.45;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+.loading-cap {
+  font-size: clamp(3rem, 10vw, 4.8rem);
+  line-height: 1;
+  display: inline-block;
+  transform-origin: center bottom;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35));
+  animation: capBounce 1.25s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
+
+.loading-confetti {
+  position: relative;
+  height: 0;
+  z-index: 1;
+}
+
+.confetti {
+  position: absolute;
+  top: -3.5rem;
+  left: 50%;
+  width: 8px;
+  height: 11px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: confettiFloat 2.6s ease-in-out infinite;
+}
+
+.confetti.c1 { margin-left: -68px; background: #ffe19f; animation-delay: -0.2s; }
+.confetti.c2 { margin-left: -42px; background: #f5bf5a; animation-delay: -1.1s; }
+.confetti.c3 { margin-left: -18px; background: #ffdca8; animation-delay: -0.6s; }
+.confetti.c4 { margin-left: 12px; background: #f0c56a; animation-delay: -1.8s; }
+.confetti.c5 { margin-left: 35px; background: #ffe7bc; animation-delay: -0.9s; }
+.confetti.c6 { margin-left: 58px; background: #eebf56; animation-delay: -1.4s; }
+.confetti.c7 { margin-left: -55px; background: #f9d88f; animation-delay: -2s; }
+.confetti.c8 { margin-left: 50px; background: #ffe9c1; animation-delay: -0.35s; }
+
+.loading-progress {
+  margin: 0.8rem auto 0.2rem;
+  width: min(100%, 325px);
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 245, 220, 0.2);
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 229, 164, 0.25);
+}
+
+.loading-progress__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, #e6bb5f 0%, #f8db97 52%, #f4c96d 100%);
+  box-shadow: 0 0 10px rgba(248, 221, 157, 0.42);
+}
+
+.loading-premium.is-animating .loading-progress__fill {
+  animation: loadingProgress 2800ms linear forwards;
+}
+
+@keyframes capBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes loadingBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes confettiFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) rotate(0deg) scale(0.9);
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(42px) rotate(145deg) scale(1);
+  }
+}
+
+@keyframes loadingProgress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .loading-premium {
+    width: min(96vw, 420px);
+    padding: 0.85rem 0.8rem 0.3rem;
+    border-radius: 16px;
+  }
+
+  .loading-progress {
+    height: 8px;
+    margin-top: 0.72rem;
+  }
+
+  .confetti {
+    width: 7px;
+    height: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-cap,
+  .loading-text,
+  .confetti,
+  .loading-premium.is-animating .loading-progress__fill {
+    animation: none !important;
+  }
+
+  .loading-progress__fill {
+    transform: scaleX(1);
+  }
+}

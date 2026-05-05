@@ -104,11 +104,11 @@
     out.fillStyle = g0;
     out.fillRect(0, 0, ow, oh);
 
-    var fx = ow * 0.08;
-    var fy = oh * 0.14;
-    var fw = ow * 0.84;
-    var fh = oh * 0.62;
-    var rad = Math.min(28, Math.min(fw, fh) * 0.06);
+    var fx = ow * 0.075;
+    var fy = oh * 0.095;
+    var fw = ow * 0.85;
+    var fh = oh * 0.67;
+    var rad = Math.min(34, Math.min(fw, fh) * 0.065);
 
     out.save();
     out.shadowColor = "rgba(0,0,0,0.48)";
@@ -142,28 +142,28 @@
     }
     out.restore();
 
-    out.strokeStyle = "rgba(239, 199, 108, 0.95)";
-    out.lineWidth = Math.max(4, Math.min(ow, oh) * 0.006);
+    out.strokeStyle = "rgba(243, 205, 118, 0.96)";
+    out.lineWidth = Math.max(4, Math.min(ow, oh) * 0.0055);
     APP.pathRoundRect(out, fx, fy, fw, fh, rad);
     out.stroke();
 
     out.save();
-    out.strokeStyle = "rgba(255, 240, 190, 0.5)";
-    out.lineWidth = Math.max(1.5, Math.min(ow, oh) * 0.0022);
-    APP.pathRoundRect(out, fx + ow * 0.01, fy + ow * 0.01, fw - ow * 0.02, fh - ow * 0.02, rad * 0.82);
+    out.strokeStyle = "rgba(255, 246, 214, 0.56)";
+    out.lineWidth = Math.max(1.4, Math.min(ow, oh) * 0.002);
+    APP.pathRoundRect(out, fx + ow * 0.008, fy + ow * 0.008, fw - ow * 0.016, fh - ow * 0.016, rad * 0.82);
     out.stroke();
     out.restore();
 
-    var bandY = oh * 0.82;
-    var bandH = oh - bandY - oh * 0.04;
+    var bandY = oh * 0.79;
+    var bandH = oh - bandY - oh * 0.05;
     out.save();
     var gb = out.createLinearGradient(0, bandY, 0, oh);
-    gb.addColorStop(0, "rgba(62, 18, 26, 0.95)");
-    gb.addColorStop(1, "rgba(26, 10, 14, 0.98)");
+    gb.addColorStop(0, "rgba(76, 24, 34, 0.95)");
+    gb.addColorStop(1, "rgba(24, 9, 13, 0.985)");
     out.fillStyle = gb;
     APP.pathRoundRect(out, ow * 0.08, bandY, ow * 0.84, bandH, Math.max(16, ow * 0.02));
     out.fill();
-    out.strokeStyle = "rgba(239, 199, 108, 0.5)";
+    out.strokeStyle = "rgba(244, 212, 136, 0.55)";
     out.lineWidth = Math.max(2, ow * 0.0028);
     out.stroke();
     out.restore();
@@ -176,12 +176,12 @@
     var lines = line.split(/\n+/);
     out.save();
     out.textAlign = "center";
-    out.fillStyle = "#fef7e8";
+    out.fillStyle = "#fff6de";
     out.shadowColor = "rgba(0,0,0,0.45)";
     out.shadowBlur = 8;
-    var fs = Math.max(24, Math.min(ow, oh) * 0.03);
+    var fs = Math.max(26, Math.min(ow, oh) * 0.0315);
     out.font = "700 " + fs + "px Be Vietnam Pro, system-ui, Segoe UI, sans-serif";
-    var lh = fs * 1.32;
+    var lh = fs * 1.34;
     var totalH = lines.length * lh;
     var startY = bandY + (bandH - totalH) / 2 + lh * 0.75;
     var i;

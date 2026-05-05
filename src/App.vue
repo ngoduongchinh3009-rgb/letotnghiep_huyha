@@ -1,6 +1,9 @@
 <template>
   <section id="screen-splash" class="screen is-active" aria-live="polite">
-    <p class="splash-text">Chúc mừng lễ tốt nghiệp của Huy Hà.</p>
+    <div class="splash-stage" role="presentation" aria-hidden="true"></div>
+    <div class="splash-copy">
+      <p class="splash-text">Chúc mừng lễ tốt nghiệp của Huy Hà.</p>
+    </div>
   </section>
 
   <section id="screen-form" class="screen" aria-labelledby="form-title">
@@ -51,8 +54,23 @@
   </section>
 
   <section id="screen-loading" class="screen" aria-live="assertive" aria-busy="true">
-    <p class="loading-text">Đang tạo thiệp nha...</p>
-    <div class="spinner" role="presentation"></div>
+    <div class="loading-premium" id="loading-premium">
+      <div class="loading-cap" role="presentation" aria-hidden="true">🎓</div>
+      <div class="loading-confetti" aria-hidden="true">
+        <span class="confetti c1"></span>
+        <span class="confetti c2"></span>
+        <span class="confetti c3"></span>
+        <span class="confetti c4"></span>
+        <span class="confetti c5"></span>
+        <span class="confetti c6"></span>
+        <span class="confetti c7"></span>
+        <span class="confetti c8"></span>
+      </div>
+      <p class="loading-text">Đang chuẩn bị thiệp mời dành riêng cho bạn</p>
+      <div class="loading-progress" role="presentation" aria-hidden="true">
+        <span class="loading-progress__fill" id="loading-progress-fill"></span>
+      </div>
+    </div>
   </section>
 
   <section id="screen-reveal" class="screen" aria-live="polite">

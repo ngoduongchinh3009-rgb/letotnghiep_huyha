@@ -127,30 +127,46 @@
     }
     var vw = APP.els.video.videoWidth;
     var vh = APP.els.video.videoHeight;
-    APP.els.snapCanvas.width = vw;
-    APP.els.snapCanvas.height = vh;
+    var targetAR = 4 / 3; // match preview container aspect-ratio + object-fit: cover
+    var sourceAR = vw / vh;
+    var sx = 0;
+    var sy = 0;
+    var sw = vw;
+    var sh = vh;
+    if (sourceAR > targetAR) {
+      sw = vh * targetAR;
+      sx = (vw - sw) / 2;
+    } else if (sourceAR < targetAR) {
+      sh = vw / targetAR;
+      sy = (vh - sh) / 2;
+    }
+    APP.els.snapCanvas.width = Math.round(sw);
+    APP.els.snapCanvas.height = Math.round(sh);
     var ctx = APP.els.snapCanvas.getContext("2d");
+    var cw = APP.els.snapCanvas.width;
+    var ch = APP.els.snapCanvas.height;
     ctx.save();
-    ctx.translate(vw, 0);
+    ctx.translate(cw, 0);
     ctx.scale(-1, 1);
     var beautyMode = APP.els.camBeautyMode && APP.els.camBeautyMode.value ? APP.els.camBeautyMode.value : DEFAULT_BEAUTY_MODE;
     ctx.filter =
       beautyMode === "off"
         ? "none"
         : "brightness(1.08) contrast(1.01) saturate(1.14)";
-    ctx.drawImage(APP.els.video, 0, 0, vw, vh);
+    ctx.drawImage(APP.els.video, sx, sy, sw, sh, 0, 0, cw, ch);
     ctx.filter = "none";
     ctx.restore();
 
     if (beautyMode !== "off") {
-      if (APP.applySkinSmoothing) APP.applySkinSmoothing(ctx, vw, vh, 0.6);
-      APP.applyPortraitEnhance(ctx, vw, vh);
-      if (APP.applyLipstickFilter) APP.applyLipstickFilter(ctx, vw, vh, APP.getLipOpacity());
+      if (APP.applySkinSmoothing) APP.applySkinSmoothing(ctx, cw, ch, 0.76);
+      if (APP.applyUnderEyeBrighten) APP.applyUnderEyeBrighten(ctx, cw, ch, 0.56);
+      APP.applyPortraitEnhance(ctx, cw, ch);
+      if (APP.applyLipstickFilter) APP.applyLipstickFilter(ctx, cw, ch, APP.getLipOpacity());
     }
 
     var didFaceSticker = false;
     if (APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400) && APP.drawFaceStickers) {
-      didFaceSticker = APP.drawFaceStickers(ctx, vw, vh);
+      didFaceSticker = APP.drawFaceStickers(ctx, cw, ch);
     }
 
     var outW = 1080;

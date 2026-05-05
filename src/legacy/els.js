@@ -62,6 +62,9 @@ import graduationBackdropUrl from "../../assets/graduation-camera-backdrop.png?u
       formScreen: $(root, "screen-form"),
       loadingScreen: $(root, "screen-loading"),
       loadingText: $(root, "screen-loading") ? $(root, "screen-loading").querySelector(".loading-text") : null,
+      loadingSubtext: $(root, "loading-subtext"),
+      loadingPremium: $(root, "loading-premium"),
+      loadingProgressFill: $(root, "loading-progress-fill"),
       revealScreen: $(root, "screen-reveal"),
       inviteScreen: $(root, "screen-invite"),
 

@@ -77,6 +77,23 @@ export function boot() {
   }
 
   function bindVerifyFlow() {
+    function refreshLoadingUi(displayName) {
+      var safeName = (displayName || "").trim();
+      if (els.loadingText) {
+        els.loadingText.textContent = safeName
+          ? "Đang chuẩn bị thiệp mời dành riêng cho " + safeName
+          : "Đang chuẩn bị thiệp mời dành riêng cho bạn";
+      }
+      if (els.loadingPremium) {
+        els.loadingPremium.classList.remove("is-animating");
+        void els.loadingPremium.offsetWidth;
+        els.loadingPremium.classList.add("is-animating");
+      }
+      if (els.loadingProgressFill) {
+        els.loadingProgressFill.style.animationDuration = Math.max(800, APP.CONFIG.loadingMs || 2800) + "ms";
+      }
+    }
+
     function proceedReveal(hit, displayName, typedRaw) {
       var roleLine;
       if (hit) {
@@ -90,7 +107,7 @@ export function boot() {
           roleLine = roleLine.replace(/\{name\}/g, displayName || typedRaw || "");
         }
       }
-      if (els.loadingText) els.loadingText.textContent = "Đang tạo thiệp nha...";
+      refreshLoadingUi(displayName || typedRaw || "");
       APP.state.guestFullName = displayName;
       APP.fillInviteCard(displayName, roleLine);
       APP.setRevealLinesForGuest(hit, displayName);

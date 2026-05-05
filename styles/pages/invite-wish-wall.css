@@ -84,16 +84,18 @@
 
 .wish-panel input::placeholder,
 .wish-panel textarea::placeholder {
-  color: rgba(78, 67, 59, 0.5);
+  color: rgba(70, 58, 50, 0.42);
   font-weight: 400;
+  font-family: "EB Garamond", "Times New Roman", serif;
+  letter-spacing: 0.01em;
 }
 
 .wish-field--row {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.65rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.62rem;
   align-items: center;
-  justify-content: center;
+  justify-content: stretch;
   margin: 0.1rem 0 0.62rem;
 }
 
@@ -111,7 +113,8 @@
   font-weight: 600;
   user-select: none;
   min-height: 2.3rem;
-  min-width: 10.5rem;
+  min-width: 0;
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -152,7 +155,8 @@
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.24);
   transition: transform 0.16s ease, box-shadow 0.16s ease;
   min-height: 2.3rem;
-  min-width: 10.5rem;
+  min-width: 0;
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -430,14 +434,13 @@
   }
 
   .wish-field--row {
-    flex-wrap: nowrap;
-    justify-content: center;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
   }
 
   .pill,
   .wish-file .wish-file__trigger {
-    min-width: 9.2rem;
+    min-width: 0;
     font-size: 0.82rem;
   }
 }

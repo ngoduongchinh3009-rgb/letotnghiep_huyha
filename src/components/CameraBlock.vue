@@ -30,7 +30,6 @@
     <section class="photo-preview photo-preview--grad" id="photo-preview" hidden>
       <div class="photo-preview__grad-inner">
         <img id="preview-img" alt="Ảnh kỷ niệm vừa chụp" />
-        <p id="photo-preview-caption" class="photo-preview__caption"></p>
       </div>
       <div class="preview-actions">
         <button type="button" class="btn-secondary" id="btn-retake">Chụp lại</button>
@@ -40,16 +39,4 @@
     </section>
   </div>
 </template>
-
-<script setup>
-import { onMounted } from "vue";
-
-onMounted(function () {
-  var cfg = window.APP && window.APP.CONFIG;
-  var cap = document.getElementById("photo-preview-caption");
-  if (!cap || !cfg) return;
-  var line = (cfg.cameraMemorialLine && String(cfg.cameraMemorialLine).trim()) || "";
-  cap.textContent = line;
-});
-</script>
 
