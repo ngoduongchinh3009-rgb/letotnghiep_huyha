@@ -24,7 +24,7 @@
       display: "BapDunChin",
       legalLine: "Người yêu xinh đẹp",
       fullNames: ["Ngô Dương Chinh", "Ngo Duong Chinh"],
-      role: "Em người yêu xinhdep hiểu chuyện — người đồng hành đáng tin cậy.",
+      role: "Em người yêu xinh đẹp, hiểu chuyện — người đồng hành đáng tin cậy.",
       relation: "Người yêu",
     },
     {

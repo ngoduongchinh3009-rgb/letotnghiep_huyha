@@ -9,6 +9,11 @@
   display: none !important;
 }
 
+#screen-invite.screen {
+  background-color: #140a0c;
+  background-image: linear-gradient(165deg, #2a1518 0%, #160a0d 55%, #0d0608 100%);
+}
+
 /* ========== Camera + overlay thiệp ========== */
 .camera-block {
   width: min(100%, 560px);
@@ -31,13 +36,10 @@
   width: 100%;
   border-radius: 14px;
   overflow: hidden;
-  border: 3px solid rgba(255, 248, 231, 0.35);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
-  background:
-    radial-gradient(ellipse 120% 80% at 50% 30%, rgba(0,0,0,0.05), rgba(0,0,0,0.45)),
-    url("../../assets/texture.png");
-  background-size: cover;
-  background-position: center;
+  border: 3px solid rgba(255, 248, 231, 0.28);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  background-color: #1a1214;
+  background-image: none;
   aspect-ratio: 4 / 3;
   max-height: 55vh;
 }

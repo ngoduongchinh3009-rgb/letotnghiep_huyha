@@ -16,24 +16,18 @@
     studentName: "Nguyễn Huy Hà",
     /** Dòng dưới khung camera (xuống dòng được, cần CSS pre-line) */
     cameraCongratsLine: "Cảm ơn bạn đã tới chung vui cùng mình.",
-    /** Câu dòng lớn trên thiệp. {student} = studentName. Ghi đè hoàn toàn: inviteCeremonyLine (một chuỗi). */
+    /** Một dòng trên thiệp (CSS nowrap). {student} = studentName. Ghi đè: inviteCeremonyLine. */
     inviteCeremonyTpl: "Đến tham dự lễ tốt nghiệp của {student}",
-    /* Xuống dòng trong chuỗi: hiển thị với .classic-card__paper-sub { white-space: pre-line } */
-    eventTime: "10h – 12h,\nThứ Bảy — ngày lễ",
-    eventPlace: "Đại học Bách Khoa Hà Nội",
+    /* Xuống dòng trong chuỗi: hiển thị với .classic-card__detail-v { white-space: pre-line } */
+    eventTime: "7h15 – 11h30 \nThứ Bảy ngày 09/05/2026",
+    eventPlace: "Hội trường C2 \nĐại học Bách khoa Hà Nội",
     /* Lời cảm ơn cuối thiệp (#card-thanks) — {name} = tên khách khi đã xác thực */
     thanksAnonymous: "Cảm ơn vì sự có mặt của bạn.",
-    thanksNamed: "{name} ơi, cảm ơn vì đã là một phần rất đẹp trong ngày này của mình.",
-    mealLine:
-      "Sau buổi lễ, trân trọng kính mời dùng bữa cơm thân mật chung vui cùng gia đình.",
+    thanksNamed: "{name} ơi, cảm ơn vì đã là một phần rất đẹp trong ngày này.",
+    mealLine: "Sau buổi lễ có bữa cơm thân mật",
     sponsorLine: "Nhà tài trợ chính: Bố & Mẹ.",
-    /* Nội dung thiệp (một nguồn duy nhất — index.html để span rỗng, fillInviteCard đổ vào) */
-    inviteFlavor:
-      "Không phải họp Zoom — đây là lời mời có thật: có mặt là có niềm vui.",
-    inviteFlavorAside:
-      "Hãy mặc thật đẹp, cười thật tươi để lưu lại ảnh nhé!",
     invitePS:
-      "P/S: Cười to một chút khi lên hình nhé… vì kỷ niệm này mình muốn giữ mãi, không chỉ trong slide.",
+      "P/S: Hãy mặc thật đẹp và cười thật tươi để lưu lại ảnh nhé!",
     /* Khi tên không khớp danh sách mời (GUEST_DB) — không còn chọn mối quan hệ trên form */
     defaultGuestRole: "{name} — cảm ơn bạn đã đến chung vui cùng mình.",
     /* Ô gợi ý dưới input (#guest-live) — HTML để trống, script.js boot gọi setGuestLiveFromInput() */

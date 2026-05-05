@@ -3,6 +3,14 @@
 
   var APP = window.APP;
 
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   function closeModal() {
     var els = APP.els;
     if (!els || !els.guestConfirmModal) return;
@@ -99,7 +107,24 @@
       greetName = guest.relation;
     }
     var role = guest && guest.role ? guest.role : "";
-    setConfirmHeadline("Chào " + greetName + (role ? "\n" + role : ""), false);
+    if (els.guestConfirmSub) {
+      els.guestConfirmSub.textContent = "";
+      els.guestConfirmSub.hidden = true;
+    }
+    if (els.guestConfirmTitle) {
+      var greetLine = "Chào " + greetName;
+      if (role) {
+        els.guestConfirmTitle.innerHTML =
+          '<span class="guest-confirm-greeting">' +
+          escapeHtml(greetLine) +
+          '</span><br /><span class="guest-confirm-role-line">' +
+          escapeHtml(role) +
+          "</span>";
+      } else {
+        els.guestConfirmTitle.innerHTML =
+          '<span class="guest-confirm-greeting">' + escapeHtml(greetLine) + "</span>";
+      }
+    }
 
     els.guestConfirmActions.innerHTML = "";
     var createBtn = document.createElement("button");

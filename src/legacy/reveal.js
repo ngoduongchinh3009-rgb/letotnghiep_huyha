@@ -70,17 +70,23 @@
   APP.fillInviteCard = function fillInviteCard(name, roleLine) {
     APP.state.guestRoleLine = roleLine || "";
     if (APP.els.cardSub) {
-      APP.els.cardSub.textContent = APP.buildInviteEventDetailText();
+      var timeLine = String(APP.CONFIG.eventTime || "").trim();
+      var placeLine = String(APP.CONFIG.eventPlace || "").trim();
+      APP.els.cardSub.innerHTML =
+        '<span class="classic-card__detail-k">Thời gian</span>' +
+        '<span class="classic-card__detail-v">' +
+        escapeHtml(timeLine) +
+        "</span>" +
+        '<span class="classic-card__detail-k">Địa điểm</span>' +
+        '<span class="classic-card__detail-v">' +
+        escapeHtml(placeLine) +
+        "</span>";
     }
     if (APP.els.cardSub2) {
       APP.els.cardSub2.textContent = APP.buildInviteEventDetailText();
     }
     if (APP.els.cardInviteGuest) {
       APP.els.cardInviteGuest.textContent = name || "Bạn và gia đình";
-    }
-    if (APP.els.cardRole) {
-      APP.els.cardRole.textContent = roleLine || "";
-      APP.els.cardRole.hidden = !roleLine;
     }
     if (APP.els.cardInviteMessage) {
       var lineOverride =
@@ -102,14 +108,6 @@
       APP.els.cardThanks.textContent = name
         ? namedTpl.replace(/\{name\}/g, name)
         : anonThanks;
-    }
-    if (APP.els.cardFlavor) {
-      APP.els.cardFlavor.textContent = APP.CONFIG.inviteFlavor || "";
-      APP.els.cardFlavor.hidden = !APP.CONFIG.inviteFlavor;
-    }
-    if (APP.els.cardFlavorAside) {
-      APP.els.cardFlavorAside.textContent = APP.CONFIG.inviteFlavorAside || "";
-      APP.els.cardFlavorAside.hidden = !APP.CONFIG.inviteFlavorAside;
     }
     if (APP.els.cardPS) {
       APP.els.cardPS.textContent = APP.CONFIG.invitePS || "";
@@ -146,6 +144,10 @@
         if (APP.els.reveal3) APP.els.reveal3.classList.remove("is-visible");
         APP.els.revealName.classList.remove("is-visible");
         APP.els.revealName.textContent = "";
+        if (APP.els.revealLetter) {
+          APP.els.revealLetter.hidden = true;
+          APP.els.revealLetter.classList.remove("is-visible");
+        }
         if (APP.els.btnToInvite) APP.els.btnToInvite.hidden = true;
         return APP.wait(400);
       })
@@ -158,10 +160,19 @@
         return APP.wait(APP.CONFIG.revealGapMs);
       })
       .then(function () {
-        if (APP.els.reveal3) APP.els.reveal3.classList.add("is-visible");
-        return APP.wait(APP.CONFIG.revealGapMs);
+        var t3 = APP.els.reveal3 && String(APP.els.reveal3.textContent || "").trim();
+        if (t3) {
+          APP.els.reveal3.classList.add("is-visible");
+          return APP.wait(APP.CONFIG.revealGapMs);
+        }
+        return APP.wait(320);
       })
       .then(function () {
+        if (APP.els.revealLetter) {
+          APP.els.revealLetter.hidden = false;
+          void APP.els.revealLetter.offsetWidth;
+          APP.els.revealLetter.classList.add("is-visible");
+        }
         APP.els.revealName.textContent = displayName;
         void APP.els.revealName.offsetWidth;
         APP.els.revealName.classList.add("is-visible");
@@ -173,25 +184,10 @@
   };
 
   APP.setRevealLinesForGuest = function setRevealLinesForGuest(hit, displayName) {
-    var l1 = "Sau 4 năm...";
-    var l2 = "Có rất nhiều người quan trọng...";
-    var l3 = "Nhưng người mình muốn mời nhất là...";
-
-    if (hit && hit.relation) {
-      if (hit.relation === "Bố" || hit.relation === "Mẹ") {
-        l2 = "Con vẫn luôn có một bệ đỡ phía sau...";
-        l3 = "Con muốn mời nhất chính là...";
-      } else if (hit.relation === "Người yêu") {
-        l2 = "Có những người làm mình thấy bình yên...";
-      } else if (hit.relation === "Anh trai") {
-        l2 = "Có một người luôn ở đó kiểu... anh trai.";
-      } else if (hit.relation === "Người yêu (anh trai)") {
-        l2 = "Gia đình mở rộng cũng là điều đáng quý...";
-      } else if (hit.relation === "Người tốt nghiệp") {
-        l2 = "Hôm nay là ngày mình tự hào nhất...";
-        l3 = "Nhân vật chính của buổi lễ là...";
-      }
-    }
+    /* Ba nhịp, mỗi dòng một ý — tránh một khối dài bị ngắt xấu */
+    var l1 = "\u201CMỗi chương khép lại không phải là kết thúc,";
+    var l2 = "mà là hành trình học hỏi để mở ra một khởi đầu mới,";
+    var l3 = "trưởng thành và vững vàng hơn.\u201D";
 
     if (APP.els.reveal1) APP.els.reveal1.textContent = l1;
     if (APP.els.reveal2) APP.els.reveal2.textContent = l2;

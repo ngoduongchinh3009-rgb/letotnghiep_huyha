@@ -37,15 +37,30 @@
   }
 
   #invite-card-main.classic-card {
-    aspect-ratio: 9 / 18.6;
+    aspect-ratio: 9 / 17.15;
+  }
+
+  #invite-card-main .classic-card__empty {
+    padding: 3.75% 4.5% 4.25% 4.5%;
   }
 
   #invite-card-main .classic-card__paper {
-    padding: 1.05rem 1.15rem;
+    padding: 1.12rem 1.1rem 1.2rem 1.1rem;
+    border-radius: 16px;
+    max-width: 100%;
   }
 
   #invite-card-main .classic-card__paper-main {
-    gap: 0.38rem;
+    gap: 0.36rem;
+    padding-top: 0.42rem;
+  }
+
+  #invite-card-main .classic-card__details {
+    grid-template-columns: minmax(5rem, auto) 1fr;
+    padding: 0.45rem 0.65rem 0.52rem;
+    font-size: 0.78rem;
+    column-gap: 1.1rem;
+    row-gap: 0.36rem;
   }
 
   .panel {
@@ -95,11 +110,44 @@
 
   .loading-text { font-size: 1.02rem; margin-bottom: 1.25rem; max-width: 100%; }
 
-  .reveal-line { font-size: clamp(0.95rem, 3.8vw, 1.15rem); max-width: 100%; }
+  .reveal-stack {
+    max-width: 100%;
+  }
 
-  .reveal-name { font-size: clamp(1.35rem, 8vw, 2rem); margin-top: 0.85rem; }
+  .reveal-quote-block {
+    gap: 0.38rem;
+  }
 
-  .btn-continue { margin-top: 1.25rem; font-size: 0.88rem; padding: 0.55rem 1.1rem; }
+  .reveal-quote-block .reveal-line {
+    max-width: 100%;
+    font-size: clamp(1rem, 3.8vw, 1.22rem);
+    line-height: 1.45;
+  }
+
+  .reveal-letter {
+    margin-top: 1.35rem;
+    max-width: 100%;
+  }
+
+  .reveal-letter__envelope {
+    max-width: 100%;
+    padding: 1.1rem 0.85rem 1rem;
+    gap: 0.35rem;
+  }
+
+  .reveal-letter__envelope::before {
+    height: 1.1rem;
+  }
+
+  .reveal-letter .reveal-name,
+  .reveal-letter__name {
+    font-size: clamp(1.28rem, 6.5vw, 1.85rem);
+  }
+
+  #screen-reveal .reveal-letter__cta {
+    font-size: 0.78rem;
+    padding: 0.38rem 0.85rem;
+  }
 
   .invite-wrap { width: 100%; max-width: none; }
 

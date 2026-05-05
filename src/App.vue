@@ -56,11 +56,22 @@
   </section>
 
   <section id="screen-reveal" class="screen" aria-live="polite">
-    <p id="reveal-1" class="reveal-line">Hôm nay là ngày đặc biệt...</p>
-    <p id="reveal-2" class="reveal-line">Mình muốn mời bạn đến tham dự lễ tốt nghiệp của mình.</p>
-    <p id="reveal-3" class="reveal-line">Nhưng người mình muốn mời nhất là...</p>
-    <p id="reveal-name" class="reveal-name" aria-label="Tên người được mời"></p>
-    <button id="btn-to-invite" type="button" class="btn-primary btn-continue" hidden>Xem thiệp mời</button>
+    <div class="reveal-stack">
+      <div class="reveal-quote-block">
+        <p id="reveal-1" class="reveal-line">Hôm nay là ngày đặc biệt...</p>
+        <p id="reveal-2" class="reveal-line">Mình muốn mời bạn đến tham dự lễ tốt nghiệp của mình.</p>
+        <p id="reveal-3" class="reveal-line reveal-line--optional"></p>
+      </div>
+      <article id="reveal-letter" class="reveal-letter" hidden>
+        <div class="reveal-letter__envelope">
+          <p class="reveal-letter__lead">Thiệp mời dành riêng cho</p>
+          <p id="reveal-name" class="reveal-name reveal-letter__name" aria-label="Tên người được mời"></p>
+          <button id="btn-to-invite" type="button" class="btn-primary reveal-letter__cta" hidden>
+            Xem thiệp mời
+          </button>
+        </div>
+      </article>
+    </div>
   </section>
 
   <section id="screen-invite" class="screen" aria-labelledby="invite-heading">
