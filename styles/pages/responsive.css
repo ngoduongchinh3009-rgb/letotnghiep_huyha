@@ -4,7 +4,7 @@
 @media (max-width: 640px) {
   .screen {
     padding: 0.65rem 0.75rem;
-    justify-content: flex-start;
+    justify-content: center;
     padding-top: max(0.65rem, env(safe-area-inset-top));
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
@@ -35,7 +35,7 @@
   }
 
   #screen-invite.screen {
-    justify-content: flex-start;
+    justify-content: center;
     overflow-x: hidden;
     overflow-y: visible;
     align-items: center;
