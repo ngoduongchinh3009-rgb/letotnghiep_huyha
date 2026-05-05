@@ -192,23 +192,5 @@
     if (APP.setPolaroidVisible) APP.setPolaroidVisible(false);
   };
 
-  APP.downloadAgain = function downloadAgain() {
-    if (!APP.state.lastPhotoBlob) return;
-    APP.downloadBlob(APP.state.lastPhotoBlob, "ky-niem-tot-nghiep.png");
-  };
-
-  APP.sharePhoto = function sharePhoto() {
-    if (!APP.state.lastPhotoBlob) return;
-    if (!navigator.share) {
-      APP.setCamError("Trình duyệt chưa hỗ trợ chia sẻ trực tiếp. Dùng nút Tải lại PNG.");
-      return;
-    }
-    var file = new File([APP.state.lastPhotoBlob], "ky-niem-tot-nghiep.png", { type: "image/png" });
-    if (navigator.canShare && !navigator.canShare({ files: [file] })) {
-      APP.setCamError("Thiết bị không hỗ trợ chia sẻ file ảnh trực tiếp.");
-      return;
-    }
-    navigator.share({ title: "Ảnh kỷ niệm tốt nghiệp", text: "Ảnh kỷ niệm tốt nghiệp", files: [file] }).catch(function () {});
-  };
 })();
 export {};

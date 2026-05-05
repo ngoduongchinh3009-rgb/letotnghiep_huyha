@@ -2,9 +2,7 @@
 
 /* Chỉ xem Wall (?view=wall): ẩn thiệp / camera / form chúc / preview */
 #screen-invite.is-wall-only #invite-main-card,
-#screen-invite.is-wall-only #invite-camera-block,
-#screen-invite.is-wall-only #wish-panel,
-#screen-invite.is-wall-only #photo-preview {
+#screen-invite.is-wall-only #invite-camera-block {
   display: none !important;
 }
 
@@ -281,34 +279,21 @@
 
 .polaroid-wrapper {
   position: relative;
-  width: min(100%, 356px);
+  width: min(100%, 340px);
+  aspect-ratio: 576 / 1024;
   margin: 0 auto;
-  padding: 0.8rem 0.2rem;
-}
-
-.polaroid-frame {
-  position: relative;
-  background:
-    radial-gradient(circle at 20% 12%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 48%),
-    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.014) 0 1px, rgba(255, 255, 255, 0.02) 1px 2px),
-    #f5f5f5;
-  padding: 18px 18px 100px;
-  border-radius: 6px;
-  box-shadow:
-    0 2px 1px rgba(255, 255, 255, 0.55) inset,
-    0 1px 0 rgba(0, 0, 0, 0.1) inset,
-    0 24px 34px rgba(0, 0, 0, 0.34),
-    0 8px 12px rgba(0, 0, 0, 0.14);
-  transform: rotate(-1.6deg);
+  isolation: isolate;
 }
 
 .polaroid-photo {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background: #040404;
+  position: absolute;
+  left: 22%;
+  top: 24%;
+  width: 56%;
+  height: 31.8%;
+  background: #000;
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.28);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  z-index: 1;
 }
 
 .polaroid-card__photo {
@@ -319,12 +304,22 @@
   background: #000;
 }
 
+.polaroid-frame-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
 .polaroid-note-input {
   position: absolute;
-  left: 10%;
-  right: 10%;
-  bottom: 30px;
-  width: 80%;
+  left: 24%;
+  width: 52%;
+  bottom: 20.2%;
   border: 0;
   outline: none;
   resize: none;
@@ -337,39 +332,11 @@
   min-height: 2.4rem;
   outline: none;
   padding: 0;
+  z-index: 3;
 }
 
 .polaroid-note-input::placeholder {
   color: rgba(56, 48, 40, 0.48);
-}
-
-.sticker-cap,
-.sticker-camera,
-.sticker-disco {
-  position: absolute;
-  z-index: 3;
-  user-select: none;
-  pointer-events: none;
-  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.26));
-}
-
-.sticker-cap {
-  width: 92px;
-  left: -14px;
-  top: -2px;
-  transform: rotate(-15deg);
-}
-
-.sticker-camera {
-  width: 70px;
-  left: 12px;
-  bottom: -8px;
-}
-
-.sticker-disco {
-  width: 82px;
-  right: 2px;
-  bottom: -10px;
 }
 
 .polaroid-panel__submit {
@@ -456,27 +423,10 @@
     width: min(100%, 330px);
   }
 
-  .polaroid-frame {
-    transform: none;
-    padding: 16px 16px 88px;
-  }
-
   .polaroid-note-input {
-    bottom: 24px;
+    left: 22%;
+    width: 56%;
+    bottom: 20%;
     font-size: clamp(1.3rem, 6vw, 1.7rem);
-  }
-
-  .sticker-cap {
-    width: 80px;
-    left: -10px;
-  }
-
-  .sticker-camera {
-    width: 62px;
-    left: 8px;
-  }
-
-  .sticker-disco {
-    width: 74px;
   }
 }

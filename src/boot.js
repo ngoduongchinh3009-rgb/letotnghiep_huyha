@@ -73,7 +73,6 @@ export function boot() {
       });
       els.polaroidUploadInput.addEventListener("change", APP.handlePolaroidUploadSelect);
     }
-    if (els.btnSharePhoto) els.btnSharePhoto.addEventListener("click", APP.sharePhoto);
     if (els.polaroidSubmit) els.polaroidSubmit.addEventListener("click", APP.handlePolaroidSubmit);
 
     window.addEventListener("beforeunload", APP.stopCamera);

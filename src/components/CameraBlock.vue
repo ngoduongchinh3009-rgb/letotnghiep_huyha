@@ -30,20 +30,21 @@
     <section class="polaroid-panel" id="polaroid-panel" hidden aria-labelledby="polaroid-title">
       <h3 class="polaroid-panel__title" id="polaroid-title">Chụp ảnh &amp; Gửi lời chúc</h3>
       <div class="polaroid-wrapper">
-        <div class="polaroid-frame">
-          <div class="polaroid-photo">
-            <img id="polaroid-image" class="polaroid-card__photo" alt="Ảnh vừa chụp để gửi lời chúc" />
-          </div>
-          <textarea
-            id="polaroid-message"
-            class="polaroid-note-input"
-            placeholder="Viết lời chúc tại đây..."
-            rows="2"
-          ></textarea>
+        <div class="polaroid-photo">
+          <img id="polaroid-image" class="polaroid-card__photo" alt="Ảnh vừa chụp để gửi lời chúc" />
         </div>
-        <img class="sticker-cap" src="/assets/sticker-cap-placeholder.svg" alt="" aria-hidden="true" />
-        <img class="sticker-camera" src="/assets/sticker-camera-placeholder.svg" alt="" aria-hidden="true" />
-        <img class="sticker-disco" src="/assets/sticker-disco-placeholder.svg" alt="" aria-hidden="true" />
+        <img
+          class="polaroid-frame-image"
+          src="/assets/polaroid-stickers-reference.png"
+          alt=""
+          aria-hidden="true"
+        />
+        <textarea
+          id="polaroid-message"
+          class="polaroid-note-input"
+          placeholder="Viết lời chúc tại đây..."
+          rows="2"
+        ></textarea>
       </div>
       <button type="button" class="btn-primary polaroid-panel__submit" id="polaroid-submit">
         Gửi lời chúc
