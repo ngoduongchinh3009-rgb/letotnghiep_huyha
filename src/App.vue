@@ -55,7 +55,20 @@
 
   <section id="screen-loading" class="screen" aria-live="assertive" aria-busy="true">
     <div class="loading-premium" id="loading-premium">
-      <div class="loading-cap" role="presentation" aria-hidden="true">🎓</div>
+      <div class="loading-cap" role="presentation" aria-hidden="true">
+        <svg class="loading-cap__svg" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M48 21L14 36L48 51L82 36L48 21Z" fill="currentColor" />
+          <path
+            d="M31 46V58.5C31 59.8 31.7 60.9 32.8 61.5C41.7 66.6 54.3 66.6 63.2 61.5C64.3 60.9 65 59.8 65 58.5V46"
+            stroke="currentColor"
+            stroke-width="5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path d="M82 36V54" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+          <circle cx="82" cy="58.5" r="4.5" fill="currentColor" />
+        </svg>
+      </div>
       <div class="loading-confetti" aria-hidden="true">
         <span class="confetti c1"></span>
         <span class="confetti c2"></span>

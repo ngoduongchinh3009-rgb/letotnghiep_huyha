@@ -2,30 +2,42 @@
 
 /* ========== Loading ========== */
 .loading-premium {
-  width: min(92vw, 460px);
+  width: min(96vw, 760px);
   margin: 0 auto;
   text-align: center;
-  padding: 1rem 1rem 0.35rem;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 232, 170, 0.2);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
-    rgba(20, 8, 12, 0.45);
-  box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  padding: 0.35rem 0 0;
 }
 
 .loading-text {
   font-family: var(--font);
-  font-size: clamp(1.05rem, 2.8vw, 1.4rem);
+  font-size: clamp(1.24rem, 3.2vw, 1.78rem);
+  font-weight: 700;
   max-width: 100%;
-  line-height: 1.4;
-  margin: 0.75rem 0 0.18rem;
-  letter-spacing: 0.01em;
+  line-height: 1.34;
+  margin: 0.82rem 0 0.12rem;
+  letter-spacing: 0.012em;
+  color: #fdf1d1;
+  background: linear-gradient(92deg, #fff6e0 0%, #f0c76e 46%, #fff2cf 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 0 12px rgba(240, 199, 110, 0.34),
+    0 4px 16px rgba(0, 0, 0, 0.45);
+  position: relative;
+  display: inline-block;
   animation: loadingBlink 1.2s ease-in-out infinite;
+}
+
+.loading-text::after {
+  content: "";
+  display: block;
+  width: 64%;
+  height: 2px;
+  margin: 0.35rem auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 228, 168, 0), rgba(255, 224, 145, 0.95), rgba(255, 228, 168, 0));
+  box-shadow: 0 0 10px rgba(255, 220, 132, 0.4);
 }
 
 .loading-subtext {
@@ -36,14 +48,55 @@
 }
 
 .loading-cap {
-  font-size: clamp(3rem, 10vw, 4.8rem);
   line-height: 1;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(78px, 16vw, 110px);
+  aspect-ratio: 1 / 1;
+  border-radius: 999px;
+  color: #ffe7b1;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.03) 46%, transparent 58%),
+    linear-gradient(160deg, rgba(53, 29, 20, 0.8), rgba(18, 12, 17, 0.92));
+  border: 1px solid rgba(255, 226, 158, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 10px 26px rgba(0, 0, 0, 0.45),
+    0 0 24px rgba(236, 187, 95, 0.28);
   transform-origin: center bottom;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35));
+  filter: saturate(1.08);
   animation: capBounce 1.25s ease-in-out infinite;
   position: relative;
   z-index: 2;
+}
+
+.loading-cap__svg {
+  width: 62%;
+  height: 62%;
+  display: block;
+  filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.25));
+}
+
+.loading-cap::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: inherit;
+  border: 1px solid rgba(246, 206, 130, 0.26);
+  box-shadow: 0 0 12px rgba(246, 206, 130, 0.22);
+  pointer-events: none;
+}
+
+.loading-cap::after {
+  content: "";
+  position: absolute;
+  inset: auto 22% -13px;
+  height: 10px;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0));
+  filter: blur(1.5px);
+  pointer-events: none;
 }
 
 .loading-confetti {
@@ -146,9 +199,13 @@
 
 @media (max-width: 640px) {
   .loading-premium {
-    width: min(96vw, 420px);
-    padding: 0.85rem 0.8rem 0.3rem;
-    border-radius: 16px;
+    width: min(97vw, 640px);
+    padding: 0.3rem 0 0;
+  }
+
+  .loading-text {
+    font-size: clamp(1.05rem, 5.2vw, 1.38rem);
+    letter-spacing: 0.008em;
   }
 
   .loading-progress {
