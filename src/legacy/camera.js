@@ -12,6 +12,10 @@
     APP.els.photoPreview.hidden = !APP.state.lastPhotoUrl;
   };
 
+  APP.setCaptureUiVisible = function setCaptureUiVisible(visible) {
+    if (APP.els.camShootPanel) APP.els.camShootPanel.hidden = !visible;
+  };
+
   APP.setCamError = function setCamError(msg) {
     APP.els.camError.textContent = msg;
     APP.els.camError.hidden = !msg;
@@ -52,12 +56,18 @@
 
   APP.refreshCameraPreviewEffects = function refreshCameraPreviewEffects() {
     if (!APP.els.video) return;
-    APP.els.video.style.filter =
-      "brightness(1.06) contrast(1.04) saturate(1.14) sepia(0.04)";
+    var mode = APP.els.camBeautyMode && APP.els.camBeautyMode.value ? APP.els.camBeautyMode.value : "soft";
+    if (mode === "off") {
+      APP.els.video.style.filter = "none";
+    } else {
+      APP.els.video.style.filter =
+        "brightness(1.08) contrast(1.05) saturate(1.18) sepia(0.05)";
+    }
     if (APP.els.camOverlay) APP.els.camOverlay.style.display = "";
   };
 
   APP.startCamera = function startCamera() {
+    APP.setCaptureUiVisible(true);
     APP.setCamError("");
     APP.refreshSecureBanner();
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -122,13 +132,20 @@
     ctx.save();
     ctx.translate(vw, 0);
     ctx.scale(-1, 1);
-    ctx.filter = "brightness(1.05) contrast(0.98) saturate(1.08)";
+    var beautyMode = APP.els.camBeautyMode && APP.els.camBeautyMode.value ? APP.els.camBeautyMode.value : "soft";
+    ctx.filter =
+      beautyMode === "off"
+        ? "none"
+        : "brightness(1.08) contrast(1.01) saturate(1.14)";
     ctx.drawImage(APP.els.video, 0, 0, vw, vh);
     ctx.filter = "none";
     ctx.restore();
 
-    APP.applyPortraitEnhance(ctx, vw, vh);
-    if (APP.applyFaceMakeup) APP.applyFaceMakeup(ctx, vw, vh, 0.7);
+    if (beautyMode !== "off") {
+      if (APP.applySkinSmoothing) APP.applySkinSmoothing(ctx, vw, vh, 0.6);
+      APP.applyPortraitEnhance(ctx, vw, vh);
+      if (APP.applyLipstickFilter) APP.applyLipstickFilter(ctx, vw, vh, APP.getLipOpacity());
+    }
 
     var didFaceSticker = false;
     if (APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400) && APP.drawFaceStickers) {
@@ -149,6 +166,8 @@
         if (!blob) return;
         var previewUrl = URL.createObjectURL(blob);
         APP.setPreview(previewUrl, blob);
+        APP.stopCamera();
+        APP.setCaptureUiVisible(false);
         APP.downloadBlob(blob, "ky-niem-tot-nghiep.png");
         if (APP.els.photoPreview) APP.els.photoPreview.scrollIntoView({ behavior: "smooth", block: "nearest" });
         if (APP.els.wishUseLast) APP.els.wishUseLast.checked = true;
@@ -158,6 +177,8 @@
   };
 
   APP.retake = function retake() {
+    APP.stopCamera();
+    APP.setCaptureUiVisible(true);
     if (APP.els.photoPreview) APP.els.photoPreview.hidden = true;
     if (APP.els.previewImg) APP.els.previewImg.src = "";
     if (APP.state.lastPhotoUrl) {

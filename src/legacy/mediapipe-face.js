@@ -21,48 +21,122 @@
     ctx.closePath();
   }
 
-  var OUTER_LIP = [61,185,40,39,37,0,267,269,270,409,291,375,321,405,314,17,84,181,91,146];
+  // Lip contours in canonical MediaPipe order (avoids crossing when mouth opens).
+  var OUTER_LIP = [61,146,91,181,84,17,314,405,321,375,291,409,270,269,267,0,37,39,40,185];
   var INNER_LIP = [78,95,88,178,87,14,317,402,318,324,308,415,310,311,312,13,82,81,80,191];
+  var FACE_OVAL = [10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109];
+  var LEFT_EYE = [33,246,161,160,159,158,157,173,133,155,154,153,145,144,163,7];
+  var RIGHT_EYE = [263,466,388,387,386,385,384,398,362,382,381,380,374,373,390,249];
+  var LEFT_BROW = [70,63,105,66,107,55,65,52,53,46];
+  var RIGHT_BROW = [336,296,334,293,300,285,295,282,283,276];
 
-  APP.applyFaceMakeup = function applyFaceMakeup(ctx, w, h, strength) {
+  function pathIndices(ctx, pts, idxs, w, h) {
+    var i;
+    for (i = 0; i < idxs.length; i++) {
+      var p = lmXY(pts[idxs[i]], w, h);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+  }
+
+  function drawFeatureCutouts(ctx, pts, w, h) {
+    ctx.beginPath();
+    pathIndices(ctx, pts, LEFT_EYE, w, h);
+    pathIndices(ctx, pts, RIGHT_EYE, w, h);
+    pathIndices(ctx, pts, LEFT_BROW, w, h);
+    pathIndices(ctx, pts, RIGHT_BROW, w, h);
+    pathIndices(ctx, pts, OUTER_LIP, w, h);
+    pathIndices(ctx, pts, INNER_LIP, w, h);
+    ctx.fill("nonzero");
+  }
+
+  APP.applySkinSmoothing = function applySkinSmoothing(ctx, w, h, strength) {
     var pts = APP.state.faceLandmarks;
     if (!pts || !pts.length) return;
 
-    var alpha = typeof strength === "number" ? strength : 1;
+    var s = Math.max(0, Math.min(1, typeof strength === "number" ? strength : 0.5));
+    if (s <= 0) return;
+
+    var cache = APP.__skinSmoothCache || (APP.__skinSmoothCache = {});
+    function ensureCanvas(key) {
+      var c = cache[key];
+      if (!c) {
+        c = document.createElement("canvas");
+        cache[key] = c;
+      }
+      if (c.width !== w) c.width = w;
+      if (c.height !== h) c.height = h;
+      return c;
+    }
+
+    var srcC = ensureCanvas("src");
+    var blurC = ensureCanvas("blur");
+    var maskC = ensureCanvas("mask");
+    var skinC = ensureCanvas("skin");
+
+    var src = srcC.getContext("2d");
+    var blur = blurC.getContext("2d");
+    var mask = maskC.getContext("2d");
+    var skin = skinC.getContext("2d");
+
+    src.clearRect(0, 0, w, h);
+    src.drawImage(ctx.canvas, 0, 0, w, h);
+
+    blur.clearRect(0, 0, w, h);
+    blur.filter = "blur(" + (2.2 + s * 2.8).toFixed(2) + "px)";
+    blur.drawImage(srcC, 0, 0, w, h);
+    blur.filter = "none";
+
+    mask.clearRect(0, 0, w, h);
+    mask.fillStyle = "#fff";
+    mask.beginPath();
+    pathIndices(mask, pts, FACE_OVAL, w, h);
+    mask.fill();
+    mask.globalCompositeOperation = "destination-out";
+    drawFeatureCutouts(mask, pts, w, h);
+    mask.globalCompositeOperation = "source-over";
+
+    skin.clearRect(0, 0, w, h);
+    skin.drawImage(blurC, 0, 0, w, h);
+    skin.globalCompositeOperation = "destination-in";
+    skin.drawImage(maskC, 0, 0, w, h);
+    skin.globalCompositeOperation = "source-over";
 
     ctx.save();
-    ctx.globalCompositeOperation = "color";
-    ctx.globalAlpha = 0.12 * alpha;
-    ctx.fillStyle = "rgba(220, 65, 98, 1)";
+    ctx.globalAlpha = 0.3 + s * 0.32;
+    ctx.drawImage(skinC, 0, 0, w, h);
+    ctx.restore();
+  };
+
+  APP.getLipOpacity = function getLipOpacity() {
+    if (!APP.els || !APP.els.camLipOpacity) return 0.45;
+    var raw = Number(APP.els.camLipOpacity.value);
+    if (!isFinite(raw)) return 0.45;
+    return Math.max(0, Math.min(1, raw / 100));
+  };
+
+  APP.applyLipstickFilter = function applyLipstickFilter(ctx, w, h, strength) {
+    var pts = APP.state.faceLandmarks;
+    if (!pts || !pts.length) return;
+
+    var alpha = typeof strength === "number" ? strength : APP.getLipOpacity();
+    if (alpha <= 0) return;
+
+    ctx.save();
+    ctx.globalCompositeOperation = "multiply";
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "rgba(220, 20, 60, 0.4)";
     ctx.beginPath();
     pathFromIndices(ctx, pts, OUTER_LIP, w, h);
     pathFromIndices(ctx, pts, INNER_LIP, w, h);
     ctx.fill("evenodd");
     ctx.restore();
+  };
 
-    var l = lmXY(pts[234], w, h);
-    var r = lmXY(pts[454], w, h);
-    var rad = Math.min(w, h) * 0.08;
-
-    ctx.save();
-    ctx.globalCompositeOperation = "soft-light";
-    ctx.globalAlpha = 0.12 * alpha;
-    var gl = ctx.createRadialGradient(l.x, l.y, 1, l.x, l.y, rad);
-    gl.addColorStop(0, "rgba(245, 120, 140, 0.55)");
-    gl.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = gl;
-    ctx.beginPath();
-    ctx.arc(l.x, l.y, rad, 0, Math.PI * 2);
-    ctx.fill();
-
-    var gr = ctx.createRadialGradient(r.x, r.y, 1, r.x, r.y, rad);
-    gr.addColorStop(0, "rgba(245, 120, 140, 0.55)");
-    gr.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = gr;
-    ctx.beginPath();
-    ctx.arc(r.x, r.y, rad, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+  // Backward compatible alias used by existing flow.
+  APP.applyFaceMakeup = function applyFaceMakeup(ctx, w, h, strength) {
+    APP.applyLipstickFilter(ctx, w, h, strength);
   };
 
   function dist(a, b) {
@@ -181,6 +255,17 @@
 
     var c = APP.els.camOverlay.getContext("2d");
     c.clearRect(0, 0, cw, ch);
+    var beautyMode = APP.els.camBeautyMode && APP.els.camBeautyMode.value ? APP.els.camBeautyMode.value : "soft";
+    if (beautyMode !== "off" && APP.els.video && APP.els.video.videoWidth) {
+      // Draw mirrored video frame, then blend skin-only blur on top.
+      c.save();
+      c.translate(cw, 0);
+      c.scale(-1, 1);
+      c.drawImage(APP.els.video, 0, 0, cw, ch);
+      c.restore();
+      APP.applySkinSmoothing(c, cw, ch, 0.52);
+      APP.applyLipstickFilter(c, cw, ch, APP.getLipOpacity() * 0.9);
+    }
     var canTrack = APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400);
     if (canTrack) {
       APP.drawFaceStickers(c, cw, ch);

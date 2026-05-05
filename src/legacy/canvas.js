@@ -97,38 +97,24 @@
 
   APP.drawGraduationMemorialToCanvas = function drawGraduationMemorialToCanvas(out, ow, oh, photoSource) {
     out.clearRect(0, 0, ow, oh);
-    var img = APP.state && APP.state.graduationBackdropImg;
-    var ready = APP.state && APP.state.graduationBackdropReady && img && img.complete && img.naturalWidth;
+    var g0 = out.createLinearGradient(0, 0, 0, oh);
+    g0.addColorStop(0, "#2d0f14");
+    g0.addColorStop(0.5, "#17080c");
+    g0.addColorStop(1, "#12070a");
+    out.fillStyle = g0;
+    out.fillRect(0, 0, ow, oh);
 
-    if (ready) {
-      var iw = img.naturalWidth;
-      var ih = img.naturalHeight;
-      var scale = Math.max(ow / iw, oh / ih);
-      var dw = iw * scale;
-      var dh = ih * scale;
-      var ox = (ow - dw) / 2;
-      var oy = (oh - dh) / 2;
-      out.drawImage(img, 0, 0, iw, ih, ox, oy, dw, dh);
-    } else {
-      var g0 = out.createLinearGradient(0, 0, ow, oh);
-      g0.addColorStop(0, "#c40012");
-      g0.addColorStop(0.45, "#ffd54a");
-      g0.addColorStop(1, "#8b0000");
-      out.fillStyle = g0;
-      out.fillRect(0, 0, ow, oh);
-    }
-
-    var fx = ow * 0.1;
-    var fy = oh * 0.26;
-    var fw = ow * 0.8;
-    var fh = oh * 0.4;
-    var rad = Math.min(22, Math.min(fw, fh) * 0.06);
+    var fx = ow * 0.08;
+    var fy = oh * 0.14;
+    var fw = ow * 0.84;
+    var fh = oh * 0.62;
+    var rad = Math.min(28, Math.min(fw, fh) * 0.06);
 
     out.save();
-    out.shadowColor = "rgba(0,0,0,0.35)";
-    out.shadowBlur = 16;
-    out.shadowOffsetY = 6;
-    out.fillStyle = "rgba(255,255,255,0.12)";
+    out.shadowColor = "rgba(0,0,0,0.48)";
+    out.shadowBlur = 24;
+    out.shadowOffsetY = 10;
+    out.fillStyle = "rgba(255,255,255,0.08)";
     APP.pathRoundRect(out, fx, fy, fw, fh, rad);
     out.fill();
     out.restore();
@@ -156,24 +142,29 @@
     }
     out.restore();
 
-    out.strokeStyle = "rgba(255, 220, 120, 0.95)";
-    out.lineWidth = Math.max(3, Math.min(ow, oh) * 0.005);
+    out.strokeStyle = "rgba(239, 199, 108, 0.95)";
+    out.lineWidth = Math.max(4, Math.min(ow, oh) * 0.006);
     APP.pathRoundRect(out, fx, fy, fw, fh, rad);
     out.stroke();
 
-    var bandY = oh * 0.72;
-    var bandH = oh - bandY;
+    out.save();
+    out.strokeStyle = "rgba(255, 240, 190, 0.5)";
+    out.lineWidth = Math.max(1.5, Math.min(ow, oh) * 0.0022);
+    APP.pathRoundRect(out, fx + ow * 0.01, fy + ow * 0.01, fw - ow * 0.02, fh - ow * 0.02, rad * 0.82);
+    out.stroke();
+    out.restore();
+
+    var bandY = oh * 0.82;
+    var bandH = oh - bandY - oh * 0.04;
     out.save();
     var gb = out.createLinearGradient(0, bandY, 0, oh);
-    gb.addColorStop(0, "rgba(140, 0, 10, 0.92)");
-    gb.addColorStop(1, "rgba(90, 0, 6, 0.96)");
+    gb.addColorStop(0, "rgba(62, 18, 26, 0.95)");
+    gb.addColorStop(1, "rgba(26, 10, 14, 0.98)");
     out.fillStyle = gb;
-    out.fillRect(0, bandY, ow, bandH);
-    out.strokeStyle = "rgba(255, 210, 80, 0.55)";
-    out.lineWidth = Math.max(2, ow * 0.003);
-    out.beginPath();
-    out.moveTo(0, bandY + 0.5);
-    out.lineTo(ow, bandY + 0.5);
+    APP.pathRoundRect(out, ow * 0.08, bandY, ow * 0.84, bandH, Math.max(16, ow * 0.02));
+    out.fill();
+    out.strokeStyle = "rgba(239, 199, 108, 0.5)";
+    out.lineWidth = Math.max(2, ow * 0.0028);
     out.stroke();
     out.restore();
 
@@ -185,14 +176,14 @@
     var lines = line.split(/\n+/);
     out.save();
     out.textAlign = "center";
-    out.fillStyle = "#fff8e8";
+    out.fillStyle = "#fef7e8";
     out.shadowColor = "rgba(0,0,0,0.45)";
     out.shadowBlur = 8;
-    var fs = Math.max(22, Math.min(ow, oh) * 0.028);
-    out.font = "700 " + fs + "px system-ui, Segoe UI, sans-serif";
-    var lh = fs * 1.38;
+    var fs = Math.max(24, Math.min(ow, oh) * 0.03);
+    out.font = "700 " + fs + "px Be Vietnam Pro, system-ui, Segoe UI, sans-serif";
+    var lh = fs * 1.32;
     var totalH = lines.length * lh;
-    var startY = bandY + (bandH - totalH) / 2 + lh * 0.72;
+    var startY = bandY + (bandH - totalH) / 2 + lh * 0.75;
     var i;
     for (i = 0; i < lines.length; i++) {
       out.fillText(lines[i].trim(), ow / 2, startY + i * lh);
