@@ -323,14 +323,23 @@
   resize: none;
   background: transparent;
   text-align: center;
-  font-family: "Dancing Script", "Great Vibes", "Pinyon Script", "Segoe Script", cursive;
-  font-size: clamp(1.35rem, 3.6vw, 1.75rem);
+  font-family:
+    "Dancing Script",
+    "Great Vibes",
+    "Pinyon Script",
+    "Segoe Script",
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Noto Color Emoji",
+    cursive;
+  font-size: clamp(1.22rem, 3.2vw, 1.62rem);
   line-height: 1.2;
   color: #2a221c;
   min-height: 2.4rem;
   outline: none;
   padding: 0;
   z-index: 2;
+  font-variant-emoji: emoji;
 }
 
 .polaroid-note-input::placeholder {

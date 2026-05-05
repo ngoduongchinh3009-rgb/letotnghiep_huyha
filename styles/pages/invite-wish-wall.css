@@ -364,7 +364,14 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-family: "Caveat", "Dancing Script", "Segoe Script", cursive;
+  font-family:
+    "Segoe UI Emoji",
+    "Apple Color Emoji",
+    "Noto Color Emoji",
+    "Caveat",
+    "Dancing Script",
+    "Segoe Script",
+    cursive;
   font-size: clamp(0.98rem, 1.9vw, 1.18rem);
   font-weight: 600;
   line-height: 1.2;
@@ -372,6 +379,7 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
+  font-variant-emoji: emoji;
 }
 
 .wish-card__note.is-long {
@@ -485,6 +493,7 @@
   display: grid;
   place-items: center;
   font-size: 1.45rem;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
   background: rgba(255, 227, 170, 0.16);
   border: 1px solid rgba(255, 227, 170, 0.35);
 }
