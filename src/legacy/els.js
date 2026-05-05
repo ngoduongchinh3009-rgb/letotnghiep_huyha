@@ -100,8 +100,6 @@ import graduationBackdropUrl from "../../assets/graduation-camera-backdrop.png?u
       camShootPanel: $(root, "cam-shoot-panel"),
       video: $(root, "cam-video"),
       camOverlay: $(root, "cam-overlay"),
-      camBeautyMode: $(root, "cam-beauty-mode"),
-      camLipOpacity: $(root, "cam-lip-opacity"),
       btnStartCam: $(root, "btn-start-cam"),
       btnCapture: $(root, "btn-capture"),
       camError: $(root, "cam-error"),

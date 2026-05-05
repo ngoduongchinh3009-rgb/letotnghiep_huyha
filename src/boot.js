@@ -64,9 +64,6 @@ export function boot() {
   }
 
   function bindCameraUi() {
-    if (els.camBeautyMode) els.camBeautyMode.addEventListener("change", APP.refreshCameraPreviewEffects);
-    if (els.camLipOpacity) els.camLipOpacity.addEventListener("input", APP.refreshCameraPreviewEffects);
-
     if (els.btnStartCam) els.btnStartCam.addEventListener("click", APP.startCamera);
     if (els.btnCapture) els.btnCapture.addEventListener("click", APP.capturePhoto);
     if (els.btnRetake) els.btnRetake.addEventListener("click", APP.retake);

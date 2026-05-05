@@ -13,7 +13,7 @@
         <textarea id="wish-message" placeholder="Viết vài dòng gửi cho HuyHa..."></textarea>
       </div>
 
-      <div class="wish-field wish-field--row">
+      <div class="wish-field wish-field--row wish-file">
         <label class="pill"><input type="checkbox" id="wish-use-last" /> Dùng ảnh vừa chụp</label>
         <input id="wish-photo" class="wish-file__input" type="file" accept="image/*" />
         <label for="wish-photo" class="wish-file__trigger" role="button" tabindex="0">Chọn ảnh</label>

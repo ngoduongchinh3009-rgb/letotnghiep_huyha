@@ -2,6 +2,7 @@
   "use strict";
 
   var APP = window.APP;
+  var DEFAULT_BEAUTY_MODE = "soft";
 
   APP.setPreview = function setPreview(url, blob) {
     if (!APP.els.photoPreview || !APP.els.previewImg) return;
@@ -56,7 +57,7 @@
 
   APP.refreshCameraPreviewEffects = function refreshCameraPreviewEffects() {
     if (!APP.els.video) return;
-    var mode = APP.els.camBeautyMode && APP.els.camBeautyMode.value ? APP.els.camBeautyMode.value : "soft";
+    var mode = APP.els.camBeautyMode && APP.els.camBeautyMode.value ? APP.els.camBeautyMode.value : DEFAULT_BEAUTY_MODE;
     if (mode === "off") {
       APP.els.video.style.filter = "none";
     } else {
@@ -132,7 +133,7 @@
     ctx.save();
     ctx.translate(vw, 0);
     ctx.scale(-1, 1);
-    var beautyMode = APP.els.camBeautyMode && APP.els.camBeautyMode.value ? APP.els.camBeautyMode.value : "soft";
+    var beautyMode = APP.els.camBeautyMode && APP.els.camBeautyMode.value ? APP.els.camBeautyMode.value : DEFAULT_BEAUTY_MODE;
     ctx.filter =
       beautyMode === "off"
         ? "none"
