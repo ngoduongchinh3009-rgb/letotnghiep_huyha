@@ -364,32 +364,36 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-family:
-    "Segoe UI Emoji",
-    "Apple Color Emoji",
-    "Noto Color Emoji",
-    "Caveat",
-    "Dancing Script",
-    "Segoe Script",
-    cursive;
-  font-size: clamp(0.98rem, 1.9vw, 1.18rem);
-  font-weight: 600;
+  font-family: "Times New Roman", Times, serif;
+  font-size: clamp(0.9rem, 1.55vw, 1.02rem);
+  font-weight: 500;
   line-height: 1.2;
   color: #241c15;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
-  font-variant-emoji: emoji;
 }
 
 .wish-card__note.is-long {
-  font-size: clamp(0.9rem, 1.65vw, 1.05rem);
+  font-size: clamp(0.82rem, 1.38vw, 0.93rem);
   line-height: 1.18;
 }
 
 .wish-card__note.is-xlong {
-  font-size: clamp(0.82rem, 1.45vw, 0.96rem);
+  font-size: clamp(0.76rem, 1.2vw, 0.86rem);
   line-height: 1.14;
+}
+
+.wish-card__emoji {
+  display: inline-block;
+  line-height: 1;
+}
+
+.wish-card__emoji-img {
+  width: 1.05em;
+  height: 1.05em;
+  display: inline-block;
+  vertical-align: -0.1em;
 }
 
 .wish-card__footer {
