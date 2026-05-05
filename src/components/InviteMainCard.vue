@@ -1,5 +1,5 @@
 <template>
-  <div class="invite-wrap">
+  <div id="invite-main-card" class="invite-wrap" lang="vi">
     <ClassicCardFrame root-id="invite-card-main">
       <div class="classic-card__empty" id="card-empty" aria-live="polite">
         <div class="classic-card__paper">

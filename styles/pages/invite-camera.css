@@ -1,0 +1,200 @@
+/* invite-camera.css — tách từ style.css, chỉnh theo màn tương ứng */
+
+/* Chỉ xem Wall (?view=wall): ẩn thiệp / camera / form chúc / preview */
+#screen-invite.is-wall-only #invite-main-card,
+#screen-invite.is-wall-only #invite-camera-block,
+#screen-invite.is-wall-only #invite-wrap-photo,
+#screen-invite.is-wall-only #wish-panel,
+#screen-invite.is-wall-only #photo-preview {
+  display: none !important;
+}
+
+/* ========== Camera + overlay thiệp ========== */
+.camera-block {
+  width: min(100%, 560px);
+  margin-top: 1.5rem;
+}
+
+.camera-block__congrats {
+  margin: 0.65rem 0 0;
+  font-family: var(--font);
+  font-size: clamp(0.88rem, 2.1vw, 1.02rem);
+  font-weight: 600;
+  color: rgba(255, 248, 231, 0.92);
+  line-height: 1.45;
+  white-space: pre-line;
+}
+
+
+.camera-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 3px solid rgba(255, 248, 231, 0.35);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  background:
+    radial-gradient(ellipse 120% 80% at 50% 30%, rgba(0,0,0,0.05), rgba(0,0,0,0.45)),
+    url("../../assets/texture.png");
+  background-size: cover;
+  background-position: center;
+  aspect-ratio: 4 / 3;
+  max-height: 55vh;
+}
+
+.camera-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 4px rgba(201, 162, 39, 0.92),
+    inset 0 0 0 8px rgba(255, 250, 230, 0.28);
+  z-index: 1;
+}
+
+.camera-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 120% 80% at 50% 18%, rgba(255,255,255,0.10), transparent 55%);
+  opacity: 0.75;
+  z-index: 1;
+}
+
+.camera-wrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scaleX(-1);
+  position: relative;
+  z-index: 0;
+}
+
+.cam-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+.cam-frame-note {
+  font-size: clamp(0.78rem, 1.9vw, 0.9rem);
+  color: rgba(255, 248, 231, 0.8);
+  margin: 0 0 0.65rem;
+  max-width: 48ch;
+  line-height: 1.4;
+}
+
+.cam-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn-capture {
+  background: linear-gradient(180deg, #f0e6d8, #d4bc9a);
+  color: #2a1810;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.cam-hint {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  color: rgba(255, 248, 231, 0.75);
+  margin-top: 0.75rem;
+  max-width: 42ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.secure-banner {
+  max-width: min(100%, 520px);
+  margin: 0 auto 1rem;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: clamp(0.82rem, 2.1vw, 0.95rem);
+  line-height: 1.45;
+  color: #2a1810;
+  background: linear-gradient(135deg, #ffe8a8, #ffd27a);
+  border: 2px solid #c9a227;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.secure-banner strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 1.05em;
+}
+
+.access-help {
+  width: min(100%, 520px);
+  margin: 1rem auto 0;
+  text-align: left;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 248, 231, 0.35);
+  border-radius: 12px;
+  padding: 0.5rem 0.85rem;
+}
+
+.access-help summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+  color: var(--cream);
+  padding: 0.35rem 0;
+}
+
+.access-help .access-help__body {
+  font-size: clamp(0.82rem, 2vw, 0.95rem);
+  line-height: 1.55;
+  color: rgba(255, 248, 231, 0.92);
+  padding: 0.25rem 0 0.5rem;
+}
+
+.access-help code {
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0.12rem 0.35rem;
+  border-radius: 6px;
+}
+
+.cam-error { color: #ffb4a8; font-size: 1rem; margin-top: 0.5rem; }
+
+.photo-preview {
+  width: min(100%, 560px);
+  margin: 1rem auto 0;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 248, 231, 0.28);
+  border-radius: 12px;
+  padding: 0.7rem;
+}
+
+.photo-preview h4 {
+  margin: 0 0 0.55rem;
+  font-size: clamp(0.95rem, 2.1vw, 1.05rem);
+  color: var(--cream);
+}
+
+.photo-preview img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 2px solid rgba(212, 165, 116, 0.75);
+  display: block;
+}
+
+.preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.65rem;
+  justify-content: center;
+}

@@ -1,0 +1,304 @@
+/* invite-wish-wall.css — tách từ style.css, chỉnh theo màn tương ứng */
+
+/* Wishes + Wall */
+.section-title {
+  margin: 0.25rem 0 0.65rem;
+  font-family: var(--font);
+  font-size: clamp(1.1rem, 2.8vw, 1.35rem);
+  color: rgba(255, 248, 231, 0.95);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+.wish-panel {
+  width: min(100%, 560px);
+  margin: 1rem auto 0;
+  padding: 1rem;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 248, 231, 0.22);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  text-align: left;
+}
+
+.wish-panel label {
+  color: rgba(255, 248, 231, 0.92);
+  font-weight: 700;
+}
+
+.wish-panel input[type="text"],
+.wish-panel input[type="password"],
+.wish-panel textarea,
+.wish-panel input[type="file"] {
+  width: 100%;
+  font-family: var(--font);
+  font-size: 1rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 248, 231, 0.28);
+  background: rgba(255, 255, 255, 0.92);
+  color: #24150f;
+  margin-bottom: 0.7rem;
+}
+
+.wish-panel textarea { min-height: 7.5rem; resize: vertical; }
+
+.wish-form__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.wish-field label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: rgba(255, 248, 231, 0.92);
+}
+
+.wish-field--muted label {
+  font-weight: 600;
+  color: rgba(255, 248, 231, 0.72);
+}
+
+.wish-field--muted input {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.wish-field--row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0.15rem 0 0.35rem;
+}
+
+.wish-field__hint {
+  margin: 0 !important;
+  font-size: 0.82rem !important;
+}
+
+.wish-file input[type="file"] {
+  padding: 0.5rem 0.65rem;
+  font-size: 0.92rem;
+}
+
+.wish-form__footer {
+  margin-top: 0.35rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.wish-page__wall-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+}
+
+.wall-page__header {
+  margin-bottom: 0.35rem;
+}
+
+.wall-page__title {
+  margin-bottom: 0.35rem;
+}
+
+.wall-page__lede {
+  margin: 0 0 0.65rem;
+}
+
+.wall-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  margin: 0.35rem 0 0.5rem;
+}
+
+.wall-toolbar__search {
+  flex: 1 1 200px;
+  min-width: 0;
+  font-family: var(--font);
+  font-size: 1rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 248, 231, 0.28);
+  background: rgba(255, 255, 255, 0.92);
+  color: #24150f;
+}
+
+.wall-toolbar__copy {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.wall-link-hint {
+  margin: 0 0 0.75rem !important;
+  font-size: 0.86rem !important;
+}
+
+.wall-page__help {
+  margin: 0 0 0.85rem;
+  width: 100%;
+  max-width: none;
+}
+
+.hintline {
+  margin: 0.2rem 0 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255, 248, 231, 0.78);
+  line-height: 1.45;
+}
+
+.inline-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0.15rem 0 0.75rem;
+}
+
+.pill {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.45rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(255, 248, 231, 0.14);
+  border: 1px solid rgba(255, 248, 231, 0.22);
+  color: rgba(255, 248, 231, 0.92);
+  font-size: 0.9rem;
+  font-weight: 700;
+  user-select: none;
+}
+
+.pill input { margin: 0; accent-color: #e8c76b; }
+
+.picker-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0.5rem 0 0.2rem;
+}
+
+.chip-select {
+  appearance: none;
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 248, 231, 0.28);
+  background: rgba(255, 255, 255, 0.92);
+  color: #24150f;
+  cursor: pointer;
+}
+
+.chip-select:focus {
+  outline: 3px solid rgba(232, 199, 107, 0.85);
+  outline-offset: 2px;
+}
+
+.status { margin-top: 0.5rem; font-size: 0.95rem; line-height: 1.4; }
+.status.ok { color: #b7f7c6; }
+.status.bad { color: #ffb4a8; }
+.status.muted { color: rgba(255, 248, 231, 0.75); }
+
+.wall {
+  width: min(100%, 860px);
+  margin: 1.2rem auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+  align-items: stretch;
+}
+
+.wish-card {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 248, 231, 0.18);
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+}
+
+.wish-card__thumb {
+  aspect-ratio: 9 / 16;
+  background: #1a0f0a;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.wish-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.01);
+}
+
+.wish-card__body {
+  padding: 0.7rem 0.8rem 0.85rem;
+  color: rgba(255, 248, 231, 0.93);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.wish-card__from { font-weight: 800; letter-spacing: 0.01em; }
+
+.wish-card__msg {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: rgba(255, 248, 231, 0.88);
+  white-space: pre-wrap;
+}
+
+.wish-card__meta { margin-top: auto; font-size: 0.8rem; color: rgba(255, 248, 231, 0.65); }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 1rem;
+}
+
+.modal.is-open { display: flex; }
+
+.modal__inner {
+  width: min(100%, 520px);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0f0b08;
+  border: 1px solid rgba(255, 248, 231, 0.2);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.6);
+}
+
+.modal__inner img { width: 100%; height: auto; display: block; }
+
+.modal__bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.7rem;
+  background: rgba(255, 248, 231, 0.08);
+  color: rgba(255, 248, 231, 0.9);
+  font-weight: 800;
+  gap: 0.75rem;
+}
+
+.modal__bar button { font-size: 0.9rem; padding: 0.45rem 0.9rem; }

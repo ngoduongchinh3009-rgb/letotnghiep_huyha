@@ -1,0 +1,422 @@
+/* form-verify.css — tách từ style.css, chỉnh theo màn tương ứng */
+
+/* ========== Form ========== */
+.panel {
+  width: min(100%, 520px);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246, 238, 224, 0.92)),
+    url("../../assets/texture.png");
+  background-size: cover;
+  color: var(--text);
+  border: 1px solid rgba(215, 182, 109, 0.55);
+  border-radius: 18px;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  box-shadow: 0 22px 60px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.panel h2 {
+  font-family: var(--font);
+  font-size: clamp(1.35rem, 3.5vw, 1.85rem);
+  margin: 0 0 1.25rem;
+  color: var(--gold-dark);
+}
+
+/* Cổng nhập tên — kem + texture mờ giống thiệp, bo góc rộng */
+#screen-form .panel--gate {
+  position: relative;
+  overflow: hidden;
+  width: min(100%, 440px);
+  max-width: 440px;
+  border-radius: 22px;
+  padding: clamp(1.85rem, 4.8vw, 2.45rem) clamp(1.45rem, 4vw, 1.95rem);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 248, 0.94) 0%, rgba(252, 246, 236, 0.9) 45%, rgba(245, 236, 222, 0.92) 100%),
+    url("../../assets/texture.png");
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(215, 182, 109, 0.5);
+  box-shadow:
+    0 20px 48px rgba(8, 10, 14, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+#screen-form .panel__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+}
+
+#screen-form .panel__title {
+  width: 100%;
+  max-width: min(100%, 22rem);
+  margin: 0 0 1.35rem;
+  padding: 0;
+  text-align: center;
+  font-family: var(--font);
+  font-weight: 700;
+  color: #5c4010;
+  font-size: clamp(1.22rem, 3.15vw, 1.52rem);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+  text-shadow: 0 1px 0 rgba(255, 252, 240, 0.95);
+}
+
+#screen-form .verify-form--gate {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+  width: 100%;
+  max-width: 22.5rem;
+  margin: 0 auto;
+  text-align: left;
+}
+
+#screen-form .verify-form--gate .guest-live {
+  margin: 0;
+}
+
+#screen-form .verify-form--gate input[type="text"] {
+  margin-bottom: 0;
+  text-align: left;
+  border-radius: 14px;
+  border: 1px solid rgba(215, 182, 109, 0.55) !important;
+  padding: 0.92rem 1.1rem;
+  font-size: clamp(0.98rem, 2.2vw, 1.08rem);
+  font-weight: 500;
+  font-family: var(--font);
+  background: #fff;
+  color: #2a2218;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 1);
+}
+
+#screen-form .verify-form--gate #guest-name::placeholder {
+  font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: rgba(130, 118, 102, 0.72);
+  opacity: 1;
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(0.9rem, 2.05vw, 1.02rem);
+}
+
+#screen-form .guest-live.is-empty {
+  margin-bottom: 0;
+  text-align: left;
+  font-style: italic;
+  font-family: var(--font);
+  font-weight: 500;
+  color: rgba(58, 44, 28, 0.88);
+  background: rgba(232, 214, 188, 0.55);
+  border: 1px solid rgba(200, 172, 128, 0.4);
+  border-radius: 14px;
+  padding: 0.95rem 1.1rem;
+  min-height: 3.25em;
+  white-space: pre-line;
+  line-height: 1.58;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+#screen-form .guest-live:not(.is-empty) {
+  text-align: left;
+  border-left: none;
+  border: 1px solid rgba(91, 72, 48, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 253, 249, 0.68);
+  box-shadow: none;
+}
+
+#screen-form .verify-form--gate .btn-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+#screen-form .btn-primary--gate {
+  box-sizing: border-box;
+  width: auto;
+  max-width: min(100%, 12.5rem);
+  min-width: max-content;
+  flex-shrink: 0;
+  padding: 0.68rem 1.5rem;
+  border-radius: 999px;
+  font-family: var(--font);
+  font-size: clamp(0.92rem, 2.05vw, 1.02rem);
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  appearance: none;
+  -webkit-appearance: none;
+  background: linear-gradient(180deg, #fff2b8 0%, #f0d56a 28%, #e4bc3a 62%, #c9a22a 100%);
+  color: #120d06;
+  box-shadow:
+    0 5px 16px rgba(212, 170, 40, 0.38),
+    inset 0 1px 0 rgba(255, 252, 230, 0.9);
+  border: 1px solid rgba(184, 140, 32, 0.55);
+}
+
+#screen-form .btn-primary--gate:hover {
+  box-shadow:
+    0 6px 20px rgba(212, 170, 40, 0.45),
+    inset 0 1px 0 rgba(255, 252, 230, 0.95);
+}
+
+label {
+  display: block;
+  text-align: left;
+  font-size: clamp(1rem, 2.2vw, 1.15rem);
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: var(--muted);
+}
+
+input[type="text"],
+select {
+  width: 100%;
+  font-family: var(--font);
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  margin-bottom: 0.65rem;
+  background: #fff;
+  color: var(--text);
+}
+
+#guest-name::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+  font-size: clamp(0.92rem, 2.15vw, 1.05rem);
+  font-weight: 400;
+}
+
+.guest-confirm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.guest-confirm-modal[hidden] {
+  display: none !important;
+}
+
+.guest-confirm-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 14, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.guest-confirm-dialog {
+  position: relative;
+  z-index: 1;
+  max-width: 28rem;
+  width: 100%;
+  padding: 1.5rem 1.4rem 1.35rem;
+  border-radius: 20px;
+  background: linear-gradient(165deg, #fdfbf7 0%, #f7f0e4 55%, #efe6d8 100%);
+  color: var(--text);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(215, 182, 109, 0.55);
+}
+
+.guest-confirm-title {
+  margin: 0 0 0.85rem;
+  font-family: var(--font);
+  font-size: clamp(1.12rem, 2.65vw, 1.42rem);
+  font-weight: 800;
+  line-height: 1.38;
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: pre-line;
+  color: #9a6a00;
+  text-wrap: balance;
+  text-shadow:
+    0 1px 0 rgba(255, 252, 240, 0.95),
+    0 2px 18px rgba(201, 162, 39, 0.38),
+    0 0 1px rgba(138, 98, 10, 0.35);
+}
+
+.guest-confirm-soft-italic {
+  font-style: italic;
+  opacity: 0.68;
+}
+
+.guest-confirm-sub {
+  margin: 0 0 0.65rem;
+  font-size: clamp(0.88rem, 2vw, 0.98rem);
+  line-height: 1.5;
+  color: rgba(107, 98, 86, 0.95);
+  text-wrap: balance;
+}
+
+.guest-confirm-sub[hidden] {
+  display: none !important;
+}
+
+/* Gợi ý: ngay dưới đoạn sub / tiêu đề, trước hàng nút */
+.guest-confirm-footer-hint {
+  margin: 0 auto 1rem;
+  padding: 0.65rem 1rem;
+  max-width: 46ch;
+  text-align: center;
+  font-size: clamp(0.82rem, 1.9vw, 0.93rem);
+  line-height: 1.58;
+  white-space: pre-line;
+  color: rgba(52, 42, 32, 0.9);
+  font-style: normal;
+  font-weight: 500;
+  background: rgba(255, 248, 228, 0.55);
+  border: 1px solid rgba(201, 162, 39, 0.28);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 4px 14px rgba(123, 90, 42, 0.08);
+}
+
+.guest-confirm-sub[hidden] + .guest-confirm-footer-hint {
+  margin-top: 0.15rem;
+}
+
+/* Grid 2 cột: không chồng như flex-basis cố định; nhiều nút thì tự xuống dòng */
+.guest-confirm-footer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.guest-confirm-actions {
+  display: contents;
+}
+
+.guest-confirm-footer .guest-confirm-pick,
+.guest-confirm-footer .guest-confirm-decline {
+  min-width: 0;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.28;
+  min-height: 3.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.72rem 0.85rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  border-radius: 999px;
+}
+
+.guest-confirm-footer .guest-confirm-pick {
+  font-size: clamp(0.92rem, 2vw, 1.05rem);
+  font-weight: 700;
+  border: 1px solid rgba(180, 145, 75, 0.45);
+  box-shadow: 0 2px 10px rgba(180, 145, 75, 0.18);
+}
+
+.guest-confirm-footer .guest-confirm-decline {
+  background: linear-gradient(180deg, #945f35, #7a4f2c) !important;
+  color: #fff8e7;
+  border: 1px solid rgba(60, 42, 22, 0.35) !important;
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  font-size: clamp(0.78rem, 1.65vw, 0.92rem);
+  font-weight: 650;
+  text-wrap: balance;
+}
+
+@media (max-width: 480px) {
+  .guest-confirm-footer {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+}
+
+.guest-confirm-footer .guest-confirm-decline:hover {
+  background: linear-gradient(180deg, #a56c3c, #8b5a32) !important;
+}
+
+@media (max-width: 520px) {
+  .guest-confirm-modal {
+    padding: 0.7rem;
+  }
+
+  .guest-confirm-dialog {
+    max-width: 100%;
+    padding: 1.2rem 1rem 1rem;
+    border-radius: 14px;
+  }
+
+  .guest-confirm-title {
+    margin-bottom: 0.9rem;
+    font-size: clamp(1.02rem, 5vw, 1.2rem);
+  }
+
+  .guest-confirm-footer {
+    gap: 0.55rem;
+  }
+
+  .guest-confirm-footer-hint {
+    font-size: clamp(0.76rem, 3.4vw, 0.86rem);
+    padding: 0.48rem 0.65rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .guest-confirm-footer .guest-confirm-pick,
+  .guest-confirm-footer .guest-confirm-decline {
+    min-height: 2.85rem;
+    padding: 0.68rem 0.86rem;
+  }
+
+  .guest-confirm-footer .guest-confirm-decline {
+    font-size: clamp(0.84rem, 3.7vw, 0.94rem);
+  }
+}
+
+/* Nhận diện tên → chức danh / lời thân thiết (cập nhật khi gõ) */
+.guest-live {
+  min-height: 3.1em;
+  margin: 0 0 1rem;
+  padding: 0.65rem 0.85rem;
+  text-align: left;
+  font-family: var(--font);
+  font-size: clamp(0.95rem, 2.2vw, 1.1rem);
+  line-height: 1.45;
+  color: var(--gold-dark);
+  background: rgba(212, 165, 116, 0.18);
+  border-radius: 10px;
+  border-left: 4px solid var(--accent);
+}
+
+.guest-live.is-empty {
+  color: var(--muted);
+  font-style: italic;
+  font-family: var(--font);
+  font-size: clamp(0.88rem, 2vw, 1rem);
+  border-left-color: rgba(139, 90, 43, 0.35);
+  background: rgba(107, 83, 68, 0.08);
+}
+
+.guest-live strong {
+  font-family: var(--font);
+  font-weight: 700;
+  font-style: normal;
+  color: var(--text);
+}

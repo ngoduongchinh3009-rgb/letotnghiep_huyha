@@ -9,6 +9,7 @@
     els.guestConfirmModal.hidden = true;
     els.guestConfirmModal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
+    setGuestConfirmFooterHintVisible(false);
     if (els.guestConfirmActions) els.guestConfirmActions.innerHTML = "";
     APP._guestConfirmOnPick = null;
     APP._guestConfirmOnDecline = null;
@@ -16,6 +17,13 @@
   }
 
   APP.closeGuestConfirmModal = closeModal;
+
+  /** Chỉ hiện khi cần chọn giữa nhiều người / nút decline có ý nghĩa tương phản. */
+  function setGuestConfirmFooterHintVisible(show) {
+    var els = APP.els;
+    if (!els || !els.guestConfirmFooterHint) return;
+    els.guestConfirmFooterHint.hidden = !show;
+  }
 
   function setConfirmHeadline(message, allowHtml) {
     var els = APP.els;
@@ -50,7 +58,7 @@
     setConfirmHeadline(subMsg, /<[^>]+>/.test(subMsg));
     if (els.guestConfirmDecline) {
       els.guestConfirmDecline.textContent =
-        APP.CONFIG.guestConfirmDecline || "Không phải → Khách mời quan trọng";
+        APP.CONFIG.guestConfirmDecline || "Tạo thiệp khách mời";
     }
 
     els.guestConfirmActions.innerHTML = "";
@@ -71,6 +79,7 @@
       })(matches[i]);
     }
 
+    setGuestConfirmFooterHintVisible(true);
     els.guestConfirmModal.hidden = false;
     els.guestConfirmModal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
@@ -107,6 +116,7 @@
     if (els.guestConfirmDecline) {
       els.guestConfirmDecline.textContent = "Quay lại";
     }
+    setGuestConfirmFooterHintVisible(false);
     els.guestConfirmModal.hidden = false;
     els.guestConfirmModal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
@@ -135,6 +145,7 @@
     if (els.guestConfirmDecline) {
       els.guestConfirmDecline.textContent = "Đóng";
     }
+    setGuestConfirmFooterHintVisible(false);
     els.guestConfirmModal.hidden = false;
     els.guestConfirmModal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
@@ -146,9 +157,14 @@
     if (!els || !els.guestConfirmModal) return;
     if (APP._guestConfirmDomBound) return;
     APP._guestConfirmDomBound = true;
+    if (els.guestConfirmFooterHint) {
+      els.guestConfirmFooterHint.textContent =
+        APP.CONFIG.guestConfirmFooterHint ||
+        "Nếu đúng là người mình đang nhắc tới, chọn nút vàng bên trái.\nNếu không, chọn Tạo thiệp khách mời bên phải.";
+    }
     if (els.guestConfirmDecline) {
       els.guestConfirmDecline.textContent =
-        APP.CONFIG.guestConfirmDecline || "Không phải -> Tạo thiệp khách mời quan trọng";
+        APP.CONFIG.guestConfirmDecline || "Tạo thiệp khách mời";
       els.guestConfirmDecline.addEventListener("click", function () {
         var d = APP._guestConfirmOnDecline;
         closeModal();

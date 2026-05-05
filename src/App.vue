@@ -4,24 +4,29 @@
   </section>
 
   <section id="screen-form" class="screen" aria-labelledby="form-title">
-    <div class="panel">
-      <h2 id="form-title">Thiệp mời Huy Hà gửi tới bạn</h2>
-      <form id="verify-form" novalidate>
-        <input
-          id="guest-name"
-          type="text"
-          name="guestName"
-          autocomplete="name"
-          required
-          placeholder="Giúp mình nhập tên bạn nha"
-        />
+    <div class="panel panel--gate">
+      <div class="panel__inner">
+        <h2 id="form-title" class="panel__title">Thiệp mời Huy Hà gửi tới bạn</h2>
+        <form id="verify-form" class="verify-form verify-form--gate" novalidate>
+          <input
+            id="guest-name"
+            type="text"
+            name="guestName"
+            autocomplete="name"
+            required
+            placeholder="Giúp mình nhập tên bạn nha"
+          />
 
-        <p id="guest-live" class="guest-live is-empty" aria-live="polite"></p>
+          <p id="guest-live" class="guest-live is-empty" aria-live="polite">
+            Nhập tên để tạo thiệp nha,<br />
+            Mình luôn mong sự có mặt của bạn.
+          </p>
 
-        <div class="btn-row">
-          <button type="submit" class="btn-primary">Xác thực</button>
-        </div>
-      </form>
+          <div class="btn-row">
+            <button type="submit" class="btn-primary btn-primary--gate">Xác thực</button>
+          </div>
+        </form>
+      </div>
 
       <div
         id="guest-confirm-modal"
@@ -35,8 +40,11 @@
         <div class="guest-confirm-dialog">
           <h3 id="guest-confirm-title" class="guest-confirm-title"></h3>
           <p id="guest-confirm-sub" class="guest-confirm-sub"></p>
-          <div id="guest-confirm-actions" class="guest-confirm-actions"></div>
-          <button type="button" id="guest-confirm-decline" class="btn-secondary guest-confirm-decline"></button>
+          <p id="guest-confirm-footer-hint" class="guest-confirm-footer-hint"></p>
+          <div class="guest-confirm-footer">
+            <div id="guest-confirm-actions" class="guest-confirm-actions"></div>
+            <button type="button" id="guest-confirm-decline" class="btn-secondary guest-confirm-decline"></button>
+          </div>
         </div>
       </div>
     </div>

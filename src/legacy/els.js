@@ -64,6 +64,7 @@ import textureUrl from "../../assets/texture.png?url";
       guestConfirmSub: $(root, "guest-confirm-sub"),
       guestConfirmActions: $(root, "guest-confirm-actions"),
       guestConfirmDecline: $(root, "guest-confirm-decline"),
+      guestConfirmFooterHint: $(root, "guest-confirm-footer-hint"),
 
       reveal1: $(root, "reveal-1"),
       reveal2: $(root, "reveal-2"),
@@ -94,7 +95,6 @@ import textureUrl from "../../assets/texture.png?url";
       camError: $(root, "cam-error"),
       snapCanvas: $(root, "snap-canvas"),
       cardCanvas: $(root, "card-canvas"),
-      camStickers: $(root, "cam-stickers"),
 
       photoPreview: $(root, "photo-preview"),
       previewImg: $(root, "preview-img"),
@@ -110,7 +110,6 @@ import textureUrl from "../../assets/texture.png?url";
       wishPhoto: $(root, "wish-photo"),
       wishSubmit: $(root, "wish-submit"),
       wishStatus: $(root, "wish-status"),
-      btnOpenWall: $(root, "btn-open-wall"),
 
       wallPanel: $(root, "wall-panel"),
       wallEl: $(root, "wall"),

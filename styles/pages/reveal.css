@@ -1,0 +1,30 @@
+/* reveal.css — tách từ style.css, chỉnh theo màn tương ứng */
+
+/* ========== Reveal (cảm xúc) ========== */
+.reveal-line {
+  font-family: var(--font);
+  font-size: clamp(1.5rem, 4.5vw, 2.5rem);
+  line-height: 1.35;
+  max-width: 22ch;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.reveal-line.is-visible { opacity: 1; transform: translateY(0); }
+
+.reveal-name {
+  font-family: var(--font);
+  font-size: clamp(2.5rem, 10vw, 5rem);
+  font-weight: 700;
+  color: #fff0c8;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  margin-top: 1.5rem;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 1s ease, transform 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.reveal-name.is-visible { opacity: 1; transform: scale(1); }
+
+.btn-continue { margin-top: 2rem; }

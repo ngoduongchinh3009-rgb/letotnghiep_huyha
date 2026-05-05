@@ -25,7 +25,16 @@
       for (t = 0; t < tracks.length; t++) tracks[t].stop();
       APP.state.stream = null;
     }
-    APP.els.video.srcObject = null;
+    if (APP.els.video) APP.els.video.srcObject = null;
+    if (APP.els.btnCapture) {
+      APP.els.btnCapture.disabled = true;
+      APP.els.btnCapture.hidden = true;
+    }
+    if (APP.els.btnStartCam) {
+      APP.els.btnStartCam.hidden = false;
+      APP.els.btnStartCam.disabled = false;
+      APP.els.btnStartCam.textContent = "Mở camera";
+    }
   };
 
   APP.refreshSecureBanner = function refreshSecureBanner() {
@@ -77,9 +86,15 @@
         return APP.els.video.play();
       })
       .then(function () {
-        APP.els.btnCapture.disabled = false;
-        APP.els.btnStartCam.textContent = "Camera đã bật";
-        APP.els.btnStartCam.disabled = true;
+        if (APP.els.btnCapture) {
+          APP.els.btnCapture.disabled = false;
+          APP.els.btnCapture.hidden = false;
+        }
+        if (APP.els.btnStartCam) {
+          APP.els.btnStartCam.hidden = true;
+          APP.els.btnStartCam.textContent = "Camera đã bật";
+          APP.els.btnStartCam.disabled = true;
+        }
         APP.refreshCameraPreviewEffects();
         if (APP.startFaceMeshLoop) APP.startFaceMeshLoop();
       })

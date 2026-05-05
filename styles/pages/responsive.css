@@ -1,0 +1,143 @@
+/* responsive.css — tách từ style.css, chỉnh theo màn tương ứng */
+
+/* ========== Điện thoại: thu nhỏ form & thiệp (vẫn đọc được) ========== */
+@media (max-width: 640px) {
+  .screen {
+    padding: 0.65rem 0.75rem;
+    justify-content: flex-start;
+    padding-top: max(0.65rem, env(safe-area-inset-top));
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  #screen-form.screen { justify-content: flex-start; }
+
+  #screen-form .panel--gate {
+    border-radius: 20px;
+    padding: 1.65rem 1.1rem 1.85rem;
+  }
+
+  #screen-form .panel__title {
+    margin-bottom: 1.35rem;
+    max-width: none;
+  }
+
+  #screen-form .verify-form--gate input[type="text"] {
+    font-size: 16px;
+  }
+
+  #screen-form .verify-form--gate #guest-name::placeholder {
+    font-size: 15px;
+  }
+
+  #screen-invite.screen {
+    justify-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: visible;
+    align-items: center;
+  }
+
+  #invite-card-main.classic-card {
+    aspect-ratio: 9 / 18.6;
+  }
+
+  #invite-card-main .classic-card__paper {
+    padding: 1.05rem 1.15rem;
+  }
+
+  #invite-card-main .classic-card__paper-main {
+    gap: 0.38rem;
+  }
+
+  .panel {
+    width: 100%;
+    max-width: none;
+    padding: 0.85rem 0.75rem;
+    border-width: 2px;
+    border-radius: 12px;
+    box-shadow: 0 10px 28px var(--shadow);
+  }
+
+  .panel h2 { font-size: 1.05rem; margin-bottom: 0.65rem; }
+
+  label { font-size: 0.8rem; margin-bottom: 0.2rem; }
+
+  input[type="text"],
+  select {
+    font-size: 16px;
+    padding: 0.5rem 0.65rem;
+    margin-bottom: 0.45rem;
+    border-radius: 8px;
+  }
+
+  .guest-live {
+    min-height: 0;
+    font-size: 0.78rem;
+    padding: 0.4rem 0.5rem;
+    margin-bottom: 0.55rem;
+    border-left-width: 3px;
+  }
+
+  .guest-live.is-empty { font-size: 0.74rem; }
+
+  button { font-size: 0.86rem; padding: 0.5rem 0.95rem; }
+
+  .btn-row { gap: 0.45rem; margin-top: 0.3rem; }
+
+  .access-help { width: 100%; margin-top: 0.55rem; padding: 0.35rem 0.55rem; }
+
+  .access-help summary { font-size: 0.84rem; }
+
+  .access-help .access-help__body { font-size: 0.74rem; line-height: 1.5; }
+
+  .access-help .access-help__body p { margin: 0.35em 0; }
+
+  .splash-text { font-size: clamp(1rem, 4.2vw, 1.28rem); max-width: 100%; }
+
+  .loading-text { font-size: 1.02rem; margin-bottom: 1.25rem; max-width: 100%; }
+
+  .reveal-line { font-size: clamp(0.95rem, 3.8vw, 1.15rem); max-width: 100%; }
+
+  .reveal-name { font-size: clamp(1.35rem, 8vw, 2rem); margin-top: 0.85rem; }
+
+  .btn-continue { margin-top: 1.25rem; font-size: 0.88rem; padding: 0.55rem 1.1rem; }
+
+  .invite-wrap { width: 100%; max-width: none; }
+
+  #invite-card-main.invite-card { padding: 0.85rem 0.65rem; border-width: 4px; }
+
+  #invite-card-main .ornament { font-size: 1rem; letter-spacing: 0.2em; margin-bottom: 0.25rem; }
+
+  #invite-card-main h3 { font-size: 0.88rem; margin-bottom: 0.4rem; }
+
+  #invite-card-main .guest { font-size: 1.05rem; margin: 0.35rem 0 0.2rem; line-height: 1.25; }
+
+  #invite-card-main .guest-role { font-size: 0.76rem; margin: 0.25rem 0 0.55rem; line-height: 1.45; }
+
+  #invite-card-main p { font-size: 0.8rem; line-height: 1.45; }
+
+  #invite-card-main .meal { font-size: 0.76rem; margin: 0.65rem 0 0.35rem; padding: 0.5rem 0.45rem; line-height: 1.45; }
+
+  #invite-card-main .sponsor { font-size: 0.72rem; line-height: 1.35; margin: 0.35rem 0 0.15rem; }
+
+  #invite-card-main .detail { margin-top: 0.75rem; padding-top: 0.6rem; font-size: 0.76rem; }
+
+  #invite-card-main .detail p { line-height: 1.4; margin: 0.2rem 0; }
+
+  .camera-block { width: 100%; margin-top: 0.85rem; }
+
+  .cam-cap { font-size: clamp(1.1rem, 6vw, 1.55rem); }
+
+  .cam-frame-note { font-size: 0.72rem; max-width: none; }
+
+  .cam-hint { font-size: 0.72rem; max-width: none; }
+
+  .photo-preview { width: 100%; margin-top: 0.8rem; padding: 0.5rem; }
+
+  .photo-preview h4 { font-size: 0.82rem; margin-bottom: 0.42rem; }
+
+  .preview-actions { gap: 0.4rem; margin-top: 0.5rem; }
+
+  .secure-banner { font-size: 0.74rem; padding: 0.55rem 0.65rem; }
+
+  .secure-banner strong { font-size: 1em; }
+}

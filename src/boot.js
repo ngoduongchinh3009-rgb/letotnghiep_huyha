@@ -27,11 +27,6 @@ export function boot() {
         if (els.wallEl && els.wallEl.__items) APP.renderWall(els.wallEl.__items);
       });
     }
-    if (els.btnOpenWall) {
-      els.btnOpenWall.addEventListener("click", function () {
-        if (els.wallPanel) els.wallPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    }
     if (els.btnCopyWallLink) {
       els.btnCopyWallLink.addEventListener("click", function () {
         var link = APP.buildWallViewLink();
@@ -195,16 +190,15 @@ export function boot() {
   APP.setGuestLiveFromInput();
   APP.refreshSecureBanner();
   APP.initFirebaseMaybe();
-  if (APP.hasFirebaseConfig()) APP.attachWallListener();
+  if (APP.hasFirebaseConfig() && els.wallEl) APP.attachWallListener();
 
   var view = APP.getQuery("view");
   if (view === "wall") {
     APP.showScreen(els.inviteScreen);
-    if (els.wishPanel) els.wishPanel.hidden = true;
-    if (els.camWrap && els.camWrap.parentElement) els.camWrap.parentElement.hidden = true;
-    if (els.photoPreview) els.photoPreview.hidden = true;
+    if (els.inviteScreen) els.inviteScreen.classList.add("is-wall-only");
     if (els.wallPanel) els.wallPanel.scrollIntoView({ behavior: "instant", block: "start" });
   } else {
+    if (els.inviteScreen) els.inviteScreen.classList.remove("is-wall-only");
     APP.startSplash();
   }
 }

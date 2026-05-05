@@ -7,9 +7,19 @@
      CẤU HÌNH — Sửa các giá trị sau cho buổi trình bày của bạn
      ======================================================================== */
   APP.CONFIG = {
+    /**
+     * Font toàn trang (thiệp, form, Wall…) — trùng với dòng lễ #card-invite-message (inviteCeremonyTpl).
+     * Đổi font: sửa chuỗi này + link Google Fonts tương ứng trong index.html (nếu dùng webfont).
+     */
+    fontStack: '"EB Garamond", Garamond, "Times New Roman", Times, Georgia, "Liberation Serif", serif',
     /* Tên SV: dùng cho lời mời / ảnh… Không lặp trong khối #card-sub (chỉ giờ + địa điểm). */
     studentName: "Nguyễn Huy Hà",
-    eventTime: "10h",
+    /** Dòng dưới khung camera (xuống dòng được, cần CSS pre-line) */
+    cameraCongratsLine: "Cảm ơn bạn đã tới chung vui cùng mình.",
+    /** Câu dòng lớn trên thiệp. {student} = studentName. Ghi đè hoàn toàn: inviteCeremonyLine (một chuỗi). */
+    inviteCeremonyTpl: "Đến tham dự lễ tốt nghiệp của {student}",
+    /* Xuống dòng trong chuỗi: hiển thị với .classic-card__paper-sub { white-space: pre-line } */
+    eventTime: "10h – 12h,\nThứ Bảy — ngày lễ",
     eventPlace: "Đại học Bách Khoa Hà Nội",
     /* Lời cảm ơn cuối thiệp (#card-thanks) — {name} = tên khách khi đã xác thực */
     thanksAnonymous: "Cảm ơn vì sự có mặt của bạn.",
@@ -28,12 +38,15 @@
     defaultGuestRole: "{name} — cảm ơn bạn đã đến chung vui cùng mình.",
     /* Ô gợi ý dưới input (#guest-live) — HTML để trống, script.js boot gọi setGuestLiveFromInput() */
     guestLiveEmptyHint:
-      "Nhập tên để tạo thiệp nha — mình luôn mong sự có mặt của bạn.",
+      "Nhập tên để tạo thiệp nha,\nMình luôn mong sự có mặt của bạn.",
     guestLiveStrangerLine: "{name} ơi, nhớ đến tham dự lễ nhé",
     guestImportantFallbackRole: "Khách mời quan trọng",
     guestConfirmTitle: "Xác nhận giúp mình nhé",
     guestConfirmSub: "Chọn đúng người để xem lời mời riêng.",
-    guestConfirmDecline: "Không phải -> Tạo thiệp khách mời quan trọng",
+    guestConfirmDecline: "Tạo thiệp khách mời",
+    guestConfirmFooterHint:
+      "Nếu đúng là người mình đang nhắc tới, chọn nút vàng bên trái để mở lời mời riêng.\n" +
+      "Nếu không phải thì bấm «Tạo thiệp khách mời» bên phải để nhận thiệp nhé, mình rất mong được gặp bạn trong buổi lễ.",
     loverGreetingDelayMs: 1600,
     splashDelayMs: 2600,
     loadingMs: 2800,
@@ -65,5 +78,13 @@
     uploadPreset: "letotnghiep_huyha",
     folder: "letotnghiep_huyha",
   };
+
+  (function applyFontStackFromConfig() {
+    var stack = APP.CONFIG.fontStack && String(APP.CONFIG.fontStack).trim();
+    if (!stack) return;
+    try {
+      document.documentElement.style.setProperty("--font", stack);
+    } catch (e) {}
+  })();
 })();
 export {};

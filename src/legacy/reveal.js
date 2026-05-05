@@ -17,12 +17,13 @@
   };
 
   APP.setGuestLiveFromInput = function setGuestLiveFromInput() {
+    if (!APP.els || !APP.els.guestLive || !APP.els.inputName) return;
     var raw = (APP.els.inputName.value || "").trim();
     if (!raw) {
       APP.els.guestLive.classList.add("is-empty");
       APP.els.guestLive.textContent =
         APP.CONFIG.guestLiveEmptyHint ||
-        "Nhập tên để tạo thiệp nha — mình luôn mong sự có mặt của bạn.";
+        "Nhập tên để tạo thiệp nha,\nMình luôn mong sự có mặt của bạn.";
       return;
     }
     var res = APP.resolveGuestLookupResult(raw);
@@ -66,7 +67,7 @@
     }
   };
 
-  APP.fillInviteCard = function fillInviteCard(displayName, roleLine) {
+  APP.fillInviteCard = function fillInviteCard(name, roleLine) {
     APP.state.guestRoleLine = roleLine || "";
     if (APP.els.cardSub) {
       APP.els.cardSub.textContent = APP.buildInviteEventDetailText();
@@ -75,23 +76,31 @@
       APP.els.cardSub2.textContent = APP.buildInviteEventDetailText();
     }
     if (APP.els.cardInviteGuest) {
-      APP.els.cardInviteGuest.textContent = displayName || "Bạn và gia đình";
+      APP.els.cardInviteGuest.textContent = name || "Bạn và gia đình";
     }
     if (APP.els.cardRole) {
       APP.els.cardRole.textContent = roleLine || "";
       APP.els.cardRole.hidden = !roleLine;
     }
     if (APP.els.cardInviteMessage) {
-      APP.els.cardInviteMessage.textContent =
-        "Đến tham dự lễ tốt nghiệp của " + APP.CONFIG.studentName;
+      var lineOverride =
+        APP.CONFIG.inviteCeremonyLine && String(APP.CONFIG.inviteCeremonyLine).trim();
+      var tpl =
+        (APP.CONFIG.inviteCeremonyTpl && String(APP.CONFIG.inviteCeremonyTpl).trim()) ||
+        "Đến tham dự lễ tốt nghiệp của {student}";
+      var sn = APP.CONFIG.studentName || "";
+      var ceremony =
+        lineOverride ||
+        (tpl.indexOf("{student}") !== -1 ? tpl.replace(/\{student\}/g, sn) : tpl);
+      APP.els.cardInviteMessage.textContent = ceremony;
     }
     if (APP.els.cardThanks) {
       var anonThanks = APP.CONFIG.thanksAnonymous || "Cảm ơn vì sự có mặt của bạn.";
       var namedTpl =
         APP.CONFIG.thanksNamed ||
         "{name} ơi, cảm ơn vì đã là một phần rất đẹp trong ngày này của mình.";
-      APP.els.cardThanks.textContent = displayName
-        ? namedTpl.replace(/\{name\}/g, displayName)
+      APP.els.cardThanks.textContent = name
+        ? namedTpl.replace(/\{name\}/g, name)
         : anonThanks;
     }
     if (APP.els.cardFlavor) {

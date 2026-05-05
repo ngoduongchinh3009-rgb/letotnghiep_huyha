@@ -1,0 +1,17 @@
+/* splash.css — tách từ style.css, chỉnh theo màn tương ứng */
+
+/* ========== Splash ========== */
+.splash-text {
+  font-family: var(--font);
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.45;
+  max-width: 36ch;
+  opacity: 0;
+  animation: fadeIn 1.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}

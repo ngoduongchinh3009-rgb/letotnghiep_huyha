@@ -20,7 +20,9 @@
         "bad",
         "Chưa cấu hình Firebase. Điền FIREBASE_CONFIG để bật gửi lời chúc."
       );
-      APP.setStatus(APP.els.wallHint, "muted", "Chưa cấu hình Firebase nên chưa tải được Wall.");
+      if (APP.els.wallHint) {
+        APP.setStatus(APP.els.wallHint, "muted", "Chưa cấu hình Firebase nên chưa tải được Wall.");
+      }
       return false;
     }
     if (typeof firebase === "undefined") {
@@ -34,7 +36,7 @@
     try {
       APP.state.firebaseApp = firebase.initializeApp(APP.FIREBASE_CONFIG);
       APP.state.db = firebase.firestore();
-      APP.setStatus(APP.els.wishStatus, "muted", "Sẵn sàng. Hãy viết lời chúc và gửi.");
+      APP.setStatus(APP.els.wishStatus, "muted", "Có thể gửi lời chúc và ảnh.");
       return true;
     } catch (e) {
       APP.setStatus(
@@ -48,18 +50,19 @@
 
   APP.renderWall = function renderWall(items) {
     if (!APP.els.wallEl) return;
+    var list = items || [];
     var q = (APP.els.wallSearch && APP.els.wallSearch.value ? APP.els.wallSearch.value : "")
       .trim()
       .toLowerCase();
     APP.els.wallEl.innerHTML = "";
-    if (!items.length) {
-      APP.setStatus(APP.els.wallHint, "muted", "Chưa có lời chúc nào.");
+    if (!list.length) {
+      if (APP.els.wallHint) APP.setStatus(APP.els.wallHint, "muted", "Chưa có lời chúc nào.");
       return;
     }
-    APP.setStatus(APP.els.wallHint, "muted", "Tổng: " + items.length + " lời chúc.");
+    if (APP.els.wallHint) APP.setStatus(APP.els.wallHint, "muted", "Tổng: " + list.length + " lời chúc.");
     var i;
-    for (i = 0; i < items.length; i++) {
-      var w = items[i];
+    for (i = 0; i < list.length; i++) {
+      var w = list[i];
       if (q) {
         var s = ((w.fromName || "") + " " + (w.message || "")).toLowerCase();
         if (s.indexOf(q) === -1) continue;
@@ -75,14 +78,11 @@
       thumb.appendChild(img);
       thumb.addEventListener(
         "click",
-        (function (url, title) {
+        (function (url) {
           return function () {
-            APP.openModal(url, title);
+            if (url) window.open(url, "_blank", "noopener,noreferrer");
           };
-        })(
-          w.photoUrl,
-          (w.fromName ? w.fromName : "Một người bạn") + " · " + APP.formatCreatedAt(w.createdAt)
-        )
+        })(w.photoUrl)
       );
 
       var body = document.createElement("div");
@@ -108,9 +108,9 @@
   };
 
   APP.attachWallListener = function attachWallListener() {
-    if (!APP.state.db) return;
+    if (!APP.state.db || !APP.els.wallEl) return;
     if (APP.state.wallUnsub) APP.state.wallUnsub();
-    APP.setStatus(APP.els.wallHint, "muted", "Đang tải Wall...");
+    if (APP.els.wallHint) APP.setStatus(APP.els.wallHint, "muted", "Đang tải Wall...");
     APP.state.wallUnsub = APP.state.db
       .collection("wishes")
       .orderBy("createdAt", "desc")
@@ -127,11 +127,13 @@
           APP.els.wallEl.__items = items;
         },
         function (err) {
-          APP.setStatus(
-            APP.els.wallHint,
-            "bad",
-            "Không tải được Wall: " + (err && err.message ? err.message : String(err))
-          );
+          if (APP.els.wallHint) {
+            APP.setStatus(
+              APP.els.wallHint,
+              "bad",
+              "Không tải được Wall: " + (err && err.message ? err.message : String(err))
+            );
+          }
         }
       );
   };
@@ -287,6 +289,9 @@
       await docRef.update({ photoUrl: url });
       APP.state.lastWishAt = Date.now();
       APP.setStatus(APP.els.wishStatus, "ok", "Đã gửi! Cảm ơn bạn.");
+      if (APP.els.wishMessage) APP.els.wishMessage.value = "";
+      if (APP.els.wishPhoto) APP.els.wishPhoto.value = "";
+      if (APP.els.wishUseLast) APP.els.wishUseLast.checked = false;
 
       if (APP.state.lastWishPreviewUrl) URL.revokeObjectURL(APP.state.lastWishPreviewUrl);
       try {
