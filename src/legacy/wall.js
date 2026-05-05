@@ -49,54 +49,38 @@
     }
   };
 
+  APP.ensureTwemojiLoaded = function ensureTwemojiLoaded() {
+    if (window.twemoji) return Promise.resolve(window.twemoji);
+    if (APP.state.twemojiLoader) return APP.state.twemojiLoader;
+    APP.state.twemojiLoader = new Promise(function (resolve) {
+      var s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js";
+      s.async = true;
+      s.onload = function () {
+        resolve(window.twemoji || null);
+      };
+      s.onerror = function () {
+        resolve(null);
+      };
+      document.head.appendChild(s);
+    });
+    return APP.state.twemojiLoader;
+  };
+
   APP.setWishNoteContent = function setWishNoteContent(el, text) {
     if (!el) return;
     var raw = String(text || "");
-    el.textContent = "";
-    try {
-      var emojiRe =
-        /(?:\p{Regional_Indicator}{2})|(?:[#*0-9]\uFE0F?\u20E3)|(?:\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*)/gu;
-      var emojiToUrl = function (emoji) {
-        var points = [];
-        var i = 0;
-        while (i < emoji.length) {
-          var cp = emoji.codePointAt(i);
-          points.push(cp.toString(16));
-          i += cp > 0xffff ? 2 : 1;
-        }
-        return (
-          "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/" +
-          points.join("-") +
-          ".svg"
-        );
-      };
-      var last = 0;
-      var match;
-      while ((match = emojiRe.exec(raw)) !== null) {
-        var start = match.index;
-        var found = match[0];
-        if (start > last) {
-          el.appendChild(document.createTextNode(raw.slice(last, start)));
-        }
-        var emWrap = document.createElement("span");
-        emWrap.className = "wish-card__emoji";
-        var emImg = document.createElement("img");
-        emImg.className = "wish-card__emoji-img";
-        emImg.alt = found;
-        emImg.src = emojiToUrl(found);
-        emImg.decoding = "sync";
-        emImg.loading = "eager";
-        emImg.referrerPolicy = "no-referrer";
-        emWrap.appendChild(emImg);
-        el.appendChild(emWrap);
-        last = start + found.length;
-      }
-      if (last < raw.length) {
-        el.appendChild(document.createTextNode(raw.slice(last)));
-      }
-    } catch (e) {
-      el.textContent = raw;
-    }
+    el.textContent = raw;
+    APP.ensureTwemojiLoaded().then(function (twemojiLib) {
+      if (!twemojiLib || !el || !el.isConnected) return;
+      try {
+        twemojiLib.parse(el, {
+          folder: "svg",
+          ext: ".svg",
+          base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
+        });
+      } catch (e) {}
+    });
   };
 
   APP.renderWall = function renderWall(items) {

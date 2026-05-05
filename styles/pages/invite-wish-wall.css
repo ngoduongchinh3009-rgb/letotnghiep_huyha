@@ -384,12 +384,7 @@
   line-height: 1.14;
 }
 
-.wish-card__emoji {
-  display: inline-block;
-  line-height: 1;
-}
-
-.wish-card__emoji-img {
+.wish-card__note img.emoji {
   width: 1.05em;
   height: 1.05em;
   display: inline-block;
