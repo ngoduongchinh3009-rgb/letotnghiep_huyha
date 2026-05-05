@@ -16,6 +16,9 @@
     studentName: "Nguyễn Huy Hà",
     /** Dòng dưới khung camera (xuống dòng được, cần CSS pre-line) */
     cameraCongratsLine: "Cảm ơn bạn đã tới chung vui cùng mình.",
+    /** Ảnh chụp xong: chú thích dưới preview + vẽ lên PNG (xuống dòng: \\n) */
+    cameraMemorialLine:
+      "Chúc mừng HuyHa tốt nghiệp cử nhân.\nTiếp tục cố gắng nhé",
     /** Một dòng trên thiệp (CSS nowrap). {student} = studentName. Ghi đè: inviteCeremonyLine. */
     inviteCeremonyTpl: "Đến tham dự lễ tốt nghiệp của {student}",
     /* Xuống dòng trong chuỗi: hiển thị với .classic-card__detail-v { white-space: pre-line } */
@@ -37,10 +40,9 @@
     guestImportantFallbackRole: "Khách mời quan trọng",
     guestConfirmTitle: "Xác nhận giúp mình nhé",
     guestConfirmSub: "Chọn đúng người để xem lời mời riêng.",
-    guestConfirmDecline: "Tạo thiệp khách mời",
+    guestConfirmDecline: "Thiệp khách mời",
     guestConfirmFooterHint:
-      "Nếu đúng là người mình đang nhắc tới, chọn nút vàng bên trái để mở lời mời riêng.\n" +
-      "Nếu không phải thì bấm «Tạo thiệp khách mời» bên phải để nhận thiệp nhé, mình rất mong được gặp bạn trong buổi lễ.",
+      "Nếu không đúng thì chọn Thiệp khách mời để xem thiệp mời riêng nha.",
     loverGreetingDelayMs: 1600,
     splashDelayMs: 2600,
     loadingMs: 2800,
@@ -60,7 +62,9 @@
     appId: "1:749181955691:web:359afc32d01bd3862dcb2e",
   };
 
-  // Bỏ mã mời: mở gửi công khai
+  // Mat khau wall de xem loi chuc (de text cho de doi nhanh)
+  APP.WALL_PASSCODE = "32771";
+  // Neu muon, co the dung hash SHA-256 thay vi pass text
   APP.PASSCODE_HASH = "";
 
   /* ========================================================================

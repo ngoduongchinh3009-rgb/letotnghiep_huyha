@@ -172,7 +172,7 @@
       return 'Dương này là <span class="guest-confirm-soft-italic">"Gia đình mở rộng"</span> hay khách mời khác vậy?';
     }
 
-    return APP.CONFIG.guestConfirmSub || "Chọn đúng người để xem lời mời riêng.";
+    return APP.CONFIG.guestConfirmSub || "Chọn đúng tên được mời để xem thiệp riêng.";
   };
 
   function isExactForGuest(q, qQ, g) {

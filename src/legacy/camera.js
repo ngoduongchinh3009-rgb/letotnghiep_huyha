@@ -52,7 +52,8 @@
 
   APP.refreshCameraPreviewEffects = function refreshCameraPreviewEffects() {
     if (!APP.els.video) return;
-    APP.els.video.style.filter = "brightness(1.04) contrast(1.03) saturate(1.10)";
+    APP.els.video.style.filter =
+      "brightness(1.06) contrast(1.04) saturate(1.14) sepia(0.04)";
     if (APP.els.camOverlay) APP.els.camOverlay.style.display = "";
   };
 
@@ -140,7 +141,7 @@
       APP.els.cardCanvas.width = outW;
       APP.els.cardCanvas.height = outH;
       var out = APP.els.cardCanvas.getContext("2d");
-      APP.drawClassicCardToCanvas(out, outW, outH, APP.els.snapCanvas);
+      APP.drawGraduationMemorialToCanvas(out, outW, outH, APP.els.snapCanvas);
     }
 
     (APP.els.cardCanvas || APP.els.snapCanvas).toBlob(
@@ -149,12 +150,7 @@
         var previewUrl = URL.createObjectURL(blob);
         APP.setPreview(previewUrl, blob);
         APP.downloadBlob(blob, "ky-niem-tot-nghiep.png");
-        if (APP.els.inviteWrapPhoto) APP.els.inviteWrapPhoto.hidden = false;
-        if (APP.els.cardSub2) {
-          APP.els.cardSub2.textContent = APP.buildInviteEventDetailText();
-        }
-        if (APP.els.cardPhoto2) APP.els.cardPhoto2.src = previewUrl;
-        if (APP.els.inviteWrapPhoto) APP.els.inviteWrapPhoto.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (APP.els.photoPreview) APP.els.photoPreview.scrollIntoView({ behavior: "smooth", block: "nearest" });
         if (APP.els.wishUseLast) APP.els.wishUseLast.checked = true;
       },
       "image/png"

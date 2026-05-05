@@ -61,7 +61,7 @@
     } else {
       subMsg =
         APP.CONFIG.guestConfirmSub ||
-        "Chọn đúng người để xem lời mời riêng. Nếu không phải ai bên dưới, bạn vẫn là khách mời quan trọng.";
+        "Chọn đúng tên được mời để xem thiệp riêng.";
     }
     setConfirmHeadline(subMsg, /<[^>]+>/.test(subMsg));
     if (els.guestConfirmDecline) {
@@ -185,7 +185,7 @@
     if (els.guestConfirmFooterHint) {
       els.guestConfirmFooterHint.textContent =
         APP.CONFIG.guestConfirmFooterHint ||
-        "Nếu đúng là người mình đang nhắc tới, chọn nút vàng bên trái.\nNếu không, chọn Tạo thiệp khách mời bên phải.";
+        "Nếu không đúng thì chọn Thiệp khách mời để xem thiệp mời riêng nha.";
     }
     if (els.guestConfirmDecline) {
       els.guestConfirmDecline.textContent =

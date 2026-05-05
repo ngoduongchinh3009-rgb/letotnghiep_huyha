@@ -95,6 +95,111 @@
 
   
 
+  APP.drawGraduationMemorialToCanvas = function drawGraduationMemorialToCanvas(out, ow, oh, photoSource) {
+    out.clearRect(0, 0, ow, oh);
+    var img = APP.state && APP.state.graduationBackdropImg;
+    var ready = APP.state && APP.state.graduationBackdropReady && img && img.complete && img.naturalWidth;
+
+    if (ready) {
+      var iw = img.naturalWidth;
+      var ih = img.naturalHeight;
+      var scale = Math.max(ow / iw, oh / ih);
+      var dw = iw * scale;
+      var dh = ih * scale;
+      var ox = (ow - dw) / 2;
+      var oy = (oh - dh) / 2;
+      out.drawImage(img, 0, 0, iw, ih, ox, oy, dw, dh);
+    } else {
+      var g0 = out.createLinearGradient(0, 0, ow, oh);
+      g0.addColorStop(0, "#c40012");
+      g0.addColorStop(0.45, "#ffd54a");
+      g0.addColorStop(1, "#8b0000");
+      out.fillStyle = g0;
+      out.fillRect(0, 0, ow, oh);
+    }
+
+    var fx = ow * 0.1;
+    var fy = oh * 0.26;
+    var fw = ow * 0.8;
+    var fh = oh * 0.4;
+    var rad = Math.min(22, Math.min(fw, fh) * 0.06);
+
+    out.save();
+    out.shadowColor = "rgba(0,0,0,0.35)";
+    out.shadowBlur = 16;
+    out.shadowOffsetY = 6;
+    out.fillStyle = "rgba(255,255,255,0.12)";
+    APP.pathRoundRect(out, fx, fy, fw, fh, rad);
+    out.fill();
+    out.restore();
+
+    out.save();
+    APP.pathRoundRect(out, fx, fy, fw, fh, rad);
+    out.clip();
+    if (photoSource) {
+      var sw = photoSource.width || photoSource.videoWidth || ow;
+      var sh = photoSource.height || photoSource.videoHeight || oh;
+      var targetAR = fw / fh;
+      var srcAR = sw / sh;
+      var sx = 0,
+        sy = 0,
+        sww = sw,
+        shh = sh;
+      if (srcAR > targetAR) {
+        sww = sh * targetAR;
+        sx = (sw - sww) / 2;
+      } else {
+        shh = sw / targetAR;
+        sy = (sh - shh) / 2;
+      }
+      out.drawImage(photoSource, sx, sy, sww, shh, fx, fy, fw, fh);
+    }
+    out.restore();
+
+    out.strokeStyle = "rgba(255, 220, 120, 0.95)";
+    out.lineWidth = Math.max(3, Math.min(ow, oh) * 0.005);
+    APP.pathRoundRect(out, fx, fy, fw, fh, rad);
+    out.stroke();
+
+    var bandY = oh * 0.72;
+    var bandH = oh - bandY;
+    out.save();
+    var gb = out.createLinearGradient(0, bandY, 0, oh);
+    gb.addColorStop(0, "rgba(140, 0, 10, 0.92)");
+    gb.addColorStop(1, "rgba(90, 0, 6, 0.96)");
+    out.fillStyle = gb;
+    out.fillRect(0, bandY, ow, bandH);
+    out.strokeStyle = "rgba(255, 210, 80, 0.55)";
+    out.lineWidth = Math.max(2, ow * 0.003);
+    out.beginPath();
+    out.moveTo(0, bandY + 0.5);
+    out.lineTo(ow, bandY + 0.5);
+    out.stroke();
+    out.restore();
+
+    var line =
+      (APP.CONFIG &&
+        APP.CONFIG.cameraMemorialLine &&
+        String(APP.CONFIG.cameraMemorialLine).trim()) ||
+      "Chúc mừng tốt nghiệp!";
+    var lines = line.split(/\n+/);
+    out.save();
+    out.textAlign = "center";
+    out.fillStyle = "#fff8e8";
+    out.shadowColor = "rgba(0,0,0,0.45)";
+    out.shadowBlur = 8;
+    var fs = Math.max(22, Math.min(ow, oh) * 0.028);
+    out.font = "700 " + fs + "px system-ui, Segoe UI, sans-serif";
+    var lh = fs * 1.38;
+    var totalH = lines.length * lh;
+    var startY = bandY + (bandH - totalH) / 2 + lh * 0.72;
+    var i;
+    for (i = 0; i < lines.length; i++) {
+      out.fillText(lines[i].trim(), ow / 2, startY + i * lh);
+    }
+    out.restore();
+  };
+
   APP.drawClassicCardToCanvas = function drawClassicCardToCanvas(out, ow, oh, photoSource) {
     out.clearRect(0, 0, ow, oh);
     out.fillStyle = "#2c1810";

@@ -1,4 +1,5 @@
 import textureUrl from "../../assets/texture.png?url";
+import graduationBackdropUrl from "../../assets/graduation-camera-backdrop.png?url";
 
 /* DOM refs — gọi bindAppDom() sau khi Vue đã mount (cùng id/class như trước). */
 (function () {
@@ -12,6 +13,8 @@ import textureUrl from "../../assets/texture.png?url";
       guestRoleLine: "",
       classicBgImg: null,
       classicBgReady: false,
+      graduationBackdropImg: null,
+      graduationBackdropReady: false,
       stream: null,
       lastPhotoBlob: null,
       lastPhotoUrl: "",
@@ -38,6 +41,14 @@ import textureUrl from "../../assets/texture.png?url";
       APP.state.classicBgReady = true;
     };
     APP.state.classicBgImg.src = textureUrl;
+    APP.state.graduationBackdropImg = new Image();
+    APP.state.graduationBackdropImg.onload = function () {
+      APP.state.graduationBackdropReady = true;
+    };
+    APP.state.graduationBackdropImg.onerror = function () {
+      APP.state.graduationBackdropReady = false;
+    };
+    APP.state.graduationBackdropImg.src = graduationBackdropUrl;
   }
 
   function $(root, id) {
@@ -113,6 +124,12 @@ import textureUrl from "../../assets/texture.png?url";
       wallEl: $(root, "wall"),
       wallSearch: $(root, "wall-search"),
       wallHint: $(root, "wall-hint"),
+      wallContent: $(root, "wall-content"),
+      wallLock: $(root, "wall-lock"),
+      wallPassForm: $(root, "wall-pass-form"),
+      wallPassInput: $(root, "wall-pass-input"),
+      wallPassSubmit: $(root, "wall-pass-submit"),
+      wallPassError: $(root, "wall-pass-error"),
 
       photoModal: $(root, "photo-modal"),
       modalImg: $(root, "modal-img"),
@@ -121,10 +138,6 @@ import textureUrl from "../../assets/texture.png?url";
       btnCopyWallLink: $(root, "btn-copy-wall-link"),
       wallLinkHint: $(root, "wall-link-hint"),
 
-      inviteWrapPhoto: $(root, "invite-wrap-photo"),
-      cardSub2: $(root, "card-sub-2"),
-      cardFrame2: $(root, "card-frame-2"),
-      cardPhoto2: $(root, "card-photo-2"),
     };
   };
 })();

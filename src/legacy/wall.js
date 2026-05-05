@@ -36,7 +36,7 @@
     try {
       APP.state.firebaseApp = firebase.initializeApp(APP.FIREBASE_CONFIG);
       APP.state.db = firebase.firestore();
-      APP.setStatus(APP.els.wishStatus, "muted", "Có thể gửi lời chúc và ảnh.");
+      APP.setStatus(APP.els.wishStatus, "muted", "");
       return true;
     } catch (e) {
       APP.setStatus(

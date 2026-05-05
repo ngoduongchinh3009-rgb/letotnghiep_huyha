@@ -51,6 +51,18 @@ export function boot() {
     }
   }
 
+  function setWallPassError(msg) {
+    if (!els.wallPassError) return;
+    els.wallPassError.hidden = !msg;
+    els.wallPassError.textContent = msg || "";
+  }
+
+  function setWallLocked(locked) {
+    if (els.wallLock) els.wallLock.hidden = !locked;
+    if (els.wallContent) els.wallContent.hidden = !!locked;
+    if (!locked) setWallPassError("");
+  }
+
   function bindCameraUi() {
     if (els.filterSelect) els.filterSelect.addEventListener("change", APP.refreshCameraPreviewEffects);
     if (els.stickerSelect) els.stickerSelect.addEventListener("change", APP.refreshCameraPreviewEffects);
@@ -76,7 +88,7 @@ export function boot() {
         roleLine =
           APP.CONFIG.guestImportantFallbackRole ||
           APP.CONFIG.defaultGuestRole ||
-          "Khách mời quan trọng";
+          "Khách mời của mình";
         if (roleLine.indexOf("{name}") !== -1) {
           roleLine = roleLine.replace(/\{name\}/g, displayName || typedRaw || "");
         }
@@ -190,15 +202,103 @@ export function boot() {
   APP.setGuestLiveFromInput();
   APP.refreshSecureBanner();
   APP.initFirebaseMaybe();
-  if (APP.hasFirebaseConfig() && els.wallEl) APP.attachWallListener();
+
+  function enterWallView() {
+    APP.showScreen(els.inviteScreen);
+    if (els.inviteScreen) els.inviteScreen.classList.add("is-wall-only");
+    setWallLocked(false);
+    if (els.wallPanel) els.wallPanel.scrollIntoView({ behavior: "instant", block: "start" });
+  }
+
+  function enterLockedWallView() {
+    APP.showScreen(els.inviteScreen);
+    if (els.inviteScreen) els.inviteScreen.classList.add("is-wall-only");
+    setWallLocked(true);
+    if (els.wallPanel) els.wallPanel.scrollIntoView({ behavior: "instant", block: "start" });
+    if (els.wallPassInput) els.wallPassInput.focus();
+  }
+
+  function leaveWallView() {
+    try {
+      var u = new URL(window.location.href);
+      u.searchParams.delete("view");
+      u.hash = "";
+      window.history.replaceState({}, "", u.toString());
+    } catch (e) {}
+    if (els.inviteScreen) els.inviteScreen.classList.remove("is-wall-only");
+    APP.startSplash();
+  }
 
   var view = APP.getQuery("view");
   if (view === "wall") {
-    APP.showScreen(els.inviteScreen);
-    if (els.inviteScreen) els.inviteScreen.classList.add("is-wall-only");
-    if (els.wallPanel) els.wallPanel.scrollIntoView({ behavior: "instant", block: "start" });
+    var passHash = APP.PASSCODE_HASH ? String(APP.PASSCODE_HASH).trim().toLowerCase() : "";
+    var plainPass = APP.WALL_PASSCODE ? String(APP.WALL_PASSCODE).trim() : "";
+    var passKeySeed = passHash ? "hash:" + passHash.slice(0, 12) : "plain:" + plainPass;
+    var sessionKey = "inviteWallUnlocked:" + passKeySeed;
+
+    if (els.wallPassForm && !els.wallPassForm.__bound) {
+      els.wallPassForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var raw = els.wallPassInput && els.wallPassInput.value ? els.wallPassInput.value : "";
+        var pass = raw.trim();
+        if (!pass) {
+          setWallPassError("Vui lòng nhập mật khẩu.");
+          if (els.wallPassInput) els.wallPassInput.focus();
+          return;
+        }
+        if (els.wallPassSubmit) els.wallPassSubmit.disabled = true;
+        setWallPassError("");
+        if (passHash) {
+          APP.sha256Hex(pass)
+            .then(function (digest) {
+              if (String(digest).toLowerCase() !== passHash) {
+                setWallPassError("Mật khẩu chưa đúng.");
+                return;
+              }
+              sessionStorage.setItem(sessionKey, "1");
+              if (els.wallPassInput) els.wallPassInput.value = "";
+              enterWallView();
+              if (APP.hasFirebaseConfig() && els.wallEl) APP.attachWallListener();
+            })
+            .catch(function () {
+              setWallPassError("Không thể xác minh mật khẩu. Thử lại nhé.");
+            })
+            .finally(function () {
+              if (els.wallPassSubmit) els.wallPassSubmit.disabled = false;
+            });
+          return;
+        }
+
+        if (!plainPass || pass !== plainPass) {
+          setWallPassError("Mật khẩu chưa đúng.");
+          if (els.wallPassSubmit) els.wallPassSubmit.disabled = false;
+          return;
+        }
+
+        sessionStorage.setItem(sessionKey, "1");
+        if (els.wallPassInput) els.wallPassInput.value = "";
+        enterWallView();
+        if (APP.hasFirebaseConfig() && els.wallEl) APP.attachWallListener();
+        if (els.wallPassSubmit) els.wallPassSubmit.disabled = false;
+      });
+      els.wallPassForm.__bound = true;
+    }
+
+    if (!passHash && !plainPass) {
+      enterWallView();
+      if (APP.hasFirebaseConfig() && els.wallEl) APP.attachWallListener();
+      return;
+    }
+
+    if (sessionStorage.getItem(sessionKey) === "1") {
+      enterWallView();
+      if (APP.hasFirebaseConfig() && els.wallEl) APP.attachWallListener();
+      return;
+    }
+    enterLockedWallView();
   } else {
     if (els.inviteScreen) els.inviteScreen.classList.remove("is-wall-only");
+    setWallLocked(false);
     APP.startSplash();
   }
 }
