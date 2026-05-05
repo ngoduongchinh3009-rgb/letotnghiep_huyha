@@ -323,7 +323,7 @@
 }
 
 .wish-card__thumb {
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 1 / 1;
   background: #1a0f0a;
   position: relative;
   overflow: hidden;
@@ -333,9 +333,10 @@
 .wish-card__thumb img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
-  transform: scale(1.01);
+  background: #0a0a0a;
+  transform: none;
 }
 
 .wish-card__body {

@@ -126,10 +126,19 @@
     }
     var vw = APP.els.video.videoWidth;
     var vh = APP.els.video.videoHeight;
+    var targetAR = 16 / 9;
+    var srcAR = vw / vh;
     var sx = 0;
     var sy = 0;
     var sw = vw;
     var sh = vh;
+    if (srcAR > targetAR) {
+      sw = vh * targetAR;
+      sx = (vw - sw) * 0.5;
+    } else if (srcAR < targetAR) {
+      sh = vw / targetAR;
+      sy = (vh - sh) * 0.5;
+    }
     APP.els.snapCanvas.width = Math.round(sw);
     APP.els.snapCanvas.height = Math.round(sh);
     var ctx = APP.els.snapCanvas.getContext("2d");

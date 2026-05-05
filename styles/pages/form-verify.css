@@ -391,13 +391,6 @@ select {
   text-wrap: balance;
 }
 
-@media (max-width: 480px) {
-  .guest-confirm-footer {
-    grid-template-columns: 1fr;
-    gap: 0.65rem;
-  }
-}
-
 .guest-confirm-footer .guest-confirm-decline:hover {
   background: linear-gradient(180deg, #9f6a40, #7d4e2c) !important;
 }

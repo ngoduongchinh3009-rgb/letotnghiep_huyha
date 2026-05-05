@@ -90,7 +90,7 @@
       body.className = "wish-card__body";
       var from = document.createElement("div");
       from.className = "wish-card__from";
-      from.textContent = w.fromName ? w.fromName : "Ẩn danh";
+      from.textContent = w.fromName ? w.fromName : "Khách mời";
       var msg = document.createElement("div");
       msg.className = "wish-card__msg";
       msg.textContent = w.message || "";
@@ -238,6 +238,19 @@
     return before + "c_fill,w_720,h_720,f_auto,q_auto:good,dpr_auto/" + after;
   };
 
+  APP.showWishThanksPopup = function showWishThanksPopup() {
+    try {
+      window.alert("Đã nhận lời chúc nha \nThứ Bảy nhớ ghé nhé!");
+    } catch (e) {
+      // ignore
+    }
+  };
+
+  APP.getGuestNameFromInvite = function getGuestNameFromInvite() {
+    var n = APP.state && APP.state.guestFullName ? String(APP.state.guestFullName).trim() : "";
+    return n || "Khách mời";
+  };
+
   APP.openWallAfterSubmit = function openWallAfterSubmit() {
     if (typeof APP.enterWallViewFromAnywhere === "function") {
       APP.enterWallViewFromAnywhere();
@@ -312,6 +325,7 @@
         ? APP.els.polaroidMessage.value.trim()
         : "";
     if (!message) message = DEFAULT_WISH_MESSAGE;
+    var fromName = APP.getGuestNameFromInvite();
 
     if (APP.els.polaroidSubmit) {
       APP.els.polaroidSubmit.disabled = true;
@@ -331,14 +345,14 @@
         timestamp: now,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         clientAt: APP.nowIso(),
-        fromName: "",
+        fromName: fromName,
       });
 
       if (APP.els.polaroidMessage) APP.els.polaroidMessage.value = "";
       APP.setPolaroidVisible(false);
       APP.setStatus(APP.els.polaroidStatus, "ok", "Đã gửi lời chúc thành công!");
       APP.setStatus(APP.els.wishStatus, "ok", "Đã gửi lời chúc thành công!");
-      APP.openWallAfterSubmit();
+      APP.showWishThanksPopup();
     } catch (err) {
       APP.setStatus(
         APP.els.polaroidStatus,
@@ -373,7 +387,7 @@
       return;
     }
 
-    var fromName = (APP.els.wishFrom && APP.els.wishFrom.value ? APP.els.wishFrom.value : "").trim();
+    var fromName = APP.getGuestNameFromInvite();
     var blob = null;
     if (APP.els.wishUseLast && APP.els.wishUseLast.checked) blob = APP.state.lastPhotoBlob;
     if (!blob && APP.els.wishPhoto && APP.els.wishPhoto.files && APP.els.wishPhoto.files[0]) {
@@ -412,7 +426,6 @@
       var optimizedUrl = APP.buildCloudinarySquareUrl(url);
       await docRef.update({ photoUrl: optimizedUrl, imageUrl: optimizedUrl, timestamp: Date.now() });
       APP.state.lastWishAt = Date.now();
-      APP.setStatus(APP.els.wishStatus, "ok", "Đã gửi! Cảm ơn bạn.");
       if (APP.els.wishMessage) APP.els.wishMessage.value = "";
       if (APP.els.wishPhoto) APP.els.wishPhoto.value = "";
       if (APP.els.wishUseLast) APP.els.wishUseLast.checked = false;
@@ -423,7 +436,8 @@
         APP.state.lastWishPreviewUrl = URL.createObjectURL(blob);
       } catch (e2) {}
 
-      APP.openWallAfterSubmit();
+      APP.setStatus(APP.els.wishStatus, "ok", "Đã gửi lời chúc thành công!");
+      APP.showWishThanksPopup();
     } catch (err) {
       APP.setStatus(
         APP.els.wishStatus,
