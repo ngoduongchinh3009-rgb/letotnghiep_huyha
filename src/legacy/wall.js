@@ -92,7 +92,12 @@
 
       var msg = document.createElement("div");
       msg.className = "wish-card__note";
-      msg.textContent = (w.message || "").trim() || DEFAULT_WISH_MESSAGE;
+      var noteText = (w.message || "").trim() || DEFAULT_WISH_MESSAGE;
+      var compactText = noteText.replace(/\s+/g, " ").trim();
+      var textLen = compactText.length;
+      if (textLen > 72) msg.classList.add("is-long");
+      if (textLen > 120) msg.classList.add("is-xlong");
+      msg.textContent = noteText;
       frame.appendChild(thumb);
       frame.appendChild(msg);
 

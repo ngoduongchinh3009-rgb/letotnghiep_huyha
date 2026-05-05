@@ -374,6 +374,16 @@
   word-break: break-word;
 }
 
+.wish-card__note.is-long {
+  font-size: clamp(0.9rem, 1.65vw, 1.05rem);
+  line-height: 1.18;
+}
+
+.wish-card__note.is-xlong {
+  font-size: clamp(0.82rem, 1.45vw, 0.96rem);
+  line-height: 1.14;
+}
+
 .wish-card__footer {
   margin-top: 0.58rem;
   display: flex;
