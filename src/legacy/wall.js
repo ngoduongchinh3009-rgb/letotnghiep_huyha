@@ -244,11 +244,42 @@
   };
 
   APP.showWishThanksPopup = function showWishThanksPopup() {
-    try {
-      window.alert("Đã nhận lời chúc nha \nThứ Bảy nhớ ghé nhé!");
-    } catch (e) {
-      // ignore
+    var existing = document.getElementById("wish-thanks-popup");
+    if (existing && existing.parentNode) {
+      existing.parentNode.removeChild(existing);
     }
+
+    var popup = document.createElement("div");
+    popup.id = "wish-thanks-popup";
+    popup.className = "wish-thanks-popup";
+    popup.innerHTML =
+      '<div class="wish-thanks-popup__card" role="dialog" aria-modal="true" aria-labelledby="wish-thanks-title">' +
+      '<div class="wish-thanks-popup__icon" aria-hidden="true">🎓</div>' +
+      '<h3 class="wish-thanks-popup__title" id="wish-thanks-title">Đã nhận lời chúc nha</h3>' +
+      '<p class="wish-thanks-popup__text">Thứ Bảy nhớ ghé nhé!</p>' +
+      '<button type="button" class="wish-thanks-popup__btn">Đóng</button>' +
+      "</div>";
+
+    function closePopup() {
+      if (!popup) return;
+      popup.classList.remove("is-open");
+      setTimeout(function () {
+        if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
+      }, 180);
+    }
+
+    popup.addEventListener("click", function (e) {
+      if (e.target === popup) closePopup();
+    });
+    var closeBtn = popup.querySelector(".wish-thanks-popup__btn");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closePopup);
+      closeBtn.focus();
+    }
+    document.body.appendChild(popup);
+    requestAnimationFrame(function () {
+      popup.classList.add("is-open");
+    });
   };
 
   APP.getGuestNameFromInvite = function getGuestNameFromInvite() {

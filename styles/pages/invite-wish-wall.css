@@ -364,11 +364,14 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-family: "Great Vibes", "Dancing Script", "Pinyon Script", "Segoe Script", cursive;
-  font-size: clamp(1.15rem, 2.85vw, 1.5rem);
-  line-height: 1.18;
+  font-family: "Caveat", "Dancing Script", "Segoe Script", cursive;
+  font-size: clamp(0.98rem, 1.9vw, 1.18rem);
+  font-weight: 600;
+  line-height: 1.2;
   color: #241c15;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .wish-card__footer {
@@ -429,6 +432,76 @@
 
 .modal__bar button { font-size: 0.9rem; padding: 0.45rem 0.9rem; }
 
+.wish-thanks-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(8, 4, 7, 0.66);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.wish-thanks-popup.is-open {
+  opacity: 1;
+}
+
+.wish-thanks-popup__card {
+  width: min(100%, 360px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 233, 188, 0.34);
+  background:
+    radial-gradient(circle at 16% 4%, rgba(255, 223, 170, 0.2), rgba(255, 223, 170, 0) 45%),
+    linear-gradient(165deg, rgba(39, 18, 25, 0.98), rgba(24, 10, 17, 0.98));
+  box-shadow: 0 22px 56px rgba(0, 0, 0, 0.58);
+  padding: 1.15rem 1rem 1rem;
+  text-align: center;
+  transform: translateY(8px) scale(0.98);
+  transition: transform 0.2s ease;
+}
+
+.wish-thanks-popup.is-open .wish-thanks-popup__card {
+  transform: translateY(0) scale(1);
+}
+
+.wish-thanks-popup__icon {
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 0.55rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 1.45rem;
+  background: rgba(255, 227, 170, 0.16);
+  border: 1px solid rgba(255, 227, 170, 0.35);
+}
+
+.wish-thanks-popup__title {
+  margin: 0;
+  font-size: 1.05rem;
+  color: rgba(255, 248, 232, 0.98);
+}
+
+.wish-thanks-popup__text {
+  margin: 0.35rem 0 0.88rem;
+  color: rgba(255, 248, 232, 0.86);
+  font-size: 0.95rem;
+}
+
+.wish-thanks-popup__btn {
+  min-width: 118px;
+  min-height: 2.28rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 227, 170, 0.4);
+  background: linear-gradient(180deg, #f0c989, #d6a15a);
+  color: #2f160a;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 @media (max-width: 640px) {
   .wish-panel {
     width: min(100%, 100vw - 1.25rem);
@@ -476,6 +549,11 @@
   .wish-file .wish-file__trigger {
     min-width: 0;
     font-size: 0.82rem;
+  }
+
+  .wish-thanks-popup__card {
+    width: min(100%, 332px);
+    padding: 1.05rem 0.9rem 0.92rem;
   }
 }
 

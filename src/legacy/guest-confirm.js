@@ -101,8 +101,10 @@
     APP._guestConfirmOnDecline = onDecline;
     APP._guestConfirmOnPick = null;
 
-    var fullName = guest && guest.fullNames && guest.fullNames[0] ? guest.fullNames[0] : "";
-    var greetName = fullName || (guest && guest.display ? guest.display : "bạn");
+    var displayName = guest && guest.display ? String(guest.display).trim() : "";
+    var fullName = guest && guest.fullNames && guest.fullNames[0] ? String(guest.fullNames[0]).trim() : "";
+    // Prefer short display name for greeting (e.g. "Anh trai"), not legal full name.
+    var greetName = displayName || fullName || "bạn";
     if (guest && (guest.relation === "Bố" || guest.relation === "Mẹ")) {
       greetName = guest.relation;
     }
