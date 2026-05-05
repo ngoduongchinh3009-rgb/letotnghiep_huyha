@@ -37,6 +37,25 @@
         <button type="button" class="btn-secondary" id="btn-share-photo">Chia sẻ</button>
       </div>
     </section>
+
+    <section class="polaroid-panel" id="polaroid-panel" hidden aria-labelledby="polaroid-title">
+      <h3 class="polaroid-panel__title" id="polaroid-title">Chụp ảnh &amp; Gửi lời chúc</h3>
+      <div class="polaroid-card">
+        <div class="polaroid-card__photo-wrap">
+          <img id="polaroid-image" class="polaroid-card__photo" alt="Ảnh vừa chụp để gửi lời chúc" />
+        </div>
+        <textarea
+          id="polaroid-message"
+          class="polaroid-card__message"
+          placeholder="Viết lời chúc của bạn tại đây..."
+          rows="4"
+        ></textarea>
+      </div>
+      <button type="button" class="btn-primary polaroid-panel__submit" id="polaroid-submit">
+        Gửi lời chúc
+      </button>
+      <p class="status muted polaroid-panel__status" id="polaroid-status"></p>
+    </section>
   </div>
 </template>
 

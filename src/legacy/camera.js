@@ -11,6 +11,7 @@
     APP.state.lastPhotoUrl = url || "";
     APP.els.previewImg.src = APP.state.lastPhotoUrl;
     APP.els.photoPreview.hidden = !APP.state.lastPhotoUrl;
+    if (APP.preparePolaroidFromCapture) APP.preparePolaroidFromCapture();
   };
 
   APP.setCaptureUiVisible = function setCaptureUiVisible(visible) {
@@ -127,19 +128,10 @@
     }
     var vw = APP.els.video.videoWidth;
     var vh = APP.els.video.videoHeight;
-    var targetAR = 4 / 3; // match preview container aspect-ratio + object-fit: cover
-    var sourceAR = vw / vh;
     var sx = 0;
     var sy = 0;
     var sw = vw;
     var sh = vh;
-    if (sourceAR > targetAR) {
-      sw = vh * targetAR;
-      sx = (vw - sw) / 2;
-    } else if (sourceAR < targetAR) {
-      sh = vw / targetAR;
-      sy = (vh - sh) / 2;
-    }
     APP.els.snapCanvas.width = Math.round(sw);
     APP.els.snapCanvas.height = Math.round(sh);
     var ctx = APP.els.snapCanvas.getContext("2d");
@@ -203,6 +195,7 @@
       APP.state.lastPhotoUrl = "";
     }
     APP.state.lastPhotoBlob = null;
+    if (APP.setPolaroidVisible) APP.setPolaroidVisible(false);
   };
 
   APP.downloadAgain = function downloadAgain() {

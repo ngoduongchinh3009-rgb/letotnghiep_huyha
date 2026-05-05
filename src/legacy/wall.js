@@ -2,6 +2,7 @@
   "use strict";
 
   var APP = window.APP;
+  var DEFAULT_WISH_MESSAGE = "Chúc mừng HuyHa tốt nghiệp cử nhân. Tiếp tục cố gắng nhé";
 
   APP.hasFirebaseConfig = function hasFirebaseConfig() {
     return (
@@ -73,7 +74,7 @@
       var thumb = document.createElement("div");
       thumb.className = "wish-card__thumb";
       var img = document.createElement("img");
-      img.src = w.photoUrl || "";
+      img.src = w.photoUrl || w.imageUrl || "";
       img.alt = "Ảnh kỷ niệm";
       thumb.appendChild(img);
       thumb.addEventListener(
@@ -82,7 +83,7 @@
           return function () {
             if (url) window.open(url, "_blank", "noopener,noreferrer");
           };
-        })(w.photoUrl)
+        })(w.photoUrl || w.imageUrl)
       );
 
       var body = document.createElement("div");
@@ -226,6 +227,108 @@
     return APP.state.db.collection("wishes").add(data);
   };
 
+  APP.buildCloudinarySquareUrl = function buildCloudinarySquareUrl(url) {
+    if (!url) return "";
+    var marker = "/upload/";
+    var idx = String(url).indexOf(marker);
+    if (idx === -1) return String(url);
+    var before = String(url).slice(0, idx + marker.length);
+    var after = String(url).slice(idx + marker.length);
+    if (!after) return String(url);
+    return before + "c_fill,w_720,h_720,f_auto,q_auto:good,dpr_auto/" + after;
+  };
+
+  APP.openWallAfterSubmit = function openWallAfterSubmit() {
+    if (typeof APP.enterWallViewFromAnywhere === "function") {
+      APP.enterWallViewFromAnywhere();
+    }
+    if (APP.hasFirebaseConfig() && APP.els.wallEl) APP.attachWallListener();
+    if (APP.els.wallPanel) {
+      APP.els.wallPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  APP.setPolaroidVisible = function setPolaroidVisible(visible) {
+    if (!APP.els.polaroidPanel) return;
+    APP.els.polaroidPanel.hidden = !visible;
+  };
+
+  APP.preparePolaroidFromCapture = function preparePolaroidFromCapture() {
+    if (!APP.els.polaroidPanel || !APP.els.polaroidImage) return;
+    if (!APP.state.lastPhotoBlob || !APP.state.lastPhotoUrl) {
+      APP.setPolaroidVisible(false);
+      return;
+    }
+    APP.els.polaroidImage.src = APP.state.lastPhotoUrl;
+    if (APP.els.polaroidMessage) APP.els.polaroidMessage.value = "";
+    if (APP.els.polaroidStatus) APP.setStatus(APP.els.polaroidStatus, "muted", "");
+    if (APP.els.polaroidSubmit) {
+      APP.els.polaroidSubmit.disabled = false;
+      APP.els.polaroidSubmit.textContent = "Gửi lời chúc";
+    }
+    APP.setPolaroidVisible(true);
+  };
+
+  APP.handlePolaroidSubmit = async function handlePolaroidSubmit() {
+    if (!APP.initFirebaseMaybe()) return;
+    if (!APP.hasCloudinaryConfig()) {
+      APP.setStatus(
+        APP.els.polaroidStatus,
+        "bad",
+        "Chưa cấu hình Cloudinary (cloudName/uploadPreset)."
+      );
+      return;
+    }
+    if (!APP.state.lastPhotoBlob) {
+      APP.setStatus(APP.els.polaroidStatus, "bad", "Bạn chưa có ảnh vừa chụp để gửi.");
+      return;
+    }
+    var message =
+      APP.els.polaroidMessage && APP.els.polaroidMessage.value
+        ? APP.els.polaroidMessage.value.trim()
+        : "";
+    if (!message) message = DEFAULT_WISH_MESSAGE;
+
+    if (APP.els.polaroidSubmit) {
+      APP.els.polaroidSubmit.disabled = true;
+      APP.els.polaroidSubmit.textContent = "Đang gửi...";
+    }
+    APP.setStatus(APP.els.polaroidStatus, "muted", "Đang gửi... (upload ảnh)");
+
+    try {
+      var uploadBlob = await APP.compressImageIfNeeded(APP.state.lastPhotoBlob, 850 * 1024);
+      var uploadedUrl = await APP.uploadWishPhotoToCloudinary(uploadBlob);
+      var optimizedUrl = APP.buildCloudinarySquareUrl(uploadedUrl);
+      var now = Date.now();
+      await APP.createWishDoc({
+        imageUrl: optimizedUrl,
+        photoUrl: optimizedUrl,
+        message: message,
+        timestamp: now,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        clientAt: APP.nowIso(),
+        fromName: "",
+      });
+
+      if (APP.els.polaroidMessage) APP.els.polaroidMessage.value = "";
+      APP.setPolaroidVisible(false);
+      APP.setStatus(APP.els.polaroidStatus, "ok", "Đã gửi lời chúc thành công!");
+      APP.setStatus(APP.els.wishStatus, "ok", "Đã gửi lời chúc thành công!");
+      APP.openWallAfterSubmit();
+    } catch (err) {
+      APP.setStatus(
+        APP.els.polaroidStatus,
+        "bad",
+        "Gửi thất bại: " + (err && err.message ? err.message : String(err))
+      );
+    } finally {
+      if (APP.els.polaroidSubmit) {
+        APP.els.polaroidSubmit.disabled = false;
+        APP.els.polaroidSubmit.textContent = "Gửi lời chúc";
+      }
+    }
+  };
+
   APP.handleWishSubmit = async function handleWishSubmit(e) {
     e.preventDefault();
     if (!APP.initFirebaseMaybe()) return;
@@ -238,11 +341,7 @@
       return;
     }
     var msg = (APP.els.wishMessage && APP.els.wishMessage.value ? APP.els.wishMessage.value : "").trim();
-    if (!msg) {
-      APP.setStatus(APP.els.wishStatus, "bad", "Bạn chưa nhập lời chúc.");
-      if (APP.els.wishMessage) APP.els.wishMessage.focus();
-      return;
-    }
+    if (!msg) msg = DEFAULT_WISH_MESSAGE;
 
     var now = Date.now();
     if (now - APP.state.lastWishAt < 45000) {
@@ -286,7 +385,8 @@
         clientAt: APP.nowIso(),
       });
       var url = await APP.uploadWishPhotoToCloudinary(blob);
-      await docRef.update({ photoUrl: url });
+      var optimizedUrl = APP.buildCloudinarySquareUrl(url);
+      await docRef.update({ photoUrl: optimizedUrl, imageUrl: optimizedUrl, timestamp: Date.now() });
       APP.state.lastWishAt = Date.now();
       APP.setStatus(APP.els.wishStatus, "ok", "Đã gửi! Cảm ơn bạn.");
       if (APP.els.wishMessage) APP.els.wishMessage.value = "";
@@ -299,7 +399,7 @@
         APP.state.lastWishPreviewUrl = URL.createObjectURL(blob);
       } catch (e2) {}
 
-      APP.attachWallListener();
+      APP.openWallAfterSubmit();
     } catch (err) {
       APP.setStatus(
         APP.els.wishStatus,

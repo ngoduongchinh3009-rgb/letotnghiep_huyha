@@ -69,6 +69,7 @@ export function boot() {
     if (els.btnRetake) els.btnRetake.addEventListener("click", APP.retake);
     if (els.btnDownloadAgain) els.btnDownloadAgain.addEventListener("click", APP.downloadAgain);
     if (els.btnSharePhoto) els.btnSharePhoto.addEventListener("click", APP.sharePhoto);
+    if (els.polaroidSubmit) els.polaroidSubmit.addEventListener("click", APP.handlePolaroidSubmit);
 
     window.addEventListener("beforeunload", APP.stopCamera);
     window.addEventListener("beforeunload", function () {
@@ -223,6 +224,10 @@ export function boot() {
     setWallLocked(false);
     if (els.wallPanel) els.wallPanel.scrollIntoView({ behavior: "instant", block: "start" });
   }
+
+  APP.enterWallViewFromAnywhere = function enterWallViewFromAnywhere() {
+    enterWallView();
+  };
 
   function enterLockedWallView() {
     APP.showScreen(els.inviteScreen);
