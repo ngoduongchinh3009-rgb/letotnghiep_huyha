@@ -96,7 +96,6 @@
     <h2 id="invite-heading" class="sr-only">Thiệp mời &amp; chụp ảnh</h2>
     <InviteMainCard />
     <CameraBlock />
-    <WishPanelBlock />
     <canvas id="snap-canvas"></canvas>
     <canvas id="card-canvas"></canvas>
     <WallPanelBlock />
@@ -107,7 +106,6 @@
 <script setup>
 import InviteMainCard from "./components/InviteMainCard.vue";
 import CameraBlock from "./components/CameraBlock.vue";
-import WishPanelBlock from "./components/WishPanelBlock.vue";
 import WallPanelBlock from "./components/WallPanelBlock.vue";
 import PhotoModalBlock from "./components/PhotoModalBlock.vue";
 </script>
