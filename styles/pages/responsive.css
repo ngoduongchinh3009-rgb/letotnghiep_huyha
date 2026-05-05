@@ -9,7 +9,12 @@
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
 
-  #screen-form.screen { justify-content: flex-start; }
+  /* Giữ màn đầu căn giữa trên mobile */
+  #screen-form.screen {
+    justify-content: center;
+    padding-top: max(0.65rem, env(safe-area-inset-top));
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
 
   #screen-form .panel--gate {
     border-radius: 20px;
