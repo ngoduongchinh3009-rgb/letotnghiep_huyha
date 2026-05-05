@@ -114,6 +114,8 @@ import graduationBackdropUrl from "../../assets/graduation-camera-backdrop.png?u
       btnRetake: $(root, "btn-retake"),
       btnDownloadAgain: $(root, "btn-download-again"),
       btnSharePhoto: $(root, "btn-share-photo"),
+      btnPolaroidUpload: $(root, "btn-polaroid-upload"),
+      polaroidUploadInput: $(root, "polaroid-upload-input"),
       polaroidPanel: $(root, "polaroid-panel"),
       polaroidImage: $(root, "polaroid-image"),
       polaroidMessage: $(root, "polaroid-message"),

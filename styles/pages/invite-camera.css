@@ -9,8 +9,12 @@
 }
 
 #screen-invite.screen {
-  background-color: #140a0c;
-  background-image: linear-gradient(165deg, #2a1518 0%, #160a0d 55%, #0d0608 100%);
+  background-color: #7a7774;
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.09), transparent 40%),
+    radial-gradient(circle at 78% 74%, rgba(0, 0, 0, 0.09), transparent 38%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.035) 0 2px, rgba(0, 0, 0, 0.02) 2px 4px),
+    linear-gradient(180deg, #8b8884 0%, #74706d 100%);
 }
 
 /* ========== Camera — nền banner + panel kính ========== */
@@ -275,23 +279,36 @@
   color: rgba(255, 244, 222, 0.96);
 }
 
-.polaroid-card {
-  background: #fdfcf8;
-  border-radius: 8px;
-  padding: 0.82rem 0.82rem 1.7rem;
-  box-shadow:
-    0 16px 34px rgba(0, 0, 0, 0.44),
-    0 2px 0 rgba(255, 255, 255, 0.55) inset;
-  border: 1px solid rgba(255, 255, 255, 0.76);
-  transform: rotate(-0.8deg);
+.polaroid-wrapper {
+  position: relative;
+  width: min(100%, 356px);
+  margin: 0 auto;
+  padding: 0.8rem 0.2rem;
 }
 
-.polaroid-card__photo-wrap {
+.polaroid-frame {
+  position: relative;
+  background:
+    radial-gradient(circle at 20% 12%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 48%),
+    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.014) 0 1px, rgba(255, 255, 255, 0.02) 1px 2px),
+    #f5f5f5;
+  padding: 18px 18px 100px;
+  border-radius: 6px;
+  box-shadow:
+    0 2px 1px rgba(255, 255, 255, 0.55) inset,
+    0 1px 0 rgba(0, 0, 0, 0.1) inset,
+    0 24px 34px rgba(0, 0, 0, 0.34),
+    0 8px 12px rgba(0, 0, 0, 0.14);
+  transform: rotate(-1.6deg);
+}
+
+.polaroid-photo {
   width: 100%;
   aspect-ratio: 1 / 1;
+  background: #040404;
   overflow: hidden;
-  background: #ece8df;
-  border: 1px solid rgba(40, 32, 24, 0.16);
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .polaroid-card__photo {
@@ -299,25 +316,60 @@
   height: 100%;
   display: block;
   object-fit: cover;
+  background: #000;
 }
 
-.polaroid-card__message {
-  width: 100%;
-  margin-top: 0.8rem;
+.polaroid-note-input {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 30px;
+  width: 80%;
   border: 0;
-  background: transparent;
-  resize: vertical;
-  min-height: 5.9rem;
-  font-family: "Caveat", "Segoe Script", "Brush Script MT", cursive;
-  font-size: clamp(1.2rem, 3.4vw, 1.42rem);
-  line-height: 1.35;
-  color: #4a3528;
   outline: none;
-  padding: 0.1rem 0.18rem;
+  resize: none;
+  background: transparent;
+  text-align: center;
+  font-family: "Great Vibes", "Pinyon Script", "Dancing Script", "Segoe Script", cursive;
+  font-size: clamp(1.45rem, 3.8vw, 1.9rem);
+  line-height: 1.2;
+  color: #1f1a16;
+  min-height: 2.4rem;
+  outline: none;
+  padding: 0;
 }
 
-.polaroid-card__message::placeholder {
-  color: rgba(83, 68, 58, 0.5);
+.polaroid-note-input::placeholder {
+  color: rgba(56, 48, 40, 0.48);
+}
+
+.sticker-cap,
+.sticker-camera,
+.sticker-disco {
+  position: absolute;
+  z-index: 3;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.26));
+}
+
+.sticker-cap {
+  width: 92px;
+  left: -14px;
+  top: -2px;
+  transform: rotate(-15deg);
+}
+
+.sticker-camera {
+  width: 70px;
+  left: 12px;
+  bottom: -8px;
+}
+
+.sticker-disco {
+  width: 82px;
+  right: 2px;
+  bottom: -10px;
 }
 
 .polaroid-panel__submit {
@@ -396,12 +448,35 @@
     gap: 0.55rem;
   }
 
-  .polaroid-card {
-    transform: none;
-    padding: 0.68rem 0.68rem 1.35rem;
-  }
-
   .polaroid-panel__actions {
     flex-direction: column;
+  }
+
+  .polaroid-wrapper {
+    width: min(100%, 330px);
+  }
+
+  .polaroid-frame {
+    transform: none;
+    padding: 16px 16px 88px;
+  }
+
+  .polaroid-note-input {
+    bottom: 24px;
+    font-size: clamp(1.3rem, 6vw, 1.7rem);
+  }
+
+  .sticker-cap {
+    width: 80px;
+    left: -10px;
+  }
+
+  .sticker-camera {
+    width: 62px;
+    left: 8px;
+  }
+
+  .sticker-disco {
+    width: 74px;
   }
 }

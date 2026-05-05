@@ -29,23 +29,29 @@
 
     <section class="polaroid-panel" id="polaroid-panel" hidden aria-labelledby="polaroid-title">
       <h3 class="polaroid-panel__title" id="polaroid-title">Chụp ảnh &amp; Gửi lời chúc</h3>
-      <div class="polaroid-card">
-        <div class="polaroid-card__photo-wrap">
-          <img id="polaroid-image" class="polaroid-card__photo" alt="Ảnh vừa chụp để gửi lời chúc" />
+      <div class="polaroid-wrapper">
+        <div class="polaroid-frame">
+          <div class="polaroid-photo">
+            <img id="polaroid-image" class="polaroid-card__photo" alt="Ảnh vừa chụp để gửi lời chúc" />
+          </div>
+          <textarea
+            id="polaroid-message"
+            class="polaroid-note-input"
+            placeholder="Viết lời chúc tại đây..."
+            rows="2"
+          ></textarea>
         </div>
-        <textarea
-          id="polaroid-message"
-          class="polaroid-card__message"
-          placeholder="Viết lời chúc của bạn tại đây..."
-          rows="4"
-        ></textarea>
+        <img class="sticker-cap" src="/assets/sticker-cap-placeholder.svg" alt="" aria-hidden="true" />
+        <img class="sticker-camera" src="/assets/sticker-camera-placeholder.svg" alt="" aria-hidden="true" />
+        <img class="sticker-disco" src="/assets/sticker-disco-placeholder.svg" alt="" aria-hidden="true" />
       </div>
       <button type="button" class="btn-primary polaroid-panel__submit" id="polaroid-submit">
         Gửi lời chúc
       </button>
       <div class="polaroid-panel__actions">
         <button type="button" class="btn-secondary" id="btn-retake">Chụp lại</button>
-        <button type="button" class="btn-primary" id="btn-download-again">Tải ảnh PNG</button>
+        <input id="polaroid-upload-input" type="file" accept="image/*" hidden />
+        <button type="button" class="btn-primary" id="btn-polaroid-upload">Tải ảnh lên</button>
       </div>
       <p class="status muted polaroid-panel__status" id="polaroid-status"></p>
     </section>

@@ -166,16 +166,7 @@
       didFaceSticker = APP.drawFaceStickers(ctx, cw, ch);
     }
 
-    var outW = 1080;
-    var outH = 1920;
-    if (APP.els.cardCanvas) {
-      APP.els.cardCanvas.width = outW;
-      APP.els.cardCanvas.height = outH;
-      var out = APP.els.cardCanvas.getContext("2d");
-      APP.drawGraduationMemorialToCanvas(out, outW, outH, APP.els.snapCanvas);
-    }
-
-    (APP.els.cardCanvas || APP.els.snapCanvas).toBlob(
+    APP.els.snapCanvas.toBlob(
       function (blob) {
         if (!blob) return;
         var previewUrl = URL.createObjectURL(blob);

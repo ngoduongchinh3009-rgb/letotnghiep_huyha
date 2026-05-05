@@ -269,6 +269,30 @@
     APP.setPolaroidVisible(true);
   };
 
+  APP.handlePolaroidUploadSelect = async function handlePolaroidUploadSelect(e) {
+    var file =
+      e &&
+      e.target &&
+      e.target.files &&
+      e.target.files[0]
+        ? e.target.files[0]
+        : null;
+    if (!file) return;
+    if (!APP.isImageFile(file)) {
+      APP.setStatus(APP.els.polaroidStatus, "bad", "Vui lòng chọn file ảnh (PNG/JPG/WebP).");
+      if (APP.els.polaroidUploadInput) APP.els.polaroidUploadInput.value = "";
+      return;
+    }
+    var blob = await APP.compressImageIfNeeded(file, 1200 * 1024);
+    if (APP.state.lastPhotoUrl) URL.revokeObjectURL(APP.state.lastPhotoUrl);
+    APP.state.lastPhotoBlob = blob || file;
+    APP.state.lastPhotoUrl = URL.createObjectURL(APP.state.lastPhotoBlob);
+    if (APP.els.polaroidImage) APP.els.polaroidImage.src = APP.state.lastPhotoUrl;
+    APP.setPolaroidVisible(true);
+    APP.setStatus(APP.els.polaroidStatus, "muted", "Đã dùng ảnh từ máy.");
+    if (APP.els.polaroidUploadInput) APP.els.polaroidUploadInput.value = "";
+  };
+
   APP.handlePolaroidSubmit = async function handlePolaroidSubmit() {
     if (!APP.initFirebaseMaybe()) return;
     if (!APP.hasCloudinaryConfig()) {

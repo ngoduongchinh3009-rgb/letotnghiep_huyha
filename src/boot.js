@@ -67,7 +67,12 @@ export function boot() {
     if (els.btnStartCam) els.btnStartCam.addEventListener("click", APP.startCamera);
     if (els.btnCapture) els.btnCapture.addEventListener("click", APP.capturePhoto);
     if (els.btnRetake) els.btnRetake.addEventListener("click", APP.retake);
-    if (els.btnDownloadAgain) els.btnDownloadAgain.addEventListener("click", APP.downloadAgain);
+    if (els.btnPolaroidUpload && els.polaroidUploadInput) {
+      els.btnPolaroidUpload.addEventListener("click", function () {
+        els.polaroidUploadInput.click();
+      });
+      els.polaroidUploadInput.addEventListener("change", APP.handlePolaroidUploadSelect);
+    }
     if (els.btnSharePhoto) els.btnSharePhoto.addEventListener("click", APP.sharePhoto);
     if (els.polaroidSubmit) els.polaroidSubmit.addEventListener("click", APP.handlePolaroidSubmit);
 
