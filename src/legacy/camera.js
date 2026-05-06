@@ -22,6 +22,7 @@
   };
 
   APP.stopCamera = function stopCamera() {
+    APP.state.cameraOpening = false;
     if (APP.stopFaceMeshLoop) APP.stopFaceMeshLoop();
     if (APP.state.stream) {
       var tracks = APP.state.stream.getTracks();
@@ -31,14 +32,19 @@
     }
     if (APP.els.video) APP.els.video.srcObject = null;
     if (APP.els.btnCapture) {
-      APP.els.btnCapture.disabled = true;
-      APP.els.btnCapture.hidden = true;
+      APP.els.btnCapture.hidden = false;
+      APP.els.btnCapture.disabled = false;
+      APP.els.btnCapture.textContent = "Chụp ảnh";
     }
-    if (APP.els.btnStartCam) {
-      APP.els.btnStartCam.hidden = false;
-      APP.els.btnStartCam.disabled = false;
-      APP.els.btnStartCam.textContent = "Mở camera";
+  };
+
+  /** Một nút: lần 1 mở camera tại chỗ, lần 2 chụp → Polaroid. */
+  APP.handleCaptureMainClick = function handleCaptureMainClick() {
+    if (APP.state.stream && APP.els.video && APP.els.video.videoWidth) {
+      APP.capturePhoto();
+      return;
     }
+    APP.startCamera();
   };
 
   APP.refreshSecureBanner = function refreshSecureBanner() {
@@ -82,6 +88,19 @@
       );
       return;
     }
+    if (APP.state.stream && APP.els.video && APP.els.video.videoWidth) {
+      if (APP.els.btnCapture) {
+        APP.els.btnCapture.disabled = false;
+        APP.els.btnCapture.textContent = "Chụp ngay";
+      }
+      return;
+    }
+    if (APP.state.cameraOpening) return;
+    APP.state.cameraOpening = true;
+    if (APP.els.btnCapture) {
+      APP.els.btnCapture.disabled = true;
+      APP.els.btnCapture.textContent = "Đang bật camera...";
+    }
     navigator.mediaDevices
       .getUserMedia({
         video: {
@@ -97,25 +116,27 @@
         return APP.els.video.play();
       })
       .then(function () {
+        APP.state.cameraOpening = false;
         if (APP.els.btnCapture) {
           APP.els.btnCapture.disabled = false;
           APP.els.btnCapture.hidden = false;
-        }
-        if (APP.els.btnStartCam) {
-          APP.els.btnStartCam.hidden = true;
-          APP.els.btnStartCam.textContent = "Camera đã bật";
-          APP.els.btnStartCam.disabled = true;
+          APP.els.btnCapture.textContent = "Chụp ngay";
         }
         APP.refreshCameraPreviewEffects();
         if (APP.startFaceMeshLoop) APP.startFaceMeshLoop();
       })
       .catch(function (err) {
+        APP.state.cameraOpening = false;
         var msg = err && err.message ? err.message : "lỗi không xác định";
         APP.setCamError(
           "Không mở được camera: " +
             msg +
             " — Nếu đang dùng điện thoại: thử HTTPS (ngrok), bật quyền camera trong Cài đặt trình duyệt."
         );
+        if (APP.els.btnCapture) {
+          APP.els.btnCapture.disabled = false;
+          APP.els.btnCapture.textContent = "Chụp ảnh";
+        }
       });
   };
 

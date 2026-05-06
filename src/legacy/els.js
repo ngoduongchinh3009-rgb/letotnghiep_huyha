@@ -28,6 +28,7 @@ import graduationBackdropUrl from "../../assets/graduation-camera-backdrop.png?u
       faceLandmarksAt: 0,
       faceMesh: null,
       faceMeshRunning: false,
+      cameraOpening: false,
       faceStickerSmooth: {
         cx: null,
         cy: null,
@@ -103,7 +104,6 @@ import graduationBackdropUrl from "../../assets/graduation-camera-backdrop.png?u
       camShootPanel: $(root, "cam-shoot-panel"),
       video: $(root, "cam-video"),
       camOverlay: $(root, "cam-overlay"),
-      btnStartCam: $(root, "btn-start-cam"),
       btnCapture: $(root, "btn-capture"),
       camError: $(root, "cam-error"),
       snapCanvas: $(root, "snap-canvas"),

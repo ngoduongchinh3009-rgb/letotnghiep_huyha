@@ -147,6 +147,14 @@
   padding-top: 0.05rem;
 }
 
+.cam-actions--single {
+  width: 100%;
+}
+
+.camera-booth__btn--capture-main {
+  width: min(100%, 300px);
+}
+
 .camera-booth__btn {
   min-height: 2.75rem;
   padding-left: 1.35rem;

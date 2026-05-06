@@ -15,9 +15,8 @@
             <video id="cam-video" playsinline webkit-playsinline autoplay muted></video>
             <canvas id="cam-overlay" class="cam-overlay" aria-hidden="true"></canvas>
           </div>
-          <div class="cam-actions">
-            <button type="button" class="btn-capture camera-booth__btn" id="btn-start-cam">Mở camera</button>
-            <button type="button" class="btn-primary camera-booth__btn" id="btn-capture" disabled hidden>
+          <div class="cam-actions cam-actions--single">
+            <button type="button" class="btn-primary camera-booth__btn camera-booth__btn--capture-main" id="btn-capture">
               Chụp ảnh
             </button>
           </div>

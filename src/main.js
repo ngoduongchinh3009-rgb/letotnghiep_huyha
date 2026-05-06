@@ -4,7 +4,7 @@ import "../style.css";
 import "./legacy/installLegacy.js";
 import { boot } from "./boot.js";
 
-const CACHE_VERSION = "20260505-4";
+const CACHE_VERSION = "20260505-5";
 
 function ensureVersionedUrl() {
   try {
