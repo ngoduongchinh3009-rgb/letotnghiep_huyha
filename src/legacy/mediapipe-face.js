@@ -299,13 +299,16 @@
 
     var c = APP.els.camOverlay.getContext("2d");
     c.clearRect(0, 0, cw, ch);
-    var beautyMode = APP.els.camBeautyMode && APP.els.camBeautyMode.value ? APP.els.camBeautyMode.value : "soft";
+    var beautyMode =
+      APP.els.camBeautyMode && APP.els.camBeautyMode.value ? APP.els.camBeautyMode.value : "soft";
     if (beautyMode !== "off" && APP.els.video && APP.els.video.videoWidth) {
-      // Draw mirrored video frame, then blend skin-only blur on top.
+      // Luôn vẽ frame đã mirror + làm đẹp lên canvas (đè lên video để soi cam và chụp cùng một kiểu xử lý).
       c.save();
       c.translate(cw, 0);
       c.scale(-1, 1);
+      c.filter = "brightness(1.08) contrast(1.05) saturate(1.18) sepia(0.05)";
       c.drawImage(APP.els.video, 0, 0, cw, ch);
+      c.filter = "none";
       c.restore();
       var hasLandmarks =
         APP.state &&
@@ -313,10 +316,14 @@
         APP.state.faceLandmarks.length &&
         APP.hasFreshFaceLandmarks &&
         APP.hasFreshFaceLandmarks(1800);
-      APP.applySkinSmoothing(c, cw, ch, hasLandmarks ? 0.8 : 0.44);
-      APP.applyUnderEyeBrighten(c, cw, ch, hasLandmarks ? 0.56 : 0.28);
-      if (!hasLandmarks && APP.applyGlobalSoftBeauty) APP.applyGlobalSoftBeauty(c, cw, ch, 0.5);
-      APP.applyLipstickFilter(c, cw, ch, APP.getLipOpacity());
+      if (hasLandmarks) {
+        if (APP.applySkinSmoothing) APP.applySkinSmoothing(c, cw, ch, 0.82);
+        if (APP.applyUnderEyeBrighten) APP.applyUnderEyeBrighten(c, cw, ch, 0.58);
+        if (APP.applyLipstickFilter) APP.applyLipstickFilter(c, cw, ch, APP.getLipOpacity());
+        if (APP.applyGlobalSoftBeauty) APP.applyGlobalSoftBeauty(c, cw, ch, 0.2);
+      } else if (APP.applyGlobalSoftBeauty) {
+        APP.applyGlobalSoftBeauty(c, cw, ch, 0.62);
+      }
     }
     var canTrack = APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400);
     if (canTrack) {
@@ -364,25 +371,24 @@
   };
 
   APP.startFaceMeshLoop = function startFaceMeshLoop() {
-    if (!APP.initFaceMeshMaybe()) return;
     if (APP.state.faceMeshRunning) return;
-
     APP.state.faceMeshRunning = true;
+
     (function tick() {
       if (!APP.state.faceMeshRunning) return;
       if (!APP.els.video || !APP.els.video.videoWidth) {
         requestAnimationFrame(tick);
         return;
       }
-      APP.state.faceMesh
-        .send({ image: APP.els.video })
-        .then(function () {
-          if (APP.renderLiveFaceOverlay) APP.renderLiveFaceOverlay();
-          requestAnimationFrame(tick);
-        })
-        .catch(function () {
-          requestAnimationFrame(tick);
-        });
+      APP.initFaceMeshMaybe();
+      var fm = APP.state.faceMesh;
+      var step = fm
+        ? fm.send({ image: APP.els.video }).catch(function () {})
+        : Promise.resolve();
+      step.then(function () {
+        if (APP.renderLiveFaceOverlay) APP.renderLiveFaceOverlay();
+        requestAnimationFrame(tick);
+      });
     })();
   };
 

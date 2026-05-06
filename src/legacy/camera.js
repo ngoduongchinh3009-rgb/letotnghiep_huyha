@@ -31,6 +31,10 @@
       APP.state.stream = null;
     }
     if (APP.els.video) APP.els.video.srcObject = null;
+    if (APP.els.camOverlay && APP.els.camOverlay.width) {
+      var oc = APP.els.camOverlay.getContext("2d");
+      if (oc) oc.clearRect(0, 0, APP.els.camOverlay.width, APP.els.camOverlay.height);
+    }
     if (APP.els.btnCapture) {
       APP.els.btnCapture.hidden = false;
       APP.els.btnCapture.disabled = false;
