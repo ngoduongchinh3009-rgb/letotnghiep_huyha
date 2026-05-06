@@ -144,7 +144,7 @@
   APP.applyUnderEyeBrighten = function applyUnderEyeBrighten(ctx, w, h, strength) {
     var pts = APP.state.faceLandmarks;
     if (!pts || !pts.length) return;
-    var s = Math.max(0, Math.min(1, typeof strength === "number" ? strength : 0.45));
+    var s = Math.max(0, Math.min(1, typeof strength === "number" ? strength : 0.34));
     if (s <= 0) return;
     function p(i) {
       return lmXY(pts[i], w, h);
@@ -159,15 +159,15 @@
     var eyeSpanR = Math.max(8, dist(rightOuter, rightInner));
 
     function drawSpot(c, span) {
-      var gy = span * 0.48;
-      var gx = span * 1.18;
+      var gy = span * 0.42;
+      var gx = span * 1.02;
       var grad = ctx.createRadialGradient(c.x, c.y + gy * 0.45, 1, c.x, c.y + gy * 0.45, gx);
-      grad.addColorStop(0, "rgba(255, 244, 228, " + (0.25 + s * 0.24).toFixed(3) + ")");
-      grad.addColorStop(0.55, "rgba(255, 236, 216, " + (0.11 + s * 0.1).toFixed(3) + ")");
+      grad.addColorStop(0, "rgba(255, 244, 228, " + (0.15 + s * 0.12).toFixed(3) + ")");
+      grad.addColorStop(0.5, "rgba(255, 236, 216, " + (0.07 + s * 0.06).toFixed(3) + ")");
       grad.addColorStop(1, "rgba(255,255,255,0)");
       ctx.fillStyle = grad;
       ctx.beginPath();
-      ctx.ellipse(c.x, c.y + gy, gx, gy, 0, 0, Math.PI * 2);
+      ctx.ellipse(c.x, c.y + gy * 1.08, gx, gy, 0, 0, Math.PI * 2);
       ctx.fill();
     }
 
@@ -287,6 +287,23 @@
     return true;
   };
 
+  APP.applyUnifiedBeautyEffects = function applyUnifiedBeautyEffects(ctx, w, h) {
+    var hasLandmarks =
+      APP.state &&
+      APP.state.faceLandmarks &&
+      APP.state.faceLandmarks.length &&
+      APP.hasFreshFaceLandmarks &&
+      APP.hasFreshFaceLandmarks(1800);
+    if (hasLandmarks) {
+      if (APP.applySkinSmoothing) APP.applySkinSmoothing(ctx, w, h, 0.82);
+      if (APP.applyUnderEyeBrighten) APP.applyUnderEyeBrighten(ctx, w, h, 0.58);
+      if (APP.applyLipstickFilter) APP.applyLipstickFilter(ctx, w, h, APP.getLipOpacity());
+      if (APP.applyGlobalSoftBeauty) APP.applyGlobalSoftBeauty(ctx, w, h, 0.2);
+    } else if (APP.applyGlobalSoftBeauty) {
+      APP.applyGlobalSoftBeauty(ctx, w, h, 0.62);
+    }
+  };
+
   APP.renderLiveFaceOverlay = function renderLiveFaceOverlay() {
     if (!APP.els.camOverlay) return;
     if (!APP.els.video || !APP.els.video.videoWidth) return;
@@ -310,34 +327,11 @@
       c.drawImage(APP.els.video, 0, 0, cw, ch);
       c.filter = "none";
       c.restore();
-      var hasLandmarks =
-        APP.state &&
-        APP.state.faceLandmarks &&
-        APP.state.faceLandmarks.length &&
-        APP.hasFreshFaceLandmarks &&
-        APP.hasFreshFaceLandmarks(1800);
-      if (hasLandmarks) {
-        if (APP.applySkinSmoothing) APP.applySkinSmoothing(c, cw, ch, 0.82);
-        if (APP.applyUnderEyeBrighten) APP.applyUnderEyeBrighten(c, cw, ch, 0.58);
-        if (APP.applyLipstickFilter) APP.applyLipstickFilter(c, cw, ch, APP.getLipOpacity());
-        if (APP.applyGlobalSoftBeauty) APP.applyGlobalSoftBeauty(c, cw, ch, 0.2);
-      } else if (APP.applyGlobalSoftBeauty) {
-        APP.applyGlobalSoftBeauty(c, cw, ch, 0.62);
-      }
+      APP.applyUnifiedBeautyEffects(c, cw, ch);
     }
     var canTrack = APP.hasFreshFaceLandmarks && APP.hasFreshFaceLandmarks(1400);
     if (canTrack) {
       APP.drawFaceStickers(c, cw, ch);
-    } else {
-      c.save();
-      c.globalAlpha = 0.55;
-      c.font = "900 " + Math.round(Math.min(cw, ch) * 0.16) + "px system-ui, Apple Color Emoji, Segoe UI Emoji";
-      c.textAlign = "center";
-      c.textBaseline = "middle";
-      c.shadowColor = "rgba(0,0,0,0.35)";
-      c.shadowBlur = 12;
-      c.fillText("🎓", cw * 0.5, ch * 0.18);
-      c.restore();
     }
   };
 

@@ -167,23 +167,13 @@
     ctx.filter =
       beautyMode === "off"
         ? "none"
-        : "brightness(1.08) contrast(1.01) saturate(1.14)";
+        : "brightness(1.08) contrast(1.05) saturate(1.18) sepia(0.05)";
     ctx.drawImage(APP.els.video, sx, sy, sw, sh, 0, 0, cw, ch);
     ctx.filter = "none";
     ctx.restore();
 
     if (beautyMode !== "off") {
-      var hasLandmarks =
-        APP.state &&
-        APP.state.faceLandmarks &&
-        APP.state.faceLandmarks.length &&
-        APP.hasFreshFaceLandmarks &&
-        APP.hasFreshFaceLandmarks(1800);
-      if (APP.applySkinSmoothing) APP.applySkinSmoothing(ctx, cw, ch, hasLandmarks ? 0.86 : 0.46);
-      if (APP.applyUnderEyeBrighten) APP.applyUnderEyeBrighten(ctx, cw, ch, hasLandmarks ? 0.66 : 0.32);
-      if (!hasLandmarks && APP.applyGlobalSoftBeauty) APP.applyGlobalSoftBeauty(ctx, cw, ch, 0.52);
-      APP.applyPortraitEnhance(ctx, cw, ch);
-      if (APP.applyLipstickFilter) APP.applyLipstickFilter(ctx, cw, ch, APP.getLipOpacity());
+      if (APP.applyUnifiedBeautyEffects) APP.applyUnifiedBeautyEffects(ctx, cw, ch);
     }
 
     var didFaceSticker = false;
