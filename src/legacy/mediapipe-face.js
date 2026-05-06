@@ -110,9 +110,9 @@
   };
 
   APP.getLipOpacity = function getLipOpacity() {
-    if (!APP.els || !APP.els.camLipOpacity) return 0.68;
+    if (!APP.els || !APP.els.camLipOpacity) return 0.42;
     var raw = Number(APP.els.camLipOpacity.value);
-    if (!isFinite(raw)) return 0.68;
+    if (!isFinite(raw)) return 0.42;
     return Math.max(0, Math.min(1, raw / 100));
   };
 
@@ -126,14 +126,14 @@
     ctx.save();
     ctx.globalCompositeOperation = "multiply";
     ctx.globalAlpha = alpha;
-    ctx.fillStyle = "rgba(235, 18, 78, 0.66)";
+    ctx.fillStyle = "rgba(204, 78, 110, 0.36)";
     ctx.beginPath();
     pathFromIndices(ctx, pts, OUTER_LIP, w, h);
     pathFromIndices(ctx, pts, INNER_LIP, w, h);
     ctx.fill("evenodd");
     ctx.globalCompositeOperation = "soft-light";
-    ctx.globalAlpha = Math.min(1, alpha * 0.55);
-    ctx.fillStyle = "rgba(255, 126, 156, 0.44)";
+    ctx.globalAlpha = Math.min(1, alpha * 0.36);
+    ctx.fillStyle = "rgba(232, 158, 176, 0.28)";
     ctx.beginPath();
     pathFromIndices(ctx, pts, OUTER_LIP, w, h);
     pathFromIndices(ctx, pts, INNER_LIP, w, h);
